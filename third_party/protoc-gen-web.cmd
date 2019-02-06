@@ -1,0 +1,1 @@
+protoc --proto_path=api/proto/v1 --proto_path=third_party --js_out=import_style=commonjs:pkg/js/v1 --grpc-web_out=import_style=commonjs,mode=grpcwebtext:pkg/js/v1 inventory-service.proto

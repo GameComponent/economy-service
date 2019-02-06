@@ -1,0 +1,209 @@
+syntax = "proto3";
+package v1;
+
+// import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+// Service definition
+service EconomyService {
+    // To see what Storages belong to an User
+    // rpc GetPlayer(GetPlayerRequest) returns (GetPlayerResponse);
+
+    // We named it Storage instead of Inventory
+    // Because it can represent an inventory just as easily as a bank
+    rpc GetStorage(GetStorageRequest) returns (GetStorageResponse);
+
+    rpc CreateStorage(CreateStorageRequest) returns (CreateStorageResponse);
+
+    // Create an Item
+    rpc CreateItem(CreateItemRequest) returns (CreateItemResponse);
+
+    // Update an Item
+    rpc UpdateItem(UpdateItemRequest) returns (UpdateItemResponse);
+
+    // List all Items
+    rpc ListItems(ListItemsRequest) returns (ListItemsResponse);
+
+    // Give Item to an Storage
+    rpc GiveItem(GiveItemRequest) returns (GiveItemResponse);
+
+    // Removes an Item from Storage
+    // rpc DestroyItem(DestroyItemRequest) returns (DestroyItemResponse);
+
+    // Trade Currency for Item
+    // rpc BuyItem(BuyItemRequest) returns (BuyItemResponse);
+
+    // Trade Item for Currency
+    // rpc SellItem(SellItemRequest) returns (SellItemResponse);
+}
+
+// Main entities
+message Item {
+    string id = 1;
+    string name = 2;
+}
+
+message StorageItem {
+    string id = 1;
+    Item item = 2;
+    //google.protobuf.Struct metadata = 3;
+}
+
+// message Currency {
+//     string id = 1;
+//     string name = 2;
+//     string shortName = 3;
+//     string symbol = 4;
+// }
+
+// message StorageCurrency {
+//     Currency currency = 2;
+//     uint64 amount = 3;
+// }
+
+// Read optimized for the GetPlayer method
+// So we dont have to return the entire Storage object
+// message StorageBase {
+//     string id = 1;
+//     string playerId = 2;
+//     string name = 3;
+// }
+
+message Storage {
+    string id = 1;
+    string playerId = 2;
+    string name = 3;
+    repeated StorageItem items = 4;
+    // repeated StorageCurrency currencies = 5;
+    //google.protobuf.Struct metadata = 4;
+}
+
+// GiveItem
+message GiveItemRequest{
+    string api = 1;
+    string storageId = 2;
+    string itemId = 3;
+    //google.protobuf.Struct metadata = 4;
+}
+
+message GiveItemResponse{
+    string api = 1;
+    string storageId = 2;
+    StorageItem item = 3;
+}
+
+// DestroyItem
+// message DestroyItemRequest{
+//     string api = 1;
+//     string storageItemId = 3;
+// }
+
+// message DestroyItemResponse{
+//     string api = 1;
+// }
+
+// // GiveCurrency
+// message GiveCurrencyRequest{
+//     string api = 1;
+//     string storageId = 2;
+//     StorageCurrency current = 3;
+// }
+
+// message GiveCurrentResponse{
+//     string api = 1;
+//     string storageId = 2;
+//     StorageCurrency currency = 3;
+// }
+
+// GetStorage
+message GetStorageRequest{
+    string api = 1;
+    string storageId = 2;
+}
+
+message GetStorageResponse{
+    string api = 1;
+    Storage storage = 2;
+}
+
+// CreateStorage
+message CreateStorageRequest{
+    string api = 1;
+    string playerId = 2;
+    string storageName = 3;
+    google.protobuf.Struct metadata = 4;
+}
+
+message CreateStorageResponse{
+    string api = 1;
+    Storage storage = 2;
+}
+
+// // GetPlayer
+// message GetPlayerRequest{
+//     string api = 1;
+//     string playerId = 2;
+// }
+
+// message GetPlayerResponse{
+//     string api = 1;
+//     string playerId = 2;
+//     repeated StorageBase storages = 3;
+// }
+
+// // BuyItem
+// message BuyItemRequest{
+//     string api = 1;
+//     StorageCurrency currency = 2;
+// }
+
+// message BuyItemResponse{
+//     string api = 1;
+//     StorageItem item = 2;
+// }
+
+// // SellItem
+// message SellItemRequest{
+//     string api = 1;
+//     StorageItem item = 2;
+// }
+
+// message SellItemResponse{
+//     string api = 1;
+//     StorageCurrency currency = 2;
+// }
+
+// CreateItem
+message CreateItemRequest{
+    string api = 1;
+    string name = 2;
+    google.protobuf.Struct metadata = 3;
+}
+
+message CreateItemResponse{
+    string api = 1;
+    Item item = 2;
+}
+
+// UpdateItem
+message UpdateItemRequest{
+    string api = 1;
+    string itemId = 2;
+    string name = 3;
+    google.protobuf.Struct metadata = 4;
+}
+
+message UpdateItemResponse{
+    string api = 1;
+    Item item = 2;
+}
+
+// ListItems
+message ListItemsRequest{
+    string api = 1;
+}
+
+message ListItemsResponse{
+    string api = 1;
+    repeated Item items = 2;
+}
