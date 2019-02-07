@@ -3,6 +3,34 @@ package v1;
 
 // import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+    info: {
+        title: "Economy service";
+        version: "0.0";
+        contact: {
+            name: "economy-service";
+            url: "https://github.com/GameComponent/economy-service";
+            email: "info@gamecomponent.com";
+        };
+    };
+    schemes: HTTP;
+    consumes: "application/json";
+    produces: "application/json";
+    responses: {
+        key: "404";
+        value: {
+            description: "Returned when the resource does not exist.";
+            schema: {
+                json_schema: {
+                    type: STRING;
+                }
+            }
+        }
+    }
+};
 
 // Service definition
 service EconomyService {
@@ -11,21 +39,51 @@ service EconomyService {
 
     // We named it Storage instead of Inventory
     // Because it can represent an inventory just as easily as a bank
-    rpc GetStorage(GetStorageRequest) returns (GetStorageResponse);
+    rpc GetStorage(GetStorageRequest) returns (GetStorageResponse) {
+        option (google.api.http) = {
+            post: "/v1/storage/get"
+            body: "*"
+        };
+    }
 
-    rpc CreateStorage(CreateStorageRequest) returns (CreateStorageResponse);
+    rpc CreateStorage(CreateStorageRequest) returns (CreateStorageResponse) {
+        option (google.api.http) = {
+            post: "/v1/storage/create"
+            body: "*"
+        };
+    }
 
     // Create an Item
-    rpc CreateItem(CreateItemRequest) returns (CreateItemResponse);
+    rpc CreateItem(CreateItemRequest) returns (CreateItemResponse) {
+        option (google.api.http) = {
+            post: "/v1/item/create"
+            body: "*"
+        };
+    }
 
     // Update an Item
-    rpc UpdateItem(UpdateItemRequest) returns (UpdateItemResponse);
+    rpc UpdateItem(UpdateItemRequest) returns (UpdateItemResponse) {
+        option (google.api.http) = {
+            post: "/v1/item/update"
+            body: "*"
+        };
+    }
 
     // List all Items
-    rpc ListItems(ListItemsRequest) returns (ListItemsResponse);
+    rpc ListItems(ListItemsRequest) returns (ListItemsResponse) {
+        option (google.api.http) = {
+            post: "/v1/item/list"
+            body: "*"
+        };
+    }
 
     // Give Item to an Storage
-    rpc GiveItem(GiveItemRequest) returns (GiveItemResponse);
+    rpc GiveItem(GiveItemRequest) returns (GiveItemResponse) {
+        option (google.api.http) = {
+            post: "/v1/item.give"
+            body: "*"
+        };
+    }
 
     // Removes an Item from Storage
     // rpc DestroyItem(DestroyItemRequest) returns (DestroyItemResponse);

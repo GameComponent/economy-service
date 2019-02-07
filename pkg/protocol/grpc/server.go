@@ -10,6 +10,8 @@ import (
   "google.golang.org/grpc"
 
   "github.com/GameComponent/economy-service/pkg/api/v1"
+  "github.com/GameComponent/economy-service/pkg/logger"
+  "github.com/GameComponent/economy-service/pkg/protocol/grpc/middleware"
 )
 
 // RunServer runs gRPC service to publish Economy service
@@ -19,11 +21,17 @@ func RunServer(ctx context.Context, v1API v1.EconomyServiceServer, port string) 
     return err
   }
 
-  // register service
+  // gRPC server statup options
+  opts := []grpc.ServerOption{}
+
+  // Add middleware
+  opts = middleware.AddLogging(logger.Log, opts)
+
+  // Register service
   server := grpc.NewServer()
   v1.RegisterEconomyServiceServer(server, v1API)
 
-  // graceful shutdown
+  // Graceful shutdown
   c := make(chan os.Signal, 1)
   signal.Notify(c, os.Interrupt)
   go func() {
@@ -37,7 +45,7 @@ func RunServer(ctx context.Context, v1API v1.EconomyServiceServer, port string) 
     }
   }()
 
-  // start gRPC server
-  log.Println("starting gRPC server...")
+  // Start gRPC server
+  logger.Log.Info("starting gRPC server...")
   return server.Serve(listen)
 }

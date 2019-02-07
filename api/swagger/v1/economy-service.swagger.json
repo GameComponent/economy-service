@@ -1,0 +1,490 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Economy service",
+    "version": "0.0",
+    "contact": {
+      "name": "economy-service",
+      "url": "https://github.com/GameComponent/economy-service",
+      "email": "info@gamecomponent.com"
+    }
+  },
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/item.give": {
+      "post": {
+        "summary": "Give Item to an Storage",
+        "operationId": "GiveItem",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GiveItemResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1GiveItemRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
+    "/v1/item/create": {
+      "post": {
+        "summary": "Create an Item",
+        "operationId": "CreateItem",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateItemResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateItemRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
+    "/v1/item/list": {
+      "post": {
+        "summary": "List all Items",
+        "operationId": "ListItems",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListItemsResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ListItemsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
+    "/v1/item/update": {
+      "post": {
+        "summary": "Update an Item",
+        "operationId": "UpdateItem",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateItemResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UpdateItemRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
+    "/v1/storage/create": {
+      "post": {
+        "operationId": "CreateStorage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateStorageResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateStorageRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
+    "/v1/storage/get": {
+      "post": {
+        "summary": "We named it Storage instead of Inventory\nBecause it can represent an inventory just as easily as a bank",
+        "operationId": "GetStorage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetStorageResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1GetStorageRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufListValue": {
+      "type": "object",
+      "properties": {
+        "values": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufValue"
+          },
+          "description": "Repeated field of dynamically typed values."
+        }
+      },
+      "description": "`ListValue` is a wrapper around a repeated field of values.\n\nThe JSON representation for `ListValue` is JSON array."
+    },
+    "protobufNullValue": {
+      "type": "string",
+      "enum": [
+        "NULL_VALUE"
+      ],
+      "default": "NULL_VALUE",
+      "description": "`NullValue` is a singleton enumeration to represent the null value for the\n`Value` type union.\n\n The JSON representation for `NullValue` is JSON `null`.\n\n - NULL_VALUE: Null value."
+    },
+    "protobufStruct": {
+      "type": "object",
+      "properties": {
+        "fields": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/protobufValue"
+          },
+          "description": "Unordered map of dynamically typed values."
+        }
+      },
+      "description": "`Struct` represents a structured data value, consisting of fields\nwhich map to dynamically typed values. In some languages, `Struct`\nmight be supported by a native representation. For example, in\nscripting languages like JS a struct is represented as an\nobject. The details of that representation are described together\nwith the proto support for the language.\n\nThe JSON representation for `Struct` is JSON object."
+    },
+    "protobufValue": {
+      "type": "object",
+      "properties": {
+        "null_value": {
+          "$ref": "#/definitions/protobufNullValue",
+          "description": "Represents a null value."
+        },
+        "number_value": {
+          "type": "number",
+          "format": "double",
+          "description": "Represents a double value."
+        },
+        "string_value": {
+          "type": "string",
+          "description": "Represents a string value."
+        },
+        "bool_value": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": "Represents a boolean value."
+        },
+        "struct_value": {
+          "$ref": "#/definitions/protobufStruct",
+          "description": "Represents a structured value."
+        },
+        "list_value": {
+          "$ref": "#/definitions/protobufListValue",
+          "description": "Represents a repeated `Value`."
+        }
+      },
+      "description": "`Value` represents a dynamically typed value which can be either\nnull, a number, a string, a boolean, a recursive struct value, or a\nlist of values. A producer of value is expected to set one of that\nvariants, absence of any variant indicates an error.\n\nThe JSON representation for `Value` is JSON value."
+    },
+    "v1CreateItemRequest": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/definitions/protobufStruct"
+        }
+      },
+      "title": "CreateItem"
+    },
+    "v1CreateItemResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "item": {
+          "$ref": "#/definitions/v1Item"
+        }
+      }
+    },
+    "v1CreateStorageRequest": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "playerId": {
+          "type": "string"
+        },
+        "storageName": {
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/definitions/protobufStruct"
+        }
+      },
+      "title": "CreateStorage"
+    },
+    "v1CreateStorageResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "storage": {
+          "$ref": "#/definitions/v1Storage"
+        }
+      }
+    },
+    "v1GetStorageRequest": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "storageId": {
+          "type": "string"
+        }
+      },
+      "title": "GetStorage"
+    },
+    "v1GetStorageResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "storage": {
+          "$ref": "#/definitions/v1Storage"
+        }
+      }
+    },
+    "v1GiveItemRequest": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "storageId": {
+          "type": "string"
+        },
+        "itemId": {
+          "type": "string"
+        }
+      },
+      "title": "GiveItem"
+    },
+    "v1GiveItemResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "storageId": {
+          "type": "string"
+        },
+        "item": {
+          "$ref": "#/definitions/v1StorageItem"
+        }
+      }
+    },
+    "v1Item": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "title": "Main entities"
+    },
+    "v1ListItemsRequest": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        }
+      },
+      "title": "ListItems"
+    },
+    "v1ListItemsResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Item"
+          }
+        }
+      }
+    },
+    "v1Storage": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "playerId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1StorageItem"
+          }
+        }
+      }
+    },
+    "v1StorageItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "item": {
+          "$ref": "#/definitions/v1Item"
+        }
+      }
+    },
+    "v1UpdateItemRequest": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "itemId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/definitions/protobufStruct"
+        }
+      },
+      "title": "UpdateItem"
+    },
+    "v1UpdateItemResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "item": {
+          "$ref": "#/definitions/v1Item"
+        }
+      }
+    }
+  }
+}

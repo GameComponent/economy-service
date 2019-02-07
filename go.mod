@@ -1,4 +1,4 @@
-module github.com/GameComponent/inventory-service
+module github.com/GameComponent/economy-service
 
 require (
   github.com/go-sql-driver/mysql v1.4.0
