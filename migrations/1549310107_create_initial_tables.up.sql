@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS storage (
   id UUID DEFAULT gen_random_uuid() NOT NULL,
-  player_id STRING NOT NULL UNIQUE,
+  player_id STRING NOT NULL,
   name STRING NOT NULL,
   data JSONB DEFAULT '{}' NOT null,
   

@@ -10,6 +10,7 @@ import (
   "google.golang.org/grpc/codes"
   "google.golang.org/grpc/status"
 
+  "github.com/google/uuid"
   // "github.com/golang/protobuf/ptypes/struct"
   v1 "github.com/GameComponent/economy-service/pkg/api/v1"
 )
@@ -201,7 +202,7 @@ func (s *economyServiceServer) CreateStorage(ctx context.Context, req *v1.Create
     ctx,
     `INSERT INTO storage(player_id, name) VALUES ($1, $2) RETURNING id`,
     req.GetPlayerId(),
-    req.GetStorageName(),
+    req.GetName(),
   ).Scan(&lastInsertUuid)
 
   if err != nil {
@@ -211,7 +212,7 @@ func (s *economyServiceServer) CreateStorage(ctx context.Context, req *v1.Create
   storage := &v1.Storage{
     Id: lastInsertUuid,
     PlayerId: req.GetPlayerId(),
-    Name: req.GetStorageName(),
+    Name: req.GetName(),
   }
 
   return &v1.CreateStorageResponse{
@@ -225,6 +226,12 @@ func (s *economyServiceServer) GetStorage(ctx context.Context, req *v1.GetStorag
 
   // check if the API version requested by client is supported by server
   if err := s.checkAPI(req.Api); err != nil {
+    return nil, err
+  }
+
+  // Check if the requested storage id is a valid UUID
+  _, err := uuid.Parse(req.GetStorageId())
+  if err != nil {
     return nil, err
   }
 
@@ -246,14 +253,10 @@ func (s *economyServiceServer) GetStorage(ctx context.Context, req *v1.GetStorag
     WHERE storage.id = $1`,
     req.GetStorageId(),
   )
-  defer rows.Close()
 
   if err != nil {
     return nil, err
   }
-
-  fmt.Println("rows")
-  fmt.Println(rows)
 
   storageItems := []*v1.StorageItem{}
 
@@ -312,5 +315,48 @@ func (s *economyServiceServer) GetStorage(ctx context.Context, req *v1.GetStorag
   return &v1.GetStorageResponse{
     Api: apiVersion,
     Storage: storage,
+  }, nil
+}
+
+func (s *economyServiceServer) GetPlayer(ctx context.Context, req *v1.GetPlayerRequest) (*v1.GetPlayerResponse, error) {
+  fmt.Println("GetPlayer");
+
+  // check if the API version requested by client is supported by server
+  if err := s.checkAPI(req.Api); err != nil {
+    return nil, err
+  }
+
+  rows, err := s.db.QueryContext(
+    ctx,
+    `SELECT id, name
+    FROM storage 
+    WHERE player_id = $1`,
+    req.GetPlayerId(),
+  )
+
+  if err != nil {
+    return nil, err
+  }
+
+  storageItems := []*v1.StorageBase{}
+
+  for rows.Next() {
+    storage := &v1.StorageBase{}
+    
+    err = rows.Scan(
+      &storage.Id,
+      &storage.Name,
+    )
+    if err != nil {
+      log.Fatal(err)
+    }
+
+    storageItems = append(storageItems, storage)
+  }
+
+  return &v1.GetPlayerResponse{
+    Api: apiVersion,
+    PlayerId: req.GetPlayerId(),
+    Storages: storageItems,
   }, nil
 }

@@ -19,7 +19,71 @@
     "application/json"
   ],
   "paths": {
-    "/v1/item.give": {
+    "/v1/item": {
+      "post": {
+        "summary": "Create an Item",
+        "operationId": "CreateItem",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateItemResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateItemRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      },
+      "patch": {
+        "summary": "Update an Item",
+        "operationId": "UpdateItem",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateItemResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UpdateItemRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
+    "/v1/item/give": {
       "post": {
         "summary": "Give Item to an Storage",
         "operationId": "GiveItem",
@@ -52,41 +116,8 @@
         ]
       }
     },
-    "/v1/item/create": {
-      "post": {
-        "summary": "Create an Item",
-        "operationId": "CreateItem",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1CreateItemResponse"
-            }
-          },
-          "404": {
-            "description": "Returned when the resource does not exist.",
-            "schema": {
-              "format": "string"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1CreateItemRequest"
-            }
-          }
-        ],
-        "tags": [
-          "EconomyService"
-        ]
-      }
-    },
-    "/v1/item/list": {
-      "post": {
+    "/v1/items": {
+      "get": {
         "summary": "List all Items",
         "operationId": "ListItems",
         "responses": {
@@ -105,12 +136,10 @@
         },
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1ListItemsRequest"
-            }
+            "name": "api",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -118,15 +147,15 @@
         ]
       }
     },
-    "/v1/item/update": {
-      "post": {
-        "summary": "Update an Item",
-        "operationId": "UpdateItem",
+    "/v1/player/{playerId}": {
+      "get": {
+        "summary": "To see what Storages belong to an User",
+        "operationId": "GetPlayer",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1UpdateItemResponse"
+              "$ref": "#/definitions/v1GetPlayerResponse"
             }
           },
           "404": {
@@ -138,12 +167,16 @@
         },
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
+            "name": "playerId",
+            "in": "path",
             "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1UpdateItemRequest"
-            }
+            "type": "string"
+          },
+          {
+            "name": "api",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -151,8 +184,9 @@
         ]
       }
     },
-    "/v1/storage/create": {
+    "/v1/storage": {
       "post": {
+        "summary": "Create a new Storage",
         "operationId": "CreateStorage",
         "responses": {
           "200": {
@@ -183,9 +217,9 @@
         ]
       }
     },
-    "/v1/storage/get": {
-      "post": {
-        "summary": "We named it Storage instead of Inventory\nBecause it can represent an inventory just as easily as a bank",
+    "/v1/storage/{storageId}": {
+      "get": {
+        "summary": "Get the contents of a storage",
         "operationId": "GetStorage",
         "responses": {
           "200": {
@@ -203,12 +237,16 @@
         },
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
+            "name": "storageId",
+            "in": "path",
             "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1GetStorageRequest"
-            }
+            "type": "string"
+          },
+          {
+            "name": "api",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -319,7 +357,7 @@
         "playerId": {
           "type": "string"
         },
-        "storageName": {
+        "name": {
           "type": "string"
         },
         "metadata": {
@@ -339,17 +377,22 @@
         }
       }
     },
-    "v1GetStorageRequest": {
+    "v1GetPlayerResponse": {
       "type": "object",
       "properties": {
         "api": {
           "type": "string"
         },
-        "storageId": {
+        "playerId": {
           "type": "string"
+        },
+        "storages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1StorageBase"
+          }
         }
-      },
-      "title": "GetStorage"
+      }
     },
     "v1GetStorageResponse": {
       "type": "object",
@@ -403,15 +446,6 @@
       },
       "title": "Main entities"
     },
-    "v1ListItemsRequest": {
-      "type": "object",
-      "properties": {
-        "api": {
-          "type": "string"
-        }
-      },
-      "title": "ListItems"
-    },
     "v1ListItemsResponse": {
       "type": "object",
       "properties": {
@@ -445,6 +479,18 @@
           }
         }
       }
+    },
+    "v1StorageBase": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "title": "Read optimized for the GetPlayer method\nSo we dont have to return the entire Storage object"
     },
     "v1StorageItem": {
       "type": "object",
