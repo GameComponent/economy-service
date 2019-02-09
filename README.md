@@ -8,7 +8,7 @@ The economy service is a service to manage your game's economy.
 
 The economy services allow you to give your players access to items, currencies and much more. Anything that touches the economy of your game is parts of this service. This services allows you to define item definitions, create currencies, open up shops and much more.
 
-** State of the project: ** Unstable and in active development
+**State of the project:** Unstable and in active development
 
 ## Contributing
 
