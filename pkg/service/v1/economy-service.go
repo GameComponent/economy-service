@@ -85,7 +85,7 @@ func (s *economyServiceServer) UpdateItem(ctx context.Context, req *v1.UpdateIte
 
   result, err := s.db.ExecContext(
     ctx,
-    `UPDATE item SET name = $1, data = $2 WHERE id = $3`,
+    `UPDATE item SET name = $1, metadata = $2 WHERE id = $3`,
     req.GetName(),
     `{"kaas":"baas"}`,
     req.GetItemId(),
@@ -240,13 +240,13 @@ func (s *economyServiceServer) GetStorage(ctx context.Context, req *v1.GetStorag
     `SELECT
       storage.id as storageId,
       storage.name as storageName,
-      storage.data as storageData,
+      storage.metadata as storageData,
       storage.player_id as playerId,
       storage_item.id as storageItemId,
-      storage_item.data as storageItemData,
+      storage_item.metadata as storageItemData,
       item.id as itemId,
       item.name as itemName,
-      item.data as itemData
+      item.metadata as itemData
     FROM storage 
     INNER JOIN storage_item on (storage.id = storage_item.storage_id)
     INNER JOIN item on (storage_item.item_id = item.id)
@@ -288,9 +288,6 @@ func (s *economyServiceServer) GetStorage(ctx context.Context, req *v1.GetStorag
     if err != nil {
       log.Fatal(err)
     }
-
-    fmt.Printf("rowzz")
-    fmt.Printf("%+v\n", r)
 
     item := &v1.Item {
       Id: r.ItemId,
@@ -342,7 +339,7 @@ func (s *economyServiceServer) GetPlayer(ctx context.Context, req *v1.GetPlayerR
 
   for rows.Next() {
     storage := &v1.StorageBase{}
-    
+
     err = rows.Scan(
       &storage.Id,
       &storage.Name,
@@ -358,5 +355,80 @@ func (s *economyServiceServer) GetPlayer(ctx context.Context, req *v1.GetPlayerR
     Api: apiVersion,
     PlayerId: req.GetPlayerId(),
     Storages: storageItems,
+  }, nil
+}
+
+func (s *economyServiceServer) CreateCurrency(ctx context.Context, req *v1.CreateCurrencyRequest) (*v1.CreateCurrencyResponse, error) {
+  fmt.Println("CreateCurrency");
+
+  // check if the API version requested by client is supported by server
+  if err := s.checkAPI(req.Api); err != nil {
+    return nil, err
+  }
+
+  // Add item to the databased return the generated UUID
+  lastInsertUuid := ""
+  err := s.db.QueryRowContext(
+    ctx,
+    `INSERT INTO currency(name) VALUES ($1) RETURNING id`,
+    req.GetName(),
+  ).Scan(&lastInsertUuid)
+
+  if err != nil {
+    return nil, err
+  }
+
+  // Generate the object based on the generated id and the requested name
+  currency := &v1.Currency{
+    Id: lastInsertUuid,
+    Name: req.GetName(),
+  }
+
+  return &v1.CreateCurrencyResponse{
+    Api: apiVersion,
+    Currency: currency,
+  }, nil
+}
+
+func (s *economyServiceServer) GiveCurrency(ctx context.Context, req *v1.GiveCurrencyRequest) (*v1.GiveCurrencyResponse, error) {
+  fmt.Println("GiveCurrency");
+
+  // check if the API version requested by client is supported by server
+  if err := s.checkAPI(req.Api); err != nil {
+    return nil, err
+  }
+
+  // Add item to the databased return the generated UUID
+  storageCurrencyUuid := ""
+  storageCurrencyAmount := int64(0)
+
+  err := s.db.QueryRowContext(
+    ctx, `
+      INSERT INTO storage_currency(currency_id, storage_id, amount)
+      VALUES($1, $2, $3)
+      ON CONFLICT(currency_id,storage_id) DO UPDATE
+      SET amount = storage_currency.amount + EXCLUDED.amount
+      RETURNING id, amount
+    `,
+    req.GetCurrencyId(),
+    req.GetStorageId(),
+    req.GetAmount(),
+  ).Scan(&storageCurrencyUuid, &storageCurrencyAmount)
+
+  if err != nil {
+    return nil, err
+  }
+
+
+  storageCurrency := &v1.StorageCurrency{
+    Id: storageCurrencyUuid,
+    CurrencyId: req.GetCurrencyId(),
+    Amount: storageCurrencyAmount,
+  }
+
+  return &v1.GiveCurrencyResponse{
+    Api: apiVersion,
+    StorageId: req.GetStorageId(),
+    Currency: storageCurrency,
   }, nil
 }

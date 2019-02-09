@@ -79,10 +79,26 @@ service EconomyService {
         };
     }
 
-    // Give Item to an Storage
+    // Give Item to a Storage
     rpc GiveItem(GiveItemRequest) returns (GiveItemResponse) {
         option (google.api.http) = {
             post: "/v1/item/give"
+            body: "*"
+        };
+    }
+
+    // Create a currency
+    rpc CreateCurrency(CreateCurrencyRequest) returns (CreateCurrencyResponse) {
+        option (google.api.http) = {
+            post: "/v1/currency"
+            body: "*"
+        };
+    }
+
+    // Give an amount of Currency to a Storage
+    rpc GiveCurrency(GiveCurrencyRequest) returns (GiveCurrencyResponse) {
+        option (google.api.http) = {
+            post: "/v1/currency/give"
             body: "*"
         };
     }
@@ -109,17 +125,18 @@ message StorageItem {
     //google.protobuf.Struct metadata = 3;
 }
 
-// message Currency {
-//     string id = 1;
-//     string name = 2;
-//     string shortName = 3;
-//     string symbol = 4;
-// }
+message Currency {
+    string id = 1;
+    string name = 2;
+    string shortName = 3;
+    string symbol = 4;
+}
 
-// message StorageCurrency {
-//     Currency currency = 2;
-//     uint64 amount = 3;
-// }
+message StorageCurrency {
+    string id = 1;
+    string currencyId = 2;
+    int64 amount = 3;
+}
 
 // Read optimized for the GetPlayer method
 // So we dont have to return the entire Storage object
@@ -159,19 +176,6 @@ message GiveItemResponse{
 
 // message DestroyItemResponse{
 //     string api = 1;
-// }
-
-// // GiveCurrency
-// message GiveCurrencyRequest{
-//     string api = 1;
-//     string storageId = 2;
-//     StorageCurrency current = 3;
-// }
-
-// message GiveCurrentResponse{
-//     string api = 1;
-//     string storageId = 2;
-//     StorageCurrency currency = 3;
 // }
 
 // GetStorage
@@ -265,4 +269,30 @@ message ListItemsRequest{
 message ListItemsResponse{
     string api = 1;
     repeated Item items = 2;
+}
+
+// CreateCurrency
+message CreateCurrencyRequest{
+    string api = 1;
+    string name = 2;
+    // google.protobuf.Struct metadata = 3;
+}
+
+message CreateCurrencyResponse{
+    string api = 1;
+    Currency currency = 2;
+}
+
+// GiveCurrency
+message GiveCurrencyRequest{
+    string api = 1;
+    string storageId = 2;
+    string currencyId = 3;
+    int64 amount = 4;
+}
+
+message GiveCurrencyResponse{
+    string api = 1;
+    string storageId = 2;
+    StorageCurrency currency = 3;
 }

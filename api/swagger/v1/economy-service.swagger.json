@@ -19,6 +19,72 @@
     "application/json"
   ],
   "paths": {
+    "/v1/currency": {
+      "post": {
+        "summary": "Create a currency",
+        "operationId": "CreateCurrency",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateCurrencyResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateCurrencyRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
+    "/v1/currency/give": {
+      "post": {
+        "summary": "Give an amount of Currency to a Storage",
+        "operationId": "GiveCurrency",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GiveCurrencyResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1GiveCurrencyRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
     "/v1/item": {
       "post": {
         "summary": "Create an Item",
@@ -85,7 +151,7 @@
     },
     "/v1/item/give": {
       "post": {
-        "summary": "Give Item to an Storage",
+        "summary": "Give Item to a Storage",
         "operationId": "GiveItem",
         "responses": {
           "200": {
@@ -322,6 +388,29 @@
       },
       "description": "`Value` represents a dynamically typed value which can be either\nnull, a number, a string, a boolean, a recursive struct value, or a\nlist of values. A producer of value is expected to set one of that\nvariants, absence of any variant indicates an error.\n\nThe JSON representation for `Value` is JSON value."
     },
+    "v1CreateCurrencyRequest": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "title": "CreateCurrency"
+    },
+    "v1CreateCurrencyResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "currency": {
+          "$ref": "#/definitions/v1Currency"
+        }
+      }
+    },
     "v1CreateItemRequest": {
       "type": "object",
       "properties": {
@@ -377,6 +466,23 @@
         }
       }
     },
+    "v1Currency": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "shortName": {
+          "type": "string"
+        },
+        "symbol": {
+          "type": "string"
+        }
+      }
+    },
     "v1GetPlayerResponse": {
       "type": "object",
       "properties": {
@@ -402,6 +508,39 @@
         },
         "storage": {
           "$ref": "#/definitions/v1Storage"
+        }
+      }
+    },
+    "v1GiveCurrencyRequest": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "storageId": {
+          "type": "string"
+        },
+        "currencyId": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        }
+      },
+      "title": "GiveCurrency"
+    },
+    "v1GiveCurrencyResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "storageId": {
+          "type": "string"
+        },
+        "currency": {
+          "$ref": "#/definitions/v1StorageCurrency"
         }
       }
     },
@@ -491,6 +630,21 @@
         }
       },
       "title": "Read optimized for the GetPlayer method\nSo we dont have to return the entire Storage object"
+    },
+    "v1StorageCurrency": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "currencyId": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
     },
     "v1StorageItem": {
       "type": "object",

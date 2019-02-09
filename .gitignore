@@ -1,1 +1,4 @@
 /pkg/api
+/cmd
+!/cmd/server/main.go
+!/cmd/client/main.go
