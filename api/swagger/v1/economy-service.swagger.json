@@ -20,6 +20,35 @@
   ],
   "paths": {
     "/v1/currency": {
+      "get": {
+        "summary": "Shows all currencies",
+        "operationId": "ListCurrency",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListCurrencyResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "api",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      },
       "post": {
         "summary": "Create a currency",
         "operationId": "CreateCurrency",
@@ -215,7 +244,7 @@
     },
     "/v1/player/{playerId}": {
       "get": {
-        "summary": "To see what Storages belong to an User",
+        "summary": "TODO: Wrap in Player struct\nTo see what Storages belong to an User",
         "operationId": "GetPlayer",
         "responses": {
           "200": {
@@ -489,14 +518,8 @@
         "api": {
           "type": "string"
         },
-        "playerId": {
-          "type": "string"
-        },
-        "storages": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/v1StorageBase"
-          }
+        "player": {
+          "$ref": "#/definitions/v1Player"
         }
       }
     },
@@ -534,9 +557,6 @@
       "type": "object",
       "properties": {
         "api": {
-          "type": "string"
-        },
-        "storageId": {
           "type": "string"
         },
         "currency": {
@@ -585,6 +605,20 @@
       },
       "title": "Main entities"
     },
+    "v1ListCurrencyResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "currencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Currency"
+          }
+        }
+      }
+    },
     "v1ListItemsResponse": {
       "type": "object",
       "properties": {
@@ -595,6 +629,20 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/v1Item"
+          }
+        }
+      }
+    },
+    "v1Player": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "storages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1StorageBase"
           }
         }
       }

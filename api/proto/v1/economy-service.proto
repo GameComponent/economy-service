@@ -34,6 +34,7 @@ option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 
 // Service definition
 service EconomyService {
+    // TODO: Wrap in Player struct
     // To see what Storages belong to an User
     rpc GetPlayer(GetPlayerRequest) returns (GetPlayerResponse) {
         option (google.api.http) = {
@@ -92,6 +93,13 @@ service EconomyService {
         option (google.api.http) = {
             post: "/v1/currency"
             body: "*"
+        };
+    }
+
+    // Shows all currencies
+    rpc ListCurrency(ListCurrencyRequest) returns (ListCurrencyResponse) {
+        option (google.api.http) = {
+            get: "/v1/currency"
         };
     }
 
@@ -154,6 +162,11 @@ message Storage {
     //google.protobuf.Struct metadata = 4;
 }
 
+message Player {
+    string id = 1;
+    repeated StorageBase storages = 2;
+}
+
 // GiveItem
 message GiveItemRequest{
     string api = 1;
@@ -210,8 +223,7 @@ message GetPlayerRequest{
 
 message GetPlayerResponse{
     string api = 1;
-    string playerId = 2;
-    repeated StorageBase storages = 3;
+    Player player = 2;
 }
 
 // // BuyItem
@@ -293,6 +305,15 @@ message GiveCurrencyRequest{
 
 message GiveCurrencyResponse{
     string api = 1;
-    string storageId = 2;
-    StorageCurrency currency = 3;
+    StorageCurrency currency = 2;
+}
+
+// ListCurrency
+message ListCurrencyRequest{
+    string api = 1;
+}
+
+message ListCurrencyResponse{
+    string api = 1;
+    repeated Currency currencies = 2;
 }

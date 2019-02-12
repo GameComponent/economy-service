@@ -11,7 +11,7 @@ import (
   "go.uber.org/zap"
   "google.golang.org/grpc"
 
- "github.com/GameComponent/economy-service/pkg/api/v1"
+  "github.com/GameComponent/economy-service/pkg/api/v1"
   "github.com/GameComponent/economy-service/pkg/logger"
   "github.com/GameComponent/economy-service/pkg/protocol/rest/middleware"
 )
@@ -30,8 +30,11 @@ func RunServer(ctx context.Context, grpcPort, httpPort string) error {
   srv := &http.Server{
     Addr: ":" + httpPort,
     // add handler with middleware
-    Handler: middleware.AddRequestID(
-      middleware.AddLogger(logger.Log, mux)),
+    Handler: middleware.AddCors(
+      middleware.AddRequestID(
+        middleware.AddLogger(logger.Log, mux),
+      ),
+    ),
   }
 
   // graceful shutdown
