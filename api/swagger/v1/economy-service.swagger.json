@@ -81,15 +81,15 @@
         ]
       }
     },
-    "/v1/currency/give": {
-      "post": {
-        "summary": "Give an amount of Currency to a Storage",
-        "operationId": "GiveCurrency",
+    "/v1/currency/{currencyId}": {
+      "get": {
+        "summary": "Get a currency",
+        "operationId": "GetCurrency",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1GiveCurrencyResponse"
+              "$ref": "#/definitions/v1GetCurrencyResponse"
             }
           },
           "404": {
@@ -101,12 +101,16 @@
         },
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
+            "name": "currencyId",
+            "in": "path",
             "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1GiveCurrencyRequest"
-            }
+            "type": "string"
+          },
+          {
+            "name": "api",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -178,15 +182,15 @@
         ]
       }
     },
-    "/v1/item/give": {
-      "post": {
-        "summary": "Give Item to a Storage",
-        "operationId": "GiveItem",
+    "/v1/item/{itemId}": {
+      "get": {
+        "summary": "Get an Item",
+        "operationId": "GetItem",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1GiveItemResponse"
+              "$ref": "#/definitions/v1GetItemResponse"
             }
           },
           "404": {
@@ -198,12 +202,16 @@
         },
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
+            "name": "itemId",
+            "in": "path",
             "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1GiveItemRequest"
-            }
+            "type": "string"
+          },
+          {
+            "name": "api",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -304,6 +312,72 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/v1CreateStorageRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
+    "/v1/storage/give/currency": {
+      "post": {
+        "summary": "Give an amount of Currency to a Storage",
+        "operationId": "GiveCurrency",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GiveCurrencyResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1GiveCurrencyRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
+    "/v1/storage/give/item": {
+      "post": {
+        "summary": "Give Item to a Storage",
+        "operationId": "GiveItem",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GiveItemResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1GiveItemRequest"
             }
           }
         ],
@@ -477,9 +551,6 @@
         },
         "name": {
           "type": "string"
-        },
-        "metadata": {
-          "$ref": "#/definitions/protobufStruct"
         }
       },
       "title": "CreateStorage"
@@ -509,6 +580,28 @@
         },
         "symbol": {
           "type": "string"
+        }
+      }
+    },
+    "v1GetCurrencyResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "currency": {
+          "$ref": "#/definitions/v1Currency"
+        }
+      }
+    },
+    "v1GetItemResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "item": {
+          "$ref": "#/definitions/v1Item"
         }
       }
     },
@@ -575,6 +668,9 @@
         },
         "itemId": {
           "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/definitions/protobufStruct"
         }
       },
       "title": "GiveItem"

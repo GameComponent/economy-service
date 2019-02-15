@@ -16,7 +16,7 @@ func (s *economyServiceServer) CreateItem(ctx context.Context, req *v1.CreateIte
 	}
 
 	// Add item to the databased return the generated UUID
-	item, err := s.itemRepository.Create(req.GetName())
+	item, err := s.itemRepository.Create(ctx, req.GetName())
 	if err != nil {
 		return nil, err
 	}
@@ -35,13 +35,30 @@ func (s *economyServiceServer) UpdateItem(ctx context.Context, req *v1.UpdateIte
 		return nil, err
 	}
 
-	item, err := s.itemRepository.Update(req.GetItemId(), req.GetName(), `{"kaas":"baas"}`)
+	item, err := s.itemRepository.Update(ctx, req.GetItemId(), req.GetName(), `{"kaas":"baas"}`)
 
 	if err != nil {
 		return nil, err
 	}
 
 	return &v1.UpdateItemResponse{
+		Api:  apiVersion,
+		Item: item,
+	}, nil
+}
+
+func (s *economyServiceServer) GetItem(ctx context.Context, req *v1.GetItemRequest) (*v1.GetItemResponse, error) {
+	// check if the API version requested by client is supported by server
+	if err := s.checkAPI(req.Api); err != nil {
+		return nil, err
+	}
+
+	item, err := s.itemRepository.Get(ctx, req.GetItemId())
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.GetItemResponse{
 		Api:  apiVersion,
 		Item: item,
 	}, nil
@@ -55,7 +72,7 @@ func (s *economyServiceServer) ListItems(ctx context.Context, req *v1.ListItemsR
 		return nil, err
 	}
 
-	items, err := s.itemRepository.List()
+	items, err := s.itemRepository.List(ctx)
 
 	if err != nil {
 		return nil, err

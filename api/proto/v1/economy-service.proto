@@ -71,6 +71,13 @@ service EconomyService {
             patch: "/v1/item"
             body: "*"
         };
+		}
+
+    // Get an Item
+    rpc GetItem(GetItemRequest) returns (GetItemResponse) {
+        option (google.api.http) = {
+            get: "/v1/item/{itemId}"
+        };
     }
 
     // List all Items
@@ -83,7 +90,7 @@ service EconomyService {
     // Give Item to a Storage
     rpc GiveItem(GiveItemRequest) returns (GiveItemResponse) {
         option (google.api.http) = {
-            post: "/v1/item/give"
+            post: "/v1/storage/give/item"
             body: "*"
         };
     }
@@ -93,6 +100,13 @@ service EconomyService {
         option (google.api.http) = {
             post: "/v1/currency"
             body: "*"
+        };
+		}
+
+    // Get a currency
+    rpc GetCurrency(GetCurrencyRequest) returns (GetCurrencyResponse) {
+        option (google.api.http) = {
+            get: "/v1/currency/{currencyId}"
         };
     }
 
@@ -106,7 +120,7 @@ service EconomyService {
     // Give an amount of Currency to a Storage
     rpc GiveCurrency(GiveCurrencyRequest) returns (GiveCurrencyResponse) {
         option (google.api.http) = {
-            post: "/v1/currency/give"
+            post: "/v1/storage/give/currency"
             body: "*"
         };
     }
@@ -172,7 +186,7 @@ message GiveItemRequest{
     string api = 1;
     string storageId = 2;
     string itemId = 3;
-    //google.protobuf.Struct metadata = 4;
+    google.protobuf.Struct metadata = 4;
 }
 
 message GiveItemResponse{
@@ -207,7 +221,7 @@ message CreateStorageRequest{
     string api = 1;
     string playerId = 2;
     string name = 3;
-    google.protobuf.Struct metadata = 4;
+    // google.protobuf.Struct metadata = 4;
 }
 
 message CreateStorageResponse{
@@ -273,6 +287,17 @@ message UpdateItemResponse{
     Item item = 2;
 }
 
+// GetItem
+message GetItemRequest{
+    string api = 1;
+    string itemId = 2;
+}
+
+message GetItemResponse{
+    string api = 1;
+    Item item = 2;
+}
+
 // ListItems
 message ListItemsRequest{
     string api = 1;
@@ -316,4 +341,15 @@ message ListCurrencyRequest{
 message ListCurrencyResponse{
     string api = 1;
     repeated Currency currencies = 2;
+}
+
+// GetCurrency
+message GetCurrencyRequest{
+    string api = 1;
+    string currencyId = 2;
+}
+
+message GetCurrencyResponse{
+    string api = 1;
+    Currency currency = 2;
 }

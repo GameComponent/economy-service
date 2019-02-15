@@ -10,27 +10,39 @@ import (
 
 	// "github.com/golang/protobuf/ptypes/struct"
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
+	currencyrepository "github.com/GameComponent/economy-service/pkg/repository/currency"
 	itemrepository "github.com/GameComponent/economy-service/pkg/repository/item"
 	playerrepository "github.com/GameComponent/economy-service/pkg/repository/player"
+	storagerepository "github.com/GameComponent/economy-service/pkg/repository/storage"
 )
 
 const (
 	apiVersion = "v1"
 )
 
-// toDoServiceServer is implementation of v1.ToDoServiceServer proto interface
+// economyServiceServer is implementation of v1.EconomyServiceServer proto interface
 type economyServiceServer struct {
-	db               *sql.DB
-	itemRepository   *itemrepository.ItemRepository
-	playerRepository *playerrepository.PlayerRepository
+	db                 *sql.DB
+	itemRepository     *itemrepository.ItemRepository
+	playerRepository   *playerrepository.PlayerRepository
+	currencyRepository *currencyrepository.CurrencyRepository
+	storageRepository  *storagerepository.StorageRepository
 }
 
 // NewEconomyServiceServer creates ToDo service
-func NewEconomyServiceServer(db *sql.DB, itemRepository *itemrepository.ItemRepository, playerRepository *playerrepository.PlayerRepository) v1.EconomyServiceServer {
+func NewEconomyServiceServer(
+	db *sql.DB,
+	itemRepository *itemrepository.ItemRepository,
+	playerRepository *playerrepository.PlayerRepository,
+	currencyRepository *currencyrepository.CurrencyRepository,
+	storageRepository *storagerepository.StorageRepository,
+) v1.EconomyServiceServer {
 	return &economyServiceServer{
 		db,
 		itemRepository,
 		playerRepository,
+		currencyRepository,
+		storageRepository,
 	}
 }
 

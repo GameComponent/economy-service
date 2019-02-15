@@ -29,25 +29,31 @@ func (s *economyServiceServer) CreateCurrency(ctx context.Context, req *v1.Creat
 		return nil, err
 	}
 
-	// Add item to the databased return the generated UUID
-	lastInsertUuid := ""
-	err := s.db.QueryRowContext(
-		ctx,
-		`INSERT INTO currency(name) VALUES ($1) RETURNING id`,
-		req.GetName(),
-	).Scan(&lastInsertUuid)
-
+	currency, err := s.currencyRepository.Create(ctx, req.GetName())
 	if err != nil {
 		return nil, err
 	}
 
-	// Generate the object based on the generated id and the requested name
-	currency := &v1.Currency{
-		Id:   lastInsertUuid,
-		Name: req.GetName(),
+	return &v1.CreateCurrencyResponse{
+		Api:      apiVersion,
+		Currency: currency,
+	}, nil
+}
+
+func (s *economyServiceServer) GetCurrency(ctx context.Context, req *v1.GetCurrencyRequest) (*v1.GetCurrencyResponse, error) {
+	fmt.Println("GetCurrency")
+
+	// check if the API version requested by client is supported by server
+	if err := s.checkAPI(req.Api); err != nil {
+		return nil, err
 	}
 
-	return &v1.CreateCurrencyResponse{
+	currency, err := s.currencyRepository.Get(ctx, req.GetCurrencyId())
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.GetCurrencyResponse{
 		Api:      apiVersion,
 		Currency: currency,
 	}, nil

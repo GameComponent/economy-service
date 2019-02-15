@@ -1,6 +1,7 @@
 package itemrepository
 
 import (
+	"context"
 	"database/sql"
 	"log"
 
@@ -20,9 +21,10 @@ func NewItemRepository(db *sql.DB) *ItemRepository {
 }
 
 // Create a new item
-func (r *ItemRepository) Create(name string) (*v1.Item, error) {
+func (r *ItemRepository) Create(ctx context.Context, name string) (*v1.Item, error) {
 	lastInsertUUID := ""
-	err := r.db.QueryRow(
+	err := r.db.QueryRowContext(
+		ctx,
 		`INSERT INTO item(name) VALUES ($1) RETURNING id`,
 		name,
 	).Scan(&lastInsertUUID)
@@ -38,8 +40,9 @@ func (r *ItemRepository) Create(name string) (*v1.Item, error) {
 }
 
 // Update an item
-func (r *ItemRepository) Update(id string, name string, metadata string) (*v1.Item, error) {
-	_, err := r.db.Exec(
+func (r *ItemRepository) Update(ctx context.Context, id string, name string, metadata string) (*v1.Item, error) {
+	_, err := r.db.ExecContext(
+		ctx,
 		`UPDATE item SET name = $1, metadata = $2 WHERE id = $3`,
 		name,
 		metadata,
@@ -59,9 +62,9 @@ func (r *ItemRepository) Update(id string, name string, metadata string) (*v1.It
 }
 
 // List all items
-func (r *ItemRepository) List() ([]*v1.Item, error) {
+func (r *ItemRepository) List(ctx context.Context) ([]*v1.Item, error) {
 	// Query items from the database
-	rows, err := r.db.Query("SELECT id, name FROM economy.item")
+	rows, err := r.db.QueryContext(ctx, "SELECT id, name FROM economy.item")
 	if err != nil {
 		return nil, err
 	}
@@ -80,4 +83,21 @@ func (r *ItemRepository) List() ([]*v1.Item, error) {
 	}
 
 	return items, nil
+}
+
+// Get an item
+func (r *ItemRepository) Get(ctx context.Context, itemID string) (*v1.Item, error) {
+	item := &v1.Item{}
+
+	err := r.db.QueryRowContext(
+		ctx,
+		`SELECT id, name FROM item WHERE id = $1`,
+		itemID,
+	).Scan(&item.Id, &item.Name)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return item, nil
 }
