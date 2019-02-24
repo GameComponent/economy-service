@@ -29,7 +29,27 @@ func (s *economyServiceServer) CreateCurrency(ctx context.Context, req *v1.Creat
 		return nil, err
 	}
 
-	currency, err := s.currencyRepository.Create(ctx, req.GetName())
+	// Check the name
+	if len(req.GetName()) == 0 {
+		return nil, fmt.Errorf("currency should have a name")
+	}
+
+	// Check the short_name
+	if len(req.GetShortName()) == 0 {
+		return nil, fmt.Errorf("currency should have a short_name")
+	}
+
+	// Check the symbol
+	if len(req.GetSymbol()) == 0 {
+		return nil, fmt.Errorf("currency should have a symbol")
+	}
+
+	currency, err := s.currencyRepository.Create(
+		ctx,
+		req.GetName(),
+		req.GetShortName(),
+		req.GetSymbol(),
+	)
 	if err != nil {
 		return nil, err
 	}

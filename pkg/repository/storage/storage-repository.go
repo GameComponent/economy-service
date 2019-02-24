@@ -58,8 +58,8 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
       item.name as itemName,
       item.metadata as itemData
     FROM storage 
-    INNER JOIN storage_item on (storage.id = storage_item.storage_id)
-    INNER JOIN item on (storage_item.item_id = item.id)
+    LEFT JOIN storage_item on (storage.id = storage_item.storage_id)
+    LEFT JOIN item on (storage_item.item_id = item.id)
     WHERE storage.id = $1`,
 		storageID,
 	)
@@ -75,11 +75,11 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 		StorageName         string
 		StorageData         string
 		PlayerID            string
-		StorageItemID       string
-		StorageItemItemData string
-		ItemID              string
-		ItemName            string
-		ItemData            string
+		StorageItemID       sql.NullString
+		StorageItemItemData sql.NullString
+		ItemID              sql.NullString
+		ItemName            sql.NullString
+		ItemData            sql.NullString
 	}
 
 	var res row
@@ -100,17 +100,24 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 			return nil, err
 		}
 
-		item := &v1.Item{
-			Id:   res.ItemID,
-			Name: res.ItemName,
+		// Extract the Item
+		item := &v1.Item{}
+		if res.ItemID.Valid && res.ItemName.Valid {
+			item.Id = res.ItemID.String
+			item.Name = res.ItemName.String
 		}
 
-		storageItem := &v1.StorageItem{
-			Id:   res.StorageItemID,
-			Item: item,
+		// Extract the StorageItem
+		storageItem := &v1.StorageItem{}
+		if res.StorageItemID.Valid {
+			storageItem.Id = res.StorageItemID.String
+			storageItem.Item = item
 		}
 
-		storageItems = append(storageItems, storageItem)
+		// Add object to the storageItem if it is set
+		if storageItem.Id != "" {
+			storageItems = append(storageItems, storageItem)
+		}
 	}
 
 	storage := &v1.Storage{

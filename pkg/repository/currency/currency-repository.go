@@ -20,14 +20,23 @@ func NewCurrencyRepository(db *sql.DB) *CurrencyRepository {
 }
 
 // Create a currency
-func (r *CurrencyRepository) Create(ctx context.Context, name string) (*v1.Currency, error) {
+func (r *CurrencyRepository) Create(
+	ctx context.Context,
+	name string,
+	shortName string,
+	symbol string,
+) (*v1.Currency, error) {
 	// Add item to the databased return the generated UUID
 	lastInsertUUID := ""
 	err := r.db.QueryRowContext(
 		ctx,
-		`INSERT INTO currency(name) VALUES ($1) RETURNING id`,
+		`INSERT INTO currency(name, short_name, symbol) VALUES ($1, $2, $3) RETURNING id`,
 		name,
-	).Scan(&lastInsertUUID)
+		shortName,
+		symbol,
+	).Scan(
+		&lastInsertUUID,
+	)
 
 	if err != nil {
 		return nil, err
@@ -35,8 +44,10 @@ func (r *CurrencyRepository) Create(ctx context.Context, name string) (*v1.Curre
 
 	// Generate the object based on the generated id and the requested name
 	currency := &v1.Currency{
-		Id:   lastInsertUUID,
-		Name: name,
+		Id:        lastInsertUUID,
+		Name:      name,
+		ShortName: shortName,
+		Symbol:    symbol,
 	}
 
 	return currency, nil
@@ -61,3 +72,22 @@ func (r *CurrencyRepository) Get(ctx context.Context, currencyID string) (*v1.Cu
 
 	return currency, nil
 }
+
+// List all currenciees
+// func (r *CurrencyRepository) List(ctx context.Context) ([]*v1.Currency, error) {
+// 	currency := &v1.Currency{}
+
+// 	err := r.db.QueryRowContext(
+// 		ctx,
+// 		`SELECT id, name FROM currency`,
+// 	).Scan(
+// 		&currency.Id,
+// 		&currency.Name,
+// 	)
+
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	return currency, nil
+// }

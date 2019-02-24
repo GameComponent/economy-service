@@ -47,9 +47,13 @@ func (s *economyServiceServer) CreateStorage(ctx context.Context, req *v1.Create
 		return nil, err
 	}
 
+	if req.GetName() == "" {
+		return nil, fmt.Errorf("name should not be empty")
+	}
+
 	storage, err := s.storageRepository.Create(ctx, req.GetPlayerId(), req.GetName())
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to create storage, make sure the name is unique")
 	}
 
 	return &v1.CreateStorageResponse{
@@ -64,6 +68,11 @@ func (s *economyServiceServer) GetStorage(ctx context.Context, req *v1.GetStorag
 	// check if the API version requested by client is supported by server
 	if err := s.checkAPI(req.Api); err != nil {
 		return nil, err
+	}
+
+	// Check if the request
+	if req.GetStorageId() == "" {
+		return nil, fmt.Errorf("the request should contain the storage_id")
 	}
 
 	// Check if the requested storage id is a valid UUID

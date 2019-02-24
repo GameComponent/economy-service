@@ -3,7 +3,9 @@ package itemrepository
 import (
 	"context"
 	"database/sql"
-	"log"
+	"time"
+
+	"github.com/golang/protobuf/ptypes"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
 )
@@ -62,42 +64,91 @@ func (r *ItemRepository) Update(ctx context.Context, id string, name string, met
 }
 
 // List all items
-func (r *ItemRepository) List(ctx context.Context) ([]*v1.Item, error) {
+func (r *ItemRepository) List(
+	ctx context.Context,
+	limit int32,
+	offset int32,
+) (
+	[]*v1.Item,
+	int32,
+	error,
+) {
 	// Query items from the database
-	rows, err := r.db.QueryContext(ctx, "SELECT id, name FROM economy.item")
+	rows, err := r.db.QueryContext(
+		ctx,
+		`
+			SELECT 
+				id,
+				name,
+				created_at,
+				updated_at,
+				(SELECT COUNT(*) FROM item) AS total_size
+			FROM item
+			LIMIT $1
+			OFFSET $2
+		`,
+		limit,
+		offset,
+	)
+
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer rows.Close()
 
 	// Unwrap rows into items
 	items := []*v1.Item{}
+	totalSize := int32(1)
+
 	for rows.Next() {
-		var item v1.Item
-		err := rows.Scan(&item.Id, &item.Name)
+		item := v1.Item{}
+		createdAt := time.Time{}
+		updatedAt := time.Time{}
+
+		err := rows.Scan(
+			&item.Id,
+			&item.Name,
+			&createdAt,
+			&updatedAt,
+			&totalSize,
+		)
 		if err != nil {
-			log.Fatalln(err)
+			return nil, 0, err
 		}
+
+		// Convert created_at to timestamp
+		item.CreatedAt, _ = ptypes.TimestampProto(createdAt)
+		item.UpdatedAt, _ = ptypes.TimestampProto(updatedAt)
 
 		items = append(items, &item)
 	}
 
-	return items, nil
+	return items, totalSize, nil
 }
 
 // Get an item
 func (r *ItemRepository) Get(ctx context.Context, itemID string) (*v1.Item, error) {
 	item := &v1.Item{}
+	createdAt := time.Time{}
+	updatedAt := time.Time{}
 
 	err := r.db.QueryRowContext(
 		ctx,
-		`SELECT id, name FROM item WHERE id = $1`,
+		`SELECT id, name, created_at, updated_at FROM item WHERE id = $1`,
 		itemID,
-	).Scan(&item.Id, &item.Name)
-
+	).Scan(
+		&item.Id,
+		&item.Name,
+		&createdAt,
+		&updatedAt,
+	)
 	if err != nil {
 		return nil, err
 	}
+
+	// Convert created_at to timestamp
+	item.CreatedAt, _ = ptypes.TimestampProto(createdAt)
+	item.UpdatedAt, _ = ptypes.TimestampProto(updatedAt)
 
 	return item, nil
 }

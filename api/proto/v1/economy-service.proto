@@ -1,8 +1,8 @@
 syntax = "proto3";
 package v1;
 
-// import "google/protobuf/timestamp.proto";
-import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+// import "google/protobuf/struct.proto";
 import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
 
@@ -34,20 +34,33 @@ option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 
 // Service definition
 service EconomyService {
-    // TODO: Wrap in Player struct
     // To see what Storages belong to an User
     rpc GetPlayer(GetPlayerRequest) returns (GetPlayerResponse) {
         option (google.api.http) = {
-            get: "/v1/player/{playerId}"
+            get: "/v1/player/{player_id}"
+        };
+		}
+
+		// List all players
+    rpc ListPlayer(ListPlayerRequest) returns (ListPlayerResponse) {
+        option (google.api.http) = {
+            get: "/v1/player"
         };
     }
 
     // Get the contents of a storage
     rpc GetStorage(GetStorageRequest) returns (GetStorageResponse) {
         option (google.api.http) = {
-            get: "/v1/storage/{storageId}"
+            get: "/v1/storage/{storage_id}"
         };
-    }
+		}
+		
+		// Get the contents of a storage for a given player
+		// rpc GetStoragePlayer(GetStoragePlayerRequest) returns (GetStoragePlayerResponse) {
+		// 	option (google.api.http) = {
+		// 			get: "/v1/storage/{player_id}/{storage_name}"
+		// 	};
+		// }
 
     // Create a new Storage
     rpc CreateStorage(CreateStorageRequest) returns (CreateStorageResponse) {
@@ -76,14 +89,14 @@ service EconomyService {
     // Get an Item
     rpc GetItem(GetItemRequest) returns (GetItemResponse) {
         option (google.api.http) = {
-            get: "/v1/item/{itemId}"
+            get: "/v1/item/{item_id}"
         };
     }
 
     // List all Items
-    rpc ListItems(ListItemsRequest) returns (ListItemsResponse) {
+    rpc ListItem(ListItemRequest) returns (ListItemResponse) {
         option (google.api.http) = {
-            get: "/v1/items"
+            get: "/v1/item"
         };
     }
 
@@ -106,7 +119,7 @@ service EconomyService {
     // Get a currency
     rpc GetCurrency(GetCurrencyRequest) returns (GetCurrencyResponse) {
         option (google.api.http) = {
-            get: "/v1/currency/{currencyId}"
+            get: "/v1/currency/{currency_id}"
         };
     }
 
@@ -137,27 +150,35 @@ service EconomyService {
 
 // Main entities
 message Item {
-    string id = 1;
-    string name = 2;
+		string id = 1;
+		google.protobuf.Timestamp created_at = 2;
+		google.protobuf.Timestamp updated_at = 3;
+    string name = 4;
 }
 
 message StorageItem {
     string id = 1;
-    Item item = 2;
+		google.protobuf.Timestamp created_at = 2;
+		google.protobuf.Timestamp updated_at = 3;
+    Item item = 4;
     //google.protobuf.Struct metadata = 3;
 }
 
 message Currency {
     string id = 1;
-    string name = 2;
-    string shortName = 3;
-    string symbol = 4;
+		google.protobuf.Timestamp created_at = 2;
+		google.protobuf.Timestamp updated_at = 3;
+    string name = 4;
+    string short_name = 5;
+    string symbol = 6;
 }
 
 message StorageCurrency {
     string id = 1;
-    string currencyId = 2;
-    int64 amount = 3;
+		google.protobuf.Timestamp created_at = 2;
+		google.protobuf.Timestamp updated_at = 3;
+    string currency_id = 4;
+    int64 amount = 5;
 }
 
 // Read optimized for the GetPlayer method
@@ -169,9 +190,11 @@ message StorageBase {
 
 message Storage {
     string id = 1;
-    string playerId = 2;
-    string name = 3;
-    repeated StorageItem items = 4;
+		google.protobuf.Timestamp created_at = 2;
+		google.protobuf.Timestamp updated_at = 3;
+    string player_id = 4;
+    string name = 5;
+    repeated StorageItem items = 6;
     // repeated StorageCurrency currencies = 5;
     //google.protobuf.Struct metadata = 4;
 }
@@ -184,14 +207,14 @@ message Player {
 // GiveItem
 message GiveItemRequest{
     string api = 1;
-    string storageId = 2;
-    string itemId = 3;
-    google.protobuf.Struct metadata = 4;
+    string storage_id = 2;
+    string item_id = 3;
+    // google.protobuf.Struct metadata = 4;
 }
 
 message GiveItemResponse{
     string api = 1;
-    string storageId = 2;
+    string storage_id = 2;
     StorageItem item = 3;
 }
 
@@ -208,7 +231,7 @@ message GiveItemResponse{
 // GetStorage
 message GetStorageRequest{
     string api = 1;
-    string storageId = 2;
+		string storage_id = 2;
 }
 
 message GetStorageResponse{
@@ -216,10 +239,22 @@ message GetStorageResponse{
     Storage storage = 2;
 }
 
+// GetStoragePlayer
+// message GetStoragePlayerRequest{
+// 	string api = 1;
+// 	string player_id = 2;
+// 	string storage_name = 3;
+// }
+
+// message GetStoragePlayerResponse{
+// 	string api = 1;
+// 	Storage storage = 2;
+// }
+
 // CreateStorage
 message CreateStorageRequest{
     string api = 1;
-    string playerId = 2;
+    string player_id = 2;
     string name = 3;
     // google.protobuf.Struct metadata = 4;
 }
@@ -229,15 +264,29 @@ message CreateStorageResponse{
     Storage storage = 2;
 }
 
-// // GetPlayer
+// GetPlayer
 message GetPlayerRequest{
     string api = 1;
-    string playerId = 2;
+    string player_id = 2;
 }
 
 message GetPlayerResponse{
     string api = 1;
     Player player = 2;
+}
+
+// ListPlayer
+message ListPlayerRequest{
+	string api = 1;
+	int32 page_size = 2;
+	string page_token = 3;
+}
+
+message ListPlayerResponse{
+	string api = 1;
+	repeated Player players = 2;
+	string next_page_token = 3;
+	int32 total_size = 4;
 }
 
 // // BuyItem
@@ -266,7 +315,7 @@ message GetPlayerResponse{
 message CreateItemRequest{
     string api = 1;
     string name = 2;
-    google.protobuf.Struct metadata = 3;
+    // google.protobuf.Struct metadata = 3;
 }
 
 message CreateItemResponse{
@@ -277,9 +326,9 @@ message CreateItemResponse{
 // UpdateItem
 message UpdateItemRequest{
     string api = 1;
-    string itemId = 2;
+    string item_id = 2;
     string name = 3;
-    google.protobuf.Struct metadata = 4;
+    // google.protobuf.Struct metadata = 4;
 }
 
 message UpdateItemResponse{
@@ -290,7 +339,7 @@ message UpdateItemResponse{
 // GetItem
 message GetItemRequest{
     string api = 1;
-    string itemId = 2;
+    string item_id = 2;
 }
 
 message GetItemResponse{
@@ -298,20 +347,26 @@ message GetItemResponse{
     Item item = 2;
 }
 
-// ListItems
-message ListItemsRequest{
-    string api = 1;
+// ListItem
+message ListItemRequest{
+		string api = 1;
+		int32 page_size = 2;
+    string page_token = 3;
 }
 
-message ListItemsResponse{
+message ListItemResponse{
     string api = 1;
-    repeated Item items = 2;
+		repeated Item items = 2;
+		string next_page_token = 3;
+		int32 total_size = 4;
 }
 
 // CreateCurrency
 message CreateCurrencyRequest{
     string api = 1;
     string name = 2;
+    string short_name = 3;
+    string symbol = 4;
     // google.protobuf.Struct metadata = 3;
 }
 
@@ -323,8 +378,8 @@ message CreateCurrencyResponse{
 // GiveCurrency
 message GiveCurrencyRequest{
     string api = 1;
-    string storageId = 2;
-    string currencyId = 3;
+    string storage_id = 2;
+    string currency_id = 3;
     int64 amount = 4;
 }
 
@@ -336,17 +391,20 @@ message GiveCurrencyResponse{
 // ListCurrency
 message ListCurrencyRequest{
     string api = 1;
+    int32 page_size = 2;
+    string page_token = 3;
 }
 
 message ListCurrencyResponse{
     string api = 1;
     repeated Currency currencies = 2;
+    string next_page_token = 3;
 }
 
 // GetCurrency
 message GetCurrencyRequest{
     string api = 1;
-    string currencyId = 2;
+    string currency_id = 2;
 }
 
 message GetCurrencyResponse{

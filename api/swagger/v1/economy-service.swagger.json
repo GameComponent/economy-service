@@ -43,6 +43,19 @@
             "in": "query",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page_token",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -81,7 +94,7 @@
         ]
       }
     },
-    "/v1/currency/{currencyId}": {
+    "/v1/currency/{currency_id}": {
       "get": {
         "summary": "Get a currency",
         "operationId": "GetCurrency",
@@ -101,7 +114,7 @@
         },
         "parameters": [
           {
-            "name": "currencyId",
+            "name": "currency_id",
             "in": "path",
             "required": true,
             "type": "string"
@@ -119,6 +132,48 @@
       }
     },
     "/v1/item": {
+      "get": {
+        "summary": "List all Items",
+        "operationId": "ListItem",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListItemResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "api",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page_token",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      },
       "post": {
         "summary": "Create an Item",
         "operationId": "CreateItem",
@@ -182,7 +237,7 @@
         ]
       }
     },
-    "/v1/item/{itemId}": {
+    "/v1/item/{item_id}": {
       "get": {
         "summary": "Get an Item",
         "operationId": "GetItem",
@@ -202,7 +257,7 @@
         },
         "parameters": [
           {
-            "name": "itemId",
+            "name": "item_id",
             "in": "path",
             "required": true,
             "type": "string"
@@ -219,15 +274,15 @@
         ]
       }
     },
-    "/v1/items": {
+    "/v1/player": {
       "get": {
-        "summary": "List all Items",
-        "operationId": "ListItems",
+        "summary": "List all players",
+        "operationId": "ListPlayer",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1ListItemsResponse"
+              "$ref": "#/definitions/v1ListPlayerResponse"
             }
           },
           "404": {
@@ -243,6 +298,19 @@
             "in": "query",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page_token",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -250,9 +318,9 @@
         ]
       }
     },
-    "/v1/player/{playerId}": {
+    "/v1/player/{player_id}": {
       "get": {
-        "summary": "TODO: Wrap in Player struct\nTo see what Storages belong to an User",
+        "summary": "To see what Storages belong to an User",
         "operationId": "GetPlayer",
         "responses": {
           "200": {
@@ -270,7 +338,7 @@
         },
         "parameters": [
           {
-            "name": "playerId",
+            "name": "player_id",
             "in": "path",
             "required": true,
             "type": "string"
@@ -386,7 +454,7 @@
         ]
       }
     },
-    "/v1/storage/{storageId}": {
+    "/v1/storage/{storage_id}": {
       "get": {
         "summary": "Get the contents of a storage",
         "operationId": "GetStorage",
@@ -406,7 +474,7 @@
         },
         "parameters": [
           {
-            "name": "storageId",
+            "name": "storage_id",
             "in": "path",
             "required": true,
             "type": "string"
@@ -425,72 +493,6 @@
     }
   },
   "definitions": {
-    "protobufListValue": {
-      "type": "object",
-      "properties": {
-        "values": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/protobufValue"
-          },
-          "description": "Repeated field of dynamically typed values."
-        }
-      },
-      "description": "`ListValue` is a wrapper around a repeated field of values.\n\nThe JSON representation for `ListValue` is JSON array."
-    },
-    "protobufNullValue": {
-      "type": "string",
-      "enum": [
-        "NULL_VALUE"
-      ],
-      "default": "NULL_VALUE",
-      "description": "`NullValue` is a singleton enumeration to represent the null value for the\n`Value` type union.\n\n The JSON representation for `NullValue` is JSON `null`.\n\n - NULL_VALUE: Null value."
-    },
-    "protobufStruct": {
-      "type": "object",
-      "properties": {
-        "fields": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/protobufValue"
-          },
-          "description": "Unordered map of dynamically typed values."
-        }
-      },
-      "description": "`Struct` represents a structured data value, consisting of fields\nwhich map to dynamically typed values. In some languages, `Struct`\nmight be supported by a native representation. For example, in\nscripting languages like JS a struct is represented as an\nobject. The details of that representation are described together\nwith the proto support for the language.\n\nThe JSON representation for `Struct` is JSON object."
-    },
-    "protobufValue": {
-      "type": "object",
-      "properties": {
-        "null_value": {
-          "$ref": "#/definitions/protobufNullValue",
-          "description": "Represents a null value."
-        },
-        "number_value": {
-          "type": "number",
-          "format": "double",
-          "description": "Represents a double value."
-        },
-        "string_value": {
-          "type": "string",
-          "description": "Represents a string value."
-        },
-        "bool_value": {
-          "type": "boolean",
-          "format": "boolean",
-          "description": "Represents a boolean value."
-        },
-        "struct_value": {
-          "$ref": "#/definitions/protobufStruct",
-          "description": "Represents a structured value."
-        },
-        "list_value": {
-          "$ref": "#/definitions/protobufListValue",
-          "description": "Represents a repeated `Value`."
-        }
-      },
-      "description": "`Value` represents a dynamically typed value which can be either\nnull, a number, a string, a boolean, a recursive struct value, or a\nlist of values. A producer of value is expected to set one of that\nvariants, absence of any variant indicates an error.\n\nThe JSON representation for `Value` is JSON value."
-    },
     "v1CreateCurrencyRequest": {
       "type": "object",
       "properties": {
@@ -498,6 +500,12 @@
           "type": "string"
         },
         "name": {
+          "type": "string"
+        },
+        "short_name": {
+          "type": "string"
+        },
+        "symbol": {
           "type": "string"
         }
       },
@@ -522,9 +530,6 @@
         },
         "name": {
           "type": "string"
-        },
-        "metadata": {
-          "$ref": "#/definitions/protobufStruct"
         }
       },
       "title": "CreateItem"
@@ -546,7 +551,7 @@
         "api": {
           "type": "string"
         },
-        "playerId": {
+        "player_id": {
           "type": "string"
         },
         "name": {
@@ -572,10 +577,18 @@
         "id": {
           "type": "string"
         },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
         "name": {
           "type": "string"
         },
-        "shortName": {
+        "short_name": {
           "type": "string"
         },
         "symbol": {
@@ -633,10 +646,10 @@
         "api": {
           "type": "string"
         },
-        "storageId": {
+        "storage_id": {
           "type": "string"
         },
-        "currencyId": {
+        "currency_id": {
           "type": "string"
         },
         "amount": {
@@ -663,14 +676,11 @@
         "api": {
           "type": "string"
         },
-        "storageId": {
+        "storage_id": {
           "type": "string"
         },
-        "itemId": {
+        "item_id": {
           "type": "string"
-        },
-        "metadata": {
-          "$ref": "#/definitions/protobufStruct"
         }
       },
       "title": "GiveItem"
@@ -681,7 +691,7 @@
         "api": {
           "type": "string"
         },
-        "storageId": {
+        "storage_id": {
           "type": "string"
         },
         "item": {
@@ -694,6 +704,14 @@
       "properties": {
         "id": {
           "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
         },
         "name": {
           "type": "string"
@@ -712,10 +730,13 @@
           "items": {
             "$ref": "#/definitions/v1Currency"
           }
+        },
+        "next_page_token": {
+          "type": "string"
         }
       }
     },
-    "v1ListItemsResponse": {
+    "v1ListItemResponse": {
       "type": "object",
       "properties": {
         "api": {
@@ -726,6 +747,34 @@
           "items": {
             "$ref": "#/definitions/v1Item"
           }
+        },
+        "next_page_token": {
+          "type": "string"
+        },
+        "total_size": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "v1ListPlayerResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "players": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Player"
+          }
+        },
+        "next_page_token": {
+          "type": "string"
+        },
+        "total_size": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -749,7 +798,15 @@
         "id": {
           "type": "string"
         },
-        "playerId": {
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "player_id": {
           "type": "string"
         },
         "name": {
@@ -781,7 +838,15 @@
         "id": {
           "type": "string"
         },
-        "currencyId": {
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "currency_id": {
           "type": "string"
         },
         "amount": {
@@ -796,6 +861,14 @@
         "id": {
           "type": "string"
         },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
         "item": {
           "$ref": "#/definitions/v1Item"
         }
@@ -807,14 +880,11 @@
         "api": {
           "type": "string"
         },
-        "itemId": {
+        "item_id": {
           "type": "string"
         },
         "name": {
           "type": "string"
-        },
-        "metadata": {
-          "$ref": "#/definitions/protobufStruct"
         }
       },
       "title": "UpdateItem"
