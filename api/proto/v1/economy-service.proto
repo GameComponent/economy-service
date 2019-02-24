@@ -181,13 +181,6 @@ message StorageCurrency {
     int64 amount = 5;
 }
 
-// Read optimized for the GetPlayer method
-// So we dont have to return the entire Storage object
-message StorageBase {
-    string id = 1;
-    string name = 2;
-}
-
 message Storage {
     string id = 1;
 		google.protobuf.Timestamp created_at = 2;
@@ -201,7 +194,7 @@ message Storage {
 
 message Player {
     string id = 1;
-    repeated StorageBase storages = 2;
+    repeated Storage storages = 2;
 }
 
 // GiveItem
@@ -398,7 +391,8 @@ message ListCurrencyRequest{
 message ListCurrencyResponse{
     string api = 1;
     repeated Currency currencies = 2;
-    string next_page_token = 3;
+		string next_page_token = 3;
+		int32 total_size = 4;
 }
 
 // GetCurrency

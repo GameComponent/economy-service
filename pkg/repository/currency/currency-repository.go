@@ -3,8 +3,10 @@ package currencyrepository
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
+	"github.com/golang/protobuf/ptypes"
 )
 
 // CurrencyRepository struct
@@ -59,11 +61,13 @@ func (r *CurrencyRepository) Get(ctx context.Context, currencyID string) (*v1.Cu
 
 	err := r.db.QueryRowContext(
 		ctx,
-		`SELECT id, name FROM currency WHERE id = $1`,
+		`SELECT id, name, short_name, symbol FROM currency WHERE id = $1`,
 		currencyID,
 	).Scan(
 		&currency.Id,
 		&currency.Name,
+		&currency.ShortName,
+		&currency.Symbol,
 	)
 
 	if err != nil {
@@ -74,20 +78,68 @@ func (r *CurrencyRepository) Get(ctx context.Context, currencyID string) (*v1.Cu
 }
 
 // List all currenciees
-// func (r *CurrencyRepository) List(ctx context.Context) ([]*v1.Currency, error) {
-// 	currency := &v1.Currency{}
+func (r *CurrencyRepository) List(
+	ctx context.Context,
+	limit int32,
+	offset int32,
+) (
+	[]*v1.Currency,
+	int32,
+	error,
+) {
+	// Query items from the database
+	rows, err := r.db.QueryContext(
+		ctx,
+		`
+			SELECT 
+				id,
+				name,
+				short_name,
+				symbol,
+				created_at,
+				updated_at,
+				(SELECT COUNT(*) FROM currency) AS total_size
+			FROM currency
+			LIMIT $1
+			OFFSET $2
+		`,
+		limit,
+		offset,
+	)
 
-// 	err := r.db.QueryRowContext(
-// 		ctx,
-// 		`SELECT id, name FROM currency`,
-// 	).Scan(
-// 		&currency.Id,
-// 		&currency.Name,
-// 	)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
 
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	// Unwrap rows into currency
+	currencies := []*v1.Currency{}
+	totalSize := int32(1)
 
-// 	return currency, nil
-// }
+	for rows.Next() {
+		currency := v1.Currency{}
+		createdAt := time.Time{}
+		updatedAt := time.Time{}
+
+		err := rows.Scan(
+			&currency.Id,
+			&currency.Name,
+			&currency.ShortName,
+			&currency.Symbol,
+			&createdAt,
+			&updatedAt,
+			&totalSize,
+		)
+		if err != nil {
+			return nil, 0, err
+		}
+
+		// Convert created_at to timestamp
+		currency.CreatedAt, _ = ptypes.TimestampProto(createdAt)
+		currency.UpdatedAt, _ = ptypes.TimestampProto(updatedAt)
+
+		currencies = append(currencies, &currency)
+	}
+
+	return currencies, totalSize, nil
+}

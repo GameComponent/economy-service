@@ -733,6 +733,10 @@
         },
         "next_page_token": {
           "type": "string"
+        },
+        "total_size": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -787,7 +791,7 @@
         "storages": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/v1StorageBase"
+            "$ref": "#/definitions/v1Storage"
           }
         }
       }
@@ -819,18 +823,6 @@
           }
         }
       }
-    },
-    "v1StorageBase": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      },
-      "title": "Read optimized for the GetPlayer method\nSo we dont have to return the entire Storage object"
     },
     "v1StorageCurrency": {
       "type": "object",
