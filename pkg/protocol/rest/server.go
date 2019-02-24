@@ -21,7 +21,12 @@ func RunServer(ctx context.Context, grpcPort, httpPort string) error {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	mux := runtime.NewServeMux()
+	mux := runtime.NewServeMux(
+		runtime.WithMarshalerOption(
+			runtime.MIMEWildcard,
+			&runtime.JSONPb{OrigName: false},
+		),
+	)
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 	if err := v1.RegisterEconomyServiceHandlerFromEndpoint(ctx, mux, "localhost:"+grpcPort, opts); err != nil {
 		logger.Log.Fatal("failed to start HTTP gateway", zap.String("reason", err.Error()))
