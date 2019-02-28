@@ -84,6 +84,7 @@ func (r *ItemRepository) List(
 				updated_at,
 				(SELECT COUNT(*) FROM item) AS total_size
 			FROM item
+			ORDER BY created_at DESC 
 			LIMIT $1
 			OFFSET $2
 		`,
