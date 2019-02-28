@@ -355,6 +355,76 @@
         ]
       }
     },
+    "/v1/shop": {
+      "post": {
+        "summary": "Create",
+        "operationId": "CreateShop",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateShopResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateShopRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
+    "/v1/shop/{shop_id}": {
+      "get": {
+        "summary": "Get Shop",
+        "operationId": "GetShop",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetShopResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "shop_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "api",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
     "/v1/storage": {
       "post": {
         "summary": "Create a new Storage",
@@ -545,6 +615,29 @@
         }
       }
     },
+    "v1CreateShopRequest": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "title": "CreateShop"
+    },
+    "v1CreateShopResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "Shop": {
+          "$ref": "#/definitions/v1Shop"
+        }
+      }
+    },
     "v1CreateStorageRequest": {
       "type": "object",
       "properties": {
@@ -626,6 +719,17 @@
         },
         "player": {
           "$ref": "#/definitions/v1Player"
+        }
+      }
+    },
+    "v1GetShopResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "shop": {
+          "$ref": "#/definitions/v1Shop"
         }
       }
     },
@@ -782,6 +886,24 @@
         }
       }
     },
+    "v1Listing": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "item": {
+          "$ref": "#/definitions/v1Item"
+        },
+        "currency": {
+          "$ref": "#/definitions/v1Currency"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
     "v1Player": {
       "type": "object",
       "properties": {
@@ -792,6 +914,23 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/v1Storage"
+          }
+        }
+      }
+    },
+    "v1Shop": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "listings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Listing"
           }
         }
       }

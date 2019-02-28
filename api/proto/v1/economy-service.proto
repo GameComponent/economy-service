@@ -136,7 +136,22 @@ service EconomyService {
             post: "/v1/storage/give/currency"
             body: "*"
         };
-    }
+		}
+		
+		// Create 
+		rpc CreateShop(CreateShopRequest) returns (CreateShopResponse) {
+			option (google.api.http) = {
+					post: "/v1/shop"
+					body: "*"
+			};
+		}
+
+		// Get Shop
+		rpc GetShop(GetShopRequest) returns (GetShopResponse) {
+			option (google.api.http) = {
+					get: "/v1/shop/{shop_id}"
+			};
+		}
 
     // Removes an Item from Storage
     // rpc DestroyItem(DestroyItemRequest) returns (DestroyItemResponse);
@@ -195,6 +210,19 @@ message Storage {
 message Player {
     string id = 1;
     repeated Storage storages = 2;
+}
+
+message Shop {
+	string id = 1;
+	string name = 2;
+	repeated Listing listings = 3;
+}
+
+message Listing {
+	string id = 1;
+	Item item = 2;
+	Currency currency = 3;
+	int64 amount = 4;
 }
 
 // GiveItem
@@ -404,4 +432,26 @@ message GetCurrencyRequest{
 message GetCurrencyResponse{
     string api = 1;
     Currency currency = 2;
+}
+
+// CreateShop
+message CreateShopRequest{
+	string api = 1;
+	string name = 2;
+}
+
+message CreateShopResponse{
+	string api = 1;
+	Shop Shop = 2;
+}
+
+// GetShop
+message GetShopRequest{
+	string api = 1;
+	string shop_id = 2;
+}
+
+message GetShopResponse{
+	string api = 1;
+	Shop shop = 2;
 }
