@@ -7,229 +7,229 @@ import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
 
 option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
-    info: {
-        title: "Economy service";
-        version: "0.0";
-        contact: {
-            name: "economy-service";
-            url: "https://github.com/GameComponent/economy-service";
-            email: "info@gamecomponent.com";
-        };
-    };
-    schemes: HTTP;
-    consumes: "application/json";
-    produces: "application/json";
-    responses: {
-        key: "404";
-        value: {
-            description: "Returned when the resource does not exist.";
-            schema: {
-                json_schema: {
-                    type: STRING;
-                }
-            }
-        }
-    }
+	info: {
+		title: "Economy service";
+		version: "0.0";
+		contact: {
+			name: "economy-service";
+			url: "https://github.com/GameComponent/economy-service";
+			email: "info@gamecomponent.com";
+		};
+	};
+	schemes: HTTP;
+	consumes: "application/json";
+	produces: "application/json";
+	responses: {
+		key: "404";
+		value: {
+			description: "Returned when the resource does not exist.";
+			schema: {
+				json_schema: {
+					type: STRING;
+				}
+			}
+		}
+	}
 };
 
 // Service definition
 service EconomyService {
-    // To see what Storages belong to an User
-    rpc GetPlayer(GetPlayerRequest) returns (GetPlayerResponse) {
-        option (google.api.http) = {
-            get: "/v1/player/{player_id}"
-        };
-		}
+	// To see what Storages belong to an User
+	rpc GetPlayer(GetPlayerRequest) returns (GetPlayerResponse) {
+		option (google.api.http) = {
+			get: "/v1/player/{player_id}"
+		};
+	}
 
-		// List all players
-    rpc ListPlayer(ListPlayerRequest) returns (ListPlayerResponse) {
-        option (google.api.http) = {
-            get: "/v1/player"
-        };
-    }
+	// List all players
+	rpc ListPlayer(ListPlayerRequest) returns (ListPlayerResponse) {
+		option (google.api.http) = {
+			get: "/v1/player"
+		};
+	}
 
-    // Get the contents of a storage
-    rpc GetStorage(GetStorageRequest) returns (GetStorageResponse) {
-        option (google.api.http) = {
-            get: "/v1/storage/{storage_id}"
-        };
-		}
-		
-		// Get the contents of a storage for a given player
-		// rpc GetStoragePlayer(GetStoragePlayerRequest) returns (GetStoragePlayerResponse) {
-		// 	option (google.api.http) = {
-		// 			get: "/v1/storage/{player_id}/{storage_name}"
-		// 	};
-		// }
+	// Get the contents of a storage
+	rpc GetStorage(GetStorageRequest) returns (GetStorageResponse) {
+		option (google.api.http) = {
+			get: "/v1/storage/{storage_id}"
+		};
+	}
+	
+	// Get the contents of a storage for a given player
+	// rpc GetStoragePlayer(GetStoragePlayerRequest) returns (GetStoragePlayerResponse) {
+	// 	option (google.api.http) = {
+	// 			get: "/v1/storage/{player_id}/{storage_name}"
+	// 	};
+	// }
 
-    // Create a new Storage
-    rpc CreateStorage(CreateStorageRequest) returns (CreateStorageResponse) {
-        option (google.api.http) = {
-            post: "/v1/storage"
-            body: "*"
-        };
-    }
+	// Create a new Storage
+	rpc CreateStorage(CreateStorageRequest) returns (CreateStorageResponse) {
+		option (google.api.http) = {
+			post: "/v1/storage"
+			body: "*"
+		};
+	}
 
-    // Create an Item
-    rpc CreateItem(CreateItemRequest) returns (CreateItemResponse) {
-        option (google.api.http) = {
-            post: "/v1/item"
-            body: "*"
-        };
-    }
+	// Create an Item
+	rpc CreateItem(CreateItemRequest) returns (CreateItemResponse) {
+		option (google.api.http) = {
+			post: "/v1/item"
+			body: "*"
+		};
+	}
 
-    // Update an Item
-    rpc UpdateItem(UpdateItemRequest) returns (UpdateItemResponse) {
-        option (google.api.http) = {
-            patch: "/v1/item"
-            body: "*"
-        };
-		}
+	// Update an Item
+	rpc UpdateItem(UpdateItemRequest) returns (UpdateItemResponse) {
+		option (google.api.http) = {
+			patch: "/v1/item"
+			body: "*"
+		};
+	}
 
-    // Get an Item
-    rpc GetItem(GetItemRequest) returns (GetItemResponse) {
-        option (google.api.http) = {
-            get: "/v1/item/{item_id}"
-        };
-    }
+	// Get an Item
+	rpc GetItem(GetItemRequest) returns (GetItemResponse) {
+		option (google.api.http) = {
+			get: "/v1/item/{item_id}"
+		};
+	}
 
-    // List all Items
-    rpc ListItem(ListItemRequest) returns (ListItemResponse) {
-        option (google.api.http) = {
-            get: "/v1/item"
-        };
-    }
+	// List all Items
+	rpc ListItem(ListItemRequest) returns (ListItemResponse) {
+		option (google.api.http) = {
+			get: "/v1/item"
+		};
+	}
 
-    // Give Item to a Storage
-    rpc GiveItem(GiveItemRequest) returns (GiveItemResponse) {
-        option (google.api.http) = {
-            post: "/v1/storage/give/item"
-            body: "*"
-        };
-    }
+	// Give Item to a Storage
+	rpc GiveItem(GiveItemRequest) returns (GiveItemResponse) {
+		option (google.api.http) = {
+			post: "/v1/storage/give/item"
+			body: "*"
+		};
+	}
 
-    // Create a currency
-    rpc CreateCurrency(CreateCurrencyRequest) returns (CreateCurrencyResponse) {
-        option (google.api.http) = {
-            post: "/v1/currency"
-            body: "*"
-        };
-		}
+	// Create a currency
+	rpc CreateCurrency(CreateCurrencyRequest) returns (CreateCurrencyResponse) {
+		option (google.api.http) = {
+			post: "/v1/currency"
+			body: "*"
+		};
+	}
 
-    // Get a currency
-    rpc GetCurrency(GetCurrencyRequest) returns (GetCurrencyResponse) {
-        option (google.api.http) = {
-            get: "/v1/currency/{currency_id}"
-        };
-    }
+	// Get a currency
+	rpc GetCurrency(GetCurrencyRequest) returns (GetCurrencyResponse) {
+		option (google.api.http) = {
+			get: "/v1/currency/{currency_id}"
+		};
+	}
 
-    // Shows all currencies
-    rpc ListCurrency(ListCurrencyRequest) returns (ListCurrencyResponse) {
-        option (google.api.http) = {
-            get: "/v1/currency"
-        };
-    }
+	// Shows all currencies
+	rpc ListCurrency(ListCurrencyRequest) returns (ListCurrencyResponse) {
+		option (google.api.http) = {
+			get: "/v1/currency"
+		};
+	}
 
-    // Give an amount of Currency to a Storage
-    rpc GiveCurrency(GiveCurrencyRequest) returns (GiveCurrencyResponse) {
-        option (google.api.http) = {
-            post: "/v1/storage/give/currency"
-            body: "*"
-        };
-    }
+	// Give an amount of Currency to a Storage
+	rpc GiveCurrency(GiveCurrencyRequest) returns (GiveCurrencyResponse) {
+		option (google.api.http) = {
+			post: "/v1/storage/give/currency"
+			body: "*"
+		};
+	}
 
-    // Removes an Item from Storage
-    // rpc DestroyItem(DestroyItemRequest) returns (DestroyItemResponse);
+	// Removes an Item from Storage
+	// rpc DestroyItem(DestroyItemRequest) returns (DestroyItemResponse);
 
-    // Trade Currency for Item
-    // rpc BuyItem(BuyItemRequest) returns (BuyItemResponse);
+	// Trade Currency for Item
+	// rpc BuyItem(BuyItemRequest) returns (BuyItemResponse);
 
-    // Trade Item for Currency
-    // rpc SellItem(SellItemRequest) returns (SellItemResponse);
+	// Trade Item for Currency
+	// rpc SellItem(SellItemRequest) returns (SellItemResponse);
 }
 
 // Main entities
 message Item {
-		string id = 1;
-		google.protobuf.Timestamp created_at = 2;
-		google.protobuf.Timestamp updated_at = 3;
-    string name = 4;
+	string id = 1;
+	google.protobuf.Timestamp created_at = 2;
+	google.protobuf.Timestamp updated_at = 3;
+	string name = 4;
 }
 
 message StorageItem {
-    string id = 1;
-		google.protobuf.Timestamp created_at = 2;
-		google.protobuf.Timestamp updated_at = 3;
-    Item item = 4;
-    //google.protobuf.Struct metadata = 3;
+	string id = 1;
+	google.protobuf.Timestamp created_at = 2;
+	google.protobuf.Timestamp updated_at = 3;
+	Item item = 4;
+	//google.protobuf.Struct metadata = 3;
 }
 
 message Currency {
-    string id = 1;
-		google.protobuf.Timestamp created_at = 2;
-		google.protobuf.Timestamp updated_at = 3;
-    string name = 4;
-    string short_name = 5;
-    string symbol = 6;
+	string id = 1;
+	google.protobuf.Timestamp created_at = 2;
+	google.protobuf.Timestamp updated_at = 3;
+	string name = 4;
+	string short_name = 5;
+	string symbol = 6;
 }
 
 message StorageCurrency {
-    string id = 1;
-		google.protobuf.Timestamp created_at = 2;
-		google.protobuf.Timestamp updated_at = 3;
-    string currency_id = 4;
-    int64 amount = 5;
+	string id = 1;
+	google.protobuf.Timestamp created_at = 2;
+	google.protobuf.Timestamp updated_at = 3;
+	string currency_id = 4;
+	int64 amount = 5;
 }
 
 message Storage {
-    string id = 1;
-		google.protobuf.Timestamp created_at = 2;
-		google.protobuf.Timestamp updated_at = 3;
-    string player_id = 4;
-    string name = 5;
-    repeated StorageItem items = 6;
-    // repeated StorageCurrency currencies = 5;
-    //google.protobuf.Struct metadata = 4;
+	string id = 1;
+	google.protobuf.Timestamp created_at = 2;
+	google.protobuf.Timestamp updated_at = 3;
+	string player_id = 4;
+	string name = 5;
+	repeated StorageItem items = 6;
+	// repeated StorageCurrency currencies = 5;
+	//google.protobuf.Struct metadata = 4;
 }
 
 message Player {
-    string id = 1;
-    repeated Storage storages = 2;
+	string id = 1;
+	repeated Storage storages = 2;
 }
 
 // GiveItem
 message GiveItemRequest{
-    string api = 1;
-    string storage_id = 2;
-    string item_id = 3;
-    // google.protobuf.Struct metadata = 4;
+	string api = 1;
+	string storage_id = 2;
+	string item_id = 3;
+	// google.protobuf.Struct metadata = 4;
 }
 
 message GiveItemResponse{
-    string api = 1;
-    string storage_id = 2;
-    StorageItem item = 3;
+	string api = 1;
+	string storage_id = 2;
+	StorageItem item = 3;
 }
 
 // DestroyItem
 // message DestroyItemRequest{
-//     string api = 1;
-//     string storageItemId = 3;
+// 	string api = 1;
+// 	string storageItemId = 3;
 // }
 
 // message DestroyItemResponse{
-//     string api = 1;
+// 	string api = 1;
 // }
 
 // GetStorage
 message GetStorageRequest{
-    string api = 1;
-		string storage_id = 2;
+	string api = 1;
+	string storage_id = 2;
 }
 
 message GetStorageResponse{
-    string api = 1;
-    Storage storage = 2;
+	string api = 1;
+	Storage storage = 2;
 }
 
 // GetStoragePlayer
@@ -246,26 +246,26 @@ message GetStorageResponse{
 
 // CreateStorage
 message CreateStorageRequest{
-    string api = 1;
-    string player_id = 2;
-    string name = 3;
-    // google.protobuf.Struct metadata = 4;
+	string api = 1;
+	string player_id = 2;
+	string name = 3;
+	// google.protobuf.Struct metadata = 4;
 }
 
 message CreateStorageResponse{
-    string api = 1;
-    Storage storage = 2;
+	string api = 1;
+	Storage storage = 2;
 }
 
 // GetPlayer
 message GetPlayerRequest{
-    string api = 1;
-    string player_id = 2;
+	string api = 1;
+	string player_id = 2;
 }
 
 message GetPlayerResponse{
-    string api = 1;
-    Player player = 2;
+	string api = 1;
+	Player player = 2;
 }
 
 // ListPlayer
@@ -282,126 +282,126 @@ message ListPlayerResponse{
 	int32 total_size = 4;
 }
 
-// // BuyItem
+// BuyItem
 // message BuyItemRequest{
-//     string api = 1;
-//     StorageCurrency currency = 2;
+// 	string api = 1;
+// 	StorageCurrency currency = 2;
 // }
 
 // message BuyItemResponse{
-//     string api = 1;
-//     StorageItem item = 2;
+// 	string api = 1;
+// 	StorageItem item = 2;
 // }
 
-// // SellItem
+// SellItem
 // message SellItemRequest{
-//     string api = 1;
-//     StorageItem item = 2;
+// 	string api = 1;
+// 	StorageItem item = 2;
 // }
 
 // message SellItemResponse{
-//     string api = 1;
-//     StorageCurrency currency = 2;
+// 	string api = 1;
+// 	StorageCurrency currency = 2;
 // }
 
 // CreateItem
 message CreateItemRequest{
-    string api = 1;
-    string name = 2;
-    // google.protobuf.Struct metadata = 3;
+	string api = 1;
+	string name = 2;
+	// google.protobuf.Struct metadata = 3;
 }
 
 message CreateItemResponse{
-    string api = 1;
-    Item item = 2;
+	string api = 1;
+	Item item = 2;
 }
 
 // UpdateItem
 message UpdateItemRequest{
-    string api = 1;
-    string item_id = 2;
-    string name = 3;
-    // google.protobuf.Struct metadata = 4;
+	string api = 1;
+	string item_id = 2;
+	string name = 3;
+	// google.protobuf.Struct metadata = 4;
 }
 
 message UpdateItemResponse{
-    string api = 1;
-    Item item = 2;
+	string api = 1;
+	Item item = 2;
 }
 
 // GetItem
 message GetItemRequest{
-    string api = 1;
-    string item_id = 2;
+	string api = 1;
+	string item_id = 2;
 }
 
 message GetItemResponse{
-    string api = 1;
-    Item item = 2;
+	string api = 1;
+	Item item = 2;
 }
 
 // ListItem
 message ListItemRequest{
-		string api = 1;
-		int32 page_size = 2;
-    string page_token = 3;
+	string api = 1;
+	int32 page_size = 2;
+	string page_token = 3;
 }
 
 message ListItemResponse{
-    string api = 1;
-		repeated Item items = 2;
-		string next_page_token = 3;
-		int32 total_size = 4;
+	string api = 1;
+	repeated Item items = 2;
+	string next_page_token = 3;
+	int32 total_size = 4;
 }
 
 // CreateCurrency
 message CreateCurrencyRequest{
-    string api = 1;
-    string name = 2;
-    string short_name = 3;
-    string symbol = 4;
-    // google.protobuf.Struct metadata = 3;
+	string api = 1;
+	string name = 2;
+	string short_name = 3;
+	string symbol = 4;
+	// google.protobuf.Struct metadata = 3;
 }
 
 message CreateCurrencyResponse{
-    string api = 1;
-    Currency currency = 2;
+	string api = 1;
+	Currency currency = 2;
 }
 
 // GiveCurrency
 message GiveCurrencyRequest{
-    string api = 1;
-    string storage_id = 2;
-    string currency_id = 3;
-    int64 amount = 4;
+	string api = 1;
+	string storage_id = 2;
+	string currency_id = 3;
+	int64 amount = 4;
 }
 
 message GiveCurrencyResponse{
-    string api = 1;
-    StorageCurrency currency = 2;
+	string api = 1;
+	StorageCurrency currency = 2;
 }
 
 // ListCurrency
 message ListCurrencyRequest{
-    string api = 1;
-    int32 page_size = 2;
-    string page_token = 3;
+	string api = 1;
+	int32 page_size = 2;
+	string page_token = 3;
 }
 
 message ListCurrencyResponse{
-    string api = 1;
-    repeated Currency currencies = 2;
-		string next_page_token = 3;
-		int32 total_size = 4;
+	string api = 1;
+	repeated Currency currencies = 2;
+	string next_page_token = 3;
+	int32 total_size = 4;
 }
 
 // GetCurrency
 message GetCurrencyRequest{
-    string api = 1;
-    string currency_id = 2;
+	string api = 1;
+	string currency_id = 2;
 }
 
 message GetCurrencyResponse{
-    string api = 1;
-    Currency currency = 2;
+	string api = 1;
+	Currency currency = 2;
 }
