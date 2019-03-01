@@ -55,13 +55,6 @@ service EconomyService {
 		};
 	}
 	
-	// Get the contents of a storage for a given player
-	// rpc GetStoragePlayer(GetStoragePlayerRequest) returns (GetStoragePlayerResponse) {
-	// 	option (google.api.http) = {
-	// 			get: "/v1/storage/{player_id}/{storage_name}"
-	// 	};
-	// }
-
 	// Create a new Storage
 	rpc CreateStorage(CreateStorageRequest) returns (CreateStorageResponse) {
 		option (google.api.http) = {
@@ -231,18 +224,6 @@ message GetStorageResponse{
 	string api = 1;
 	Storage storage = 2;
 }
-
-// GetStoragePlayer
-// message GetStoragePlayerRequest{
-// 	string api = 1;
-// 	string player_id = 2;
-// 	string storage_name = 3;
-// }
-
-// message GetStoragePlayerResponse{
-// 	string api = 1;
-// 	Storage storage = 2;
-// }
 
 // CreateStorage
 message CreateStorageRequest{
