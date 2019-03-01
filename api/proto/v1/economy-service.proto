@@ -190,6 +190,12 @@ message Player {
 	repeated Storage storages = 2;
 }
 
+message Notification {
+	string id = 1;
+	google.protobuf.Timestamp created_at = 2;	
+	google.protobuf.Struct metadata = 3;
+}
+
 // GiveItem
 message GiveItemRequest{
 	string api = 1;
