@@ -54,6 +54,13 @@ service EconomyService {
 			get: "/v1/storage/{storage_id}"
 		};
 	}
+
+	// List all storages
+	rpc ListStorage(ListStorageRequest) returns (ListStorageResponse) {
+		option (google.api.http) = {
+			get: "/v1/storage"
+		};
+	}
 	
 	// Create a new Storage
 	rpc CreateStorage(CreateStorageRequest) returns (CreateStorageResponse) {
@@ -223,6 +230,20 @@ message GetStorageRequest{
 message GetStorageResponse{
 	string api = 1;
 	Storage storage = 2;
+}
+
+// ListStorage
+message ListStorageRequest{
+	string api = 1;
+	int32 page_size = 2;
+	string page_token = 3;
+}
+
+message ListStorageResponse{
+	string api = 1;
+	repeated Storage storages = 2;
+	string next_page_token = 3;
+	int32 total_size = 4;
 }
 
 // CreateStorage

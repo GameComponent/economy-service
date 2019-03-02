@@ -180,3 +180,56 @@ func (r *StorageRepository) GiveCurrency(ctx context.Context, storageID string, 
 
 	return storageCurrency, nil
 }
+
+// List all storages
+func (r *StorageRepository) List(
+	ctx context.Context,
+	limit int32,
+	offset int32,
+) (
+	[]*v1.Storage,
+	int32,
+	error,
+) {
+	// Query items from the database
+	rows, err := r.db.QueryContext(
+		ctx,
+		`
+			SELECT 
+				id,
+				name,
+				(SELECT COUNT(DISTINCT id) FROM storage) AS total_size
+			FROM storage
+			LIMIT $1
+			OFFSET $2
+		`,
+		limit,
+		offset,
+	)
+
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	// Unwrap rows into items
+	storages := []*v1.Storage{}
+	totalSize := int32(1)
+
+	for rows.Next() {
+		storage := v1.Storage{}
+
+		err := rows.Scan(
+			&storage.Id,
+			&storage.Name,
+			&totalSize,
+		)
+		if err != nil {
+			return nil, 0, err
+		}
+
+		storages = append(storages, &storage)
+	}
+
+	return storages, totalSize, nil
+}

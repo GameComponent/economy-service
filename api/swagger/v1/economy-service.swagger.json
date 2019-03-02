@@ -356,6 +356,48 @@
       }
     },
     "/v1/storage": {
+      "get": {
+        "summary": "List all storages",
+        "operationId": "ListStorage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListStorageResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "api",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page_token",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      },
       "post": {
         "summary": "Create a new Storage",
         "operationId": "CreateStorage",
@@ -771,6 +813,27 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/v1Player"
+          }
+        },
+        "next_page_token": {
+          "type": "string"
+        },
+        "total_size": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "v1ListStorageResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "storages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Storage"
           }
         },
         "next_page_token": {
