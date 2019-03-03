@@ -28,6 +28,25 @@ func (s *economyServiceServer) GetPlayer(ctx context.Context, req *v1.GetPlayerR
 	}, nil
 }
 
+func (s *economyServiceServer) CreatePlayer(ctx context.Context, req *v1.CreatePlayerRequest) (*v1.CreatePlayerResponse, error) {
+	fmt.Println("CreatePlayer")
+
+	player, err := s.playerRepository.Create(
+		ctx,
+		req.GetId(),
+		req.GetName(),
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf("unable to retrieve player")
+	}
+
+	return &v1.CreatePlayerResponse{
+		Api:    apiVersion,
+		Player: player,
+	}, nil
+}
+
 func (s *economyServiceServer) ListPlayer(ctx context.Context, req *v1.ListPlayerRequest) (*v1.ListPlayerResponse, error) {
 	fmt.Println("ListPlayer")
 

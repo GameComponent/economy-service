@@ -67,6 +67,26 @@ func (r *PlayerRepository) Get(ctx context.Context, id string) (*v1.Player, erro
 	}, nil
 }
 
+// Create a new player
+func (r *PlayerRepository) Create(ctx context.Context, id string, name string) (*v1.Player, error) {
+	databaseID := ""
+	err := r.db.QueryRowContext(
+		ctx,
+		`INSERT INTO player(id, name) VALUES ($1, $2) RETURNING id`,
+		id,
+		name,
+	).Scan(&databaseID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.Player{
+		Id:   databaseID,
+		Name: name,
+	}, nil
+}
+
 // List all player
 func (r *PlayerRepository) List(
 	ctx context.Context,

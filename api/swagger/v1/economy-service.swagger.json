@@ -316,6 +316,37 @@
         "tags": [
           "EconomyService"
         ]
+      },
+      "post": {
+        "summary": "Create a player",
+        "operationId": "CreatePlayer",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreatePlayerResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreatePlayerRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
       }
     },
     "/v1/player/{player_id}": {
@@ -587,6 +618,32 @@
         }
       }
     },
+    "v1CreatePlayerRequest": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "title": "CreatePlayer"
+    },
+    "v1CreatePlayerResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "player": {
+          "$ref": "#/definitions/v1Player"
+        }
+      }
+    },
     "v1CreateStorageRequest": {
       "type": "object",
       "properties": {
@@ -849,6 +906,9 @@
       "type": "object",
       "properties": {
         "id": {
+          "type": "string"
+        },
+        "name": {
           "type": "string"
         },
         "storages": {

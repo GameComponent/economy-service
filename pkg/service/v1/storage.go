@@ -54,7 +54,9 @@ func (s *economyServiceServer) CreateStorage(ctx context.Context, req *v1.Create
 
 	storage, err := s.storageRepository.Create(ctx, req.GetPlayerId(), req.GetName())
 	if err != nil {
-		return nil, fmt.Errorf("unable to create storage, make sure the name is unique")
+		fmt.Println("err")
+		fmt.Println(err)
+		return nil, fmt.Errorf("unable to create storage, make sure the player exists")
 	}
 
 	return &v1.CreateStorageResponse{

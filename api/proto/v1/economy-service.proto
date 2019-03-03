@@ -41,6 +41,14 @@ service EconomyService {
 		};
 	}
 
+	// Create a player
+	rpc CreatePlayer(CreatePlayerRequest) returns (CreatePlayerResponse) {
+		option (google.api.http) = {
+			post: "/v1/player"
+			body: "*"
+		};
+	}
+
 	// List all players
 	rpc ListPlayer(ListPlayerRequest) returns (ListPlayerResponse) {
 		option (google.api.http) = {
@@ -194,7 +202,20 @@ message Storage {
 
 message Player {
 	string id = 1;
-	repeated Storage storages = 2;
+	string name = 2;
+	repeated Storage storages = 3;
+}
+
+// CreatePlayer
+message CreatePlayerRequest{
+	string api = 1;
+	string id = 2;
+	string name = 3;
+}
+
+message CreatePlayerResponse{
+	string api = 1;
+	Player player = 2;
 }
 
 // GiveItem

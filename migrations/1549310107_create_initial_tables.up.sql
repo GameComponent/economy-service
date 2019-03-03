@@ -19,6 +19,12 @@ CREATE TABLE IF NOT EXISTS currency (
   
   PRIMARY KEY (id)
 );
+CREATE TABLE IF NOT EXISTS player (
+	id STRING NOT NULL,
+	name STRING NOT NULL,
+
+	PRIMARY KEY (id)
+);
 
 CREATE TABLE IF NOT EXISTS storage (
   id UUID DEFAULT gen_random_uuid() NOT NULL,
@@ -29,7 +35,7 @@ CREATE TABLE IF NOT EXISTS storage (
   metadata JSONB DEFAULT '{}' NOT null,
   
   PRIMARY KEY (id),
-  UNIQUE (player_id, name)
+	FOREIGN KEY (player_id) REFERENCES player(id)
 );
 
 CREATE INDEX index_player_id ON storage(player_id);
@@ -43,8 +49,8 @@ CREATE TABLE IF NOT EXISTS storage_item (
   metadata JSONB DEFAULT '{}' NOT null,
   
   PRIMARY KEY (id),
-  FOREIGN KEY (item_id) REFERENCES item (id),
-  FOREIGN KEY (storage_id) REFERENCES storage (id)
+  FOREIGN KEY (item_id) REFERENCES item(id),
+  FOREIGN KEY (storage_id) REFERENCES storage(id)
 );
 
 CREATE TABLE IF NOT EXISTS storage_currency (
@@ -56,7 +62,7 @@ CREATE TABLE IF NOT EXISTS storage_currency (
   amount INT64 DEFAULT 0 NOT NULL,
   
   PRIMARY KEY (id),
-  FOREIGN KEY (currency_id) REFERENCES currency (id),
-  FOREIGN KEY (storage_id) REFERENCES storage (id),
+  FOREIGN KEY (currency_id) REFERENCES currency(id),
+  FOREIGN KEY (storage_id) REFERENCES storage(id),
   UNIQUE (currency_id, storage_id)
 );
