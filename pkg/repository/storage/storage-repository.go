@@ -3,8 +3,10 @@ package storagerepository
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
+	"github.com/golang/protobuf/ptypes"
 )
 
 // StorageRepository struct
@@ -198,6 +200,9 @@ func (r *StorageRepository) List(
 			SELECT 
 				id,
 				name,
+				player_id,
+				created_at,
+				updated_at,
 				(SELECT COUNT(DISTINCT id) FROM storage) AS total_size
 			FROM storage
 			LIMIT $1
@@ -218,15 +223,24 @@ func (r *StorageRepository) List(
 
 	for rows.Next() {
 		storage := v1.Storage{}
+		createdAt := time.Time{}
+		updatedAt := time.Time{}
 
 		err := rows.Scan(
 			&storage.Id,
 			&storage.Name,
+			&storage.PlayerId,
+			&createdAt,
+			&updatedAt,
 			&totalSize,
 		)
 		if err != nil {
 			return nil, 0, err
 		}
+
+		// Convert created_at to timestamp
+		storage.CreatedAt, _ = ptypes.TimestampProto(createdAt)
+		storage.UpdatedAt, _ = ptypes.TimestampProto(updatedAt)
 
 		storages = append(storages, &storage)
 	}
