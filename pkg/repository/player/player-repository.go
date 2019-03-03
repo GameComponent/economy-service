@@ -81,7 +81,7 @@ func (r *PlayerRepository) List(
 	rows, err := r.db.QueryContext(
 		ctx,
 		`
-			SELECT 
+			SELECT DISTINCT
 				player_id,
 				(SELECT COUNT(DISTINCT player_id) FROM storage) AS total_size
 			FROM storage
