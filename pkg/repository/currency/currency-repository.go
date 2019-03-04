@@ -114,7 +114,7 @@ func (r *CurrencyRepository) List(
 
 	// Unwrap rows into currency
 	currencies := []*v1.Currency{}
-	totalSize := int32(1)
+	totalSize := int32(0)
 
 	for rows.Next() {
 		currency := v1.Currency{}

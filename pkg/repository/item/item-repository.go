@@ -99,7 +99,7 @@ func (r *ItemRepository) List(
 
 	// Unwrap rows into items
 	items := []*v1.Item{}
-	totalSize := int32(1)
+	totalSize := int32(0)
 
 	for rows.Next() {
 		item := v1.Item{}
