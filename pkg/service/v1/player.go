@@ -100,6 +100,11 @@ func (s *economyServiceServer) SearchPlayer(ctx context.Context, req *v1.SearchP
 		return nil, err
 	}
 
+	// Check if query is empty
+	if len(req.GetQuery()) == 0 {
+		return nil, fmt.Errorf("query is empty")
+	}
+
 	// Parse the page token
 	var parsedToken int64
 	parsedToken, _ = strconv.ParseInt(req.GetPageToken(), 10, 32)
