@@ -219,7 +219,7 @@ func (r *StorageRepository) List(
 
 	// Unwrap rows into items
 	storages := []*v1.Storage{}
-	totalSize := int32(1)
+	totalSize := int32(0)
 
 	for rows.Next() {
 		storage := v1.Storage{}
