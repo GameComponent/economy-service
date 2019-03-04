@@ -349,6 +349,39 @@
         ]
       }
     },
+    "/v1/player/search": {
+      "post": {
+        "summary": "Search player",
+        "operationId": "SearchPlayer",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1SearchPlayerResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1SearchPlayerRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
     "/v1/player/{player_id}": {
       "get": {
         "summary": "To see what Storages belong to an User",
@@ -916,6 +949,46 @@
           "items": {
             "$ref": "#/definitions/v1Storage"
           }
+        }
+      }
+    },
+    "v1SearchPlayerRequest": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "query": {
+          "type": "string"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "page_token": {
+          "type": "string"
+        }
+      },
+      "title": "SearchPlayer"
+    },
+    "v1SearchPlayerResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "players": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Player"
+          }
+        },
+        "next_page_token": {
+          "type": "string"
+        },
+        "total_size": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

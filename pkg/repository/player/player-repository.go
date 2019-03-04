@@ -137,3 +137,59 @@ func (r *PlayerRepository) List(
 
 	return players, totalSize, nil
 }
+
+// Search player
+func (r *PlayerRepository) Search(
+	ctx context.Context,
+	query string,
+	limit int32,
+	offset int32,
+) (
+	[]*v1.Player,
+	int32,
+	error,
+) {
+	// Query items from the database
+	rows, err := r.db.QueryContext(
+		ctx,
+		`
+			SELECT
+				id,
+				name,
+				(SELECT COUNT(id) FROM player WHERE name ~* $1) AS total_size
+			FROM player
+			WHERE name ~* $1
+			LIMIT $2
+			OFFSET $3
+		`,
+		query,
+		limit,
+		offset,
+	)
+
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	// Unwrap rows into items
+	players := []*v1.Player{}
+	totalSize := int32(0)
+
+	for rows.Next() {
+		player := v1.Player{}
+
+		err := rows.Scan(
+			&player.Id,
+			&player.Name,
+			&totalSize,
+		)
+		if err != nil {
+			return nil, 0, err
+		}
+
+		players = append(players, &player)
+	}
+
+	return players, totalSize, nil
+}

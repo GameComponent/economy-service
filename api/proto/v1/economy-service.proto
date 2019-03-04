@@ -56,6 +56,14 @@ service EconomyService {
 		};
 	}
 
+	// Search player
+	rpc SearchPlayer(SearchPlayerRequest) returns (SearchPlayerResponse) {
+		option (google.api.http) = {
+			post: "/v1/player/search"
+			body: "*"
+		};
+	}
+
 	// Get the contents of a storage
 	rpc GetStorage(GetStorageRequest) returns (GetStorageResponse) {
 		option (google.api.http) = {
@@ -299,6 +307,21 @@ message ListPlayerRequest{
 }
 
 message ListPlayerResponse{
+	string api = 1;
+	repeated Player players = 2;
+	string next_page_token = 3;
+	int32 total_size = 4;
+}
+
+// SearchPlayer
+message SearchPlayerRequest{
+	string api = 1;
+	string query = 2;
+	int32 page_size = 3;
+	string page_token = 4;
+}
+
+message SearchPlayerResponse{
 	string api = 1;
 	repeated Player players = 2;
 	string next_page_token = 3;
