@@ -101,10 +101,11 @@ func (r *PlayerRepository) List(
 	rows, err := r.db.QueryContext(
 		ctx,
 		`
-			SELECT DISTINCT
-				player_id,
-				(SELECT COUNT(DISTINCT player_id) FROM storage) AS total_size
-			FROM storage
+			SELECT
+				id,
+				name,
+				(SELECT COUNT(id) FROM player) AS total_size
+			FROM player
 			LIMIT $1
 			OFFSET $2
 		`,
@@ -126,6 +127,7 @@ func (r *PlayerRepository) List(
 
 		err := rows.Scan(
 			&player.Id,
+			&player.Name,
 			&totalSize,
 		)
 		if err != nil {
