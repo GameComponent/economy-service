@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS item (
   PRIMARY KEY (id)
 );
 
+CREATE INDEX index_name ON item(name);
+
 CREATE TABLE IF NOT EXISTS currency (  
   id UUID DEFAULT gen_random_uuid() NOT NULL,
 	created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),

@@ -109,3 +109,53 @@ func (s *economyServiceServer) ListItem(ctx context.Context, req *v1.ListItemReq
 		NextPageToken: nextPageToken,
 	}, nil
 }
+
+func (s *economyServiceServer) SearchItem(ctx context.Context, req *v1.SearchItemRequest) (*v1.SearchItemResponse, error) {
+	fmt.Println("SearchItem")
+
+	// check if the API version requested by client is supported by server
+	if err := s.checkAPI(req.Api); err != nil {
+		return nil, err
+	}
+
+	// Check if query is empty
+	if len(req.GetQuery()) == 0 {
+		return nil, fmt.Errorf("query is empty")
+	}
+
+	// Parse the page token
+	var parsedToken int64
+	parsedToken, _ = strconv.ParseInt(req.GetPageToken(), 10, 32)
+
+	// Get the limit
+	limit := req.GetPageSize()
+	if limit == 0 {
+		limit = 100
+	}
+
+	// Get the offset
+	offset := int32(0)
+	if len(req.GetPageToken()) > 0 {
+		offset = int32(parsedToken) * limit
+	}
+
+	// Search the items
+	items, totalSize, err := s.itemRepository.Search(ctx, req.GetQuery(), limit, offset)
+	if err != nil {
+		return nil, err
+	}
+
+	// Determine if there is a next page
+	var nextPageToken string
+	if totalSize > (offset + limit) {
+		nextPage := int32(parsedToken) + 1
+		nextPageToken = strconv.Itoa(int(nextPage))
+	}
+
+	return &v1.SearchItemResponse{
+		Api:           apiVersion,
+		Items:         items,
+		TotalSize:     totalSize,
+		NextPageToken: nextPageToken,
+	}, nil
+}

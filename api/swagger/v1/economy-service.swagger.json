@@ -237,6 +237,39 @@
         ]
       }
     },
+    "/v1/item/search": {
+      "post": {
+        "summary": "Search item",
+        "operationId": "SearchItem",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1SearchItemResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1SearchItemRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
     "/v1/item/{item_id}": {
       "get": {
         "summary": "Get an Item",
@@ -949,6 +982,46 @@
           "items": {
             "$ref": "#/definitions/v1Storage"
           }
+        }
+      }
+    },
+    "v1SearchItemRequest": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "query": {
+          "type": "string"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "page_token": {
+          "type": "string"
+        }
+      },
+      "title": "SearchItem"
+    },
+    "v1SearchItemResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Item"
+          }
+        },
+        "next_page_token": {
+          "type": "string"
+        },
+        "total_size": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

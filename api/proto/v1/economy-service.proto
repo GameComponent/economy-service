@@ -116,6 +116,14 @@ service EconomyService {
 		};
 	}
 
+	// Search item
+	rpc SearchItem(SearchItemRequest) returns (SearchItemResponse) {
+		option (google.api.http) = {
+			post: "/v1/item/search"
+			body: "*"
+		};
+	}
+
 	// Give Item to a Storage
 	rpc GiveItem(GiveItemRequest) returns (GiveItemResponse) {
 		option (google.api.http) = {
@@ -394,6 +402,21 @@ message ListItemRequest{
 }
 
 message ListItemResponse{
+	string api = 1;
+	repeated Item items = 2;
+	string next_page_token = 3;
+	int32 total_size = 4;
+}
+
+// SearchItem
+message SearchItemRequest{
+	string api = 1;
+	string query = 2;
+	int32 page_size = 3;
+	string page_token = 4;
+}
+
+message SearchItemResponse{
 	string api = 1;
 	repeated Item items = 2;
 	string next_page_token = 3;
