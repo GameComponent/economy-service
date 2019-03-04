@@ -19,12 +19,15 @@ CREATE TABLE IF NOT EXISTS currency (
   
   PRIMARY KEY (id)
 );
+
 CREATE TABLE IF NOT EXISTS player (
 	id STRING NOT NULL,
 	name STRING NOT NULL,
 
 	PRIMARY KEY (id)
 );
+
+CREATE INDEX index_name ON player(name);
 
 CREATE TABLE IF NOT EXISTS storage (
   id UUID DEFAULT gen_random_uuid() NOT NULL,
