@@ -1,5 +1,7 @@
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FGameComponent%2Feconomy-service.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FGameComponent%2Feconomy-service?ref=badge_shield)
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/GameComponent/economy-service)](https://goreportcard.com/report/github.com/GameComponent/economy-service)
+
 # Economy Service
 The economy service is a service to manage your game's economy.
 
