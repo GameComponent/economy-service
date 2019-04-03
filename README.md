@@ -3,7 +3,7 @@
 
 **State of the project:** Unstable and in active development
 
-# Economy Service
+# :moneybag: Economy Service
 The economy service is a service to manage your game's economy.
 
 - [What is the economy service?](#what-is-the-economy-service)
