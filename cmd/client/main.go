@@ -25,8 +25,7 @@ func main() {
 	flag.Parse()
 
 	// Set up a connection to the server.
-  conn, err := grpc.Dial(*address, grpc.W
-    ithInsecure())
+	conn, err := grpc.Dial(*address, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
