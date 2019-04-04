@@ -25,7 +25,7 @@ func RunServer(ctx context.Context, v1API v1.EconomyServiceServer, port string) 
 	opts := []grpc.ServerOption{}
 
 	// Add middleware
-	newOpts := middleware.AddLogging(logger.Log, opts)
+	middleware.AddLogging(logger.Log, opts)
 
 	// Register service
 	server := grpc.NewServer()
