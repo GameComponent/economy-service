@@ -38,7 +38,7 @@ func Init(lvl int, timeFormat string) error {
 
 		// High-priority output should also go to standard error, and low-priority
 		// output should also go to standard out.
-		// It is usefull for Kubernetes deployment.
+		// It is useful for Kubernetes deployment.
 		// Kubernetes interprets os.Stdout log items as INFO and os.Stderr log items
 		// as ERROR by default.
 		highPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
