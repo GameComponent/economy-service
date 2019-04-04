@@ -7,8 +7,6 @@ import (
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/cockroachdb"
-	_ "github.com/golang-migrate/migrate/v4/database/postgres"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
 	pq "github.com/lib/pq"
 )
 
@@ -19,6 +17,7 @@ const (
 	defaultLimit             = -1
 )
 
+// Init the migration process
 func Init(host string, port string, user string, password string, dbname string, sslmode string) (bool, error) {
 	connectStringBase := fmt.Sprintf(
 		"host=%s port=%s sslmode=%s",
