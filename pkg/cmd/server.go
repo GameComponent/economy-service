@@ -10,6 +10,7 @@ import (
 	"github.com/GameComponent/economy-service/pkg/logger"
 	"github.com/GameComponent/economy-service/pkg/protocol/grpc"
 	"github.com/GameComponent/economy-service/pkg/protocol/rest"
+	configrepository "github.com/GameComponent/economy-service/pkg/repository/config"
 	currencyrepository "github.com/GameComponent/economy-service/pkg/repository/currency"
 	itemrepository "github.com/GameComponent/economy-service/pkg/repository/item"
 	playerrepository "github.com/GameComponent/economy-service/pkg/repository/player"
@@ -90,6 +91,7 @@ func RunServer() error {
 	playerRepository := playerrepository.NewPlayerRepository(db)
 	currencyRepository := currencyrepository.NewCurrencyRepository(db)
 	storageRepository := storagerepository.NewStorageRepository(db)
+	configRepository := configrepository.NewConfigRepository(db)
 
 	// Start the service
 	v1API := v1.NewEconomyServiceServer(
@@ -98,6 +100,7 @@ func RunServer() error {
 		playerRepository,
 		currencyRepository,
 		storageRepository,
+		configRepository,
 	)
 
 	// Start the REST server
