@@ -2,7 +2,7 @@ syntax = "proto3";
 package v1;
 
 import "google/protobuf/timestamp.proto";
-// import "google/protobuf/struct.proto";
+import "google/protobuf/struct.proto";
 import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
 
@@ -162,6 +162,21 @@ service EconomyService {
 		};
 	}
 
+	// Set a config
+	rpc SetConfig(SetConfigRequest) returns (SetConfigResponse) {
+		option (google.api.http) = {
+			post: "/v1/config"
+			body: "*"
+		};
+	}
+
+	// Get a config
+	rpc GetConfig(GetConfigRequest) returns (GetConfigResponse) {
+		option (google.api.http) = {
+			get: "/v1/config/{key}"
+		};
+	}
+
 	// Removes an Item from Storage
 	// rpc DestroyItem(DestroyItemRequest) returns (DestroyItemResponse);
 
@@ -220,6 +235,11 @@ message Player {
 	string id = 1;
 	string name = 2;
 	repeated Storage storages = 3;
+}
+
+message Config {
+	string key = 1;
+	google.protobuf.Struct value = 2;
 }
 
 // CreatePlayer
@@ -473,4 +493,27 @@ message GetCurrencyRequest{
 message GetCurrencyResponse{
 	string api = 1;
 	Currency currency = 2;
+}
+
+// GetConfig
+message GetConfigRequest{
+	string api = 1;
+	string key = 2;
+}
+
+message GetConfigResponse{
+	string api = 1;
+	Config config = 2;
+}
+
+// SetConfig
+message SetConfigRequest{
+	string api = 1;
+	string key = 2;
+	google.protobuf.Struct value = 3;
+}
+
+message SetConfigResponse{
+	string api = 1;
+	Config config = 2;
 }

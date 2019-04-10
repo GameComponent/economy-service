@@ -71,3 +71,10 @@ CREATE TABLE IF NOT EXISTS storage_currency (
   FOREIGN KEY (storage_id) REFERENCES storage(id),
   UNIQUE (currency_id, storage_id)
 );
+
+CREATE TABLE IF NOT EXISTS config (  
+  key STRING NOT NULL,
+	value JSONB,
+  
+  PRIMARY KEY (key)
+);
