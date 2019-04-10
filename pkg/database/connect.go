@@ -5,6 +5,7 @@ import (
 	"fmt"
 )
 
+// Connect to a database
 func Connect(
 	host string,
 	port string,

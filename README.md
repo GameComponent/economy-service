@@ -1,5 +1,9 @@
-# Economy Service
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FGameComponent%2Feconomy-service.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FGameComponent%2Feconomy-service?ref=badge_shield)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FGameComponent%2Feconomy-service.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FGameComponent%2Feconomy-service?ref=badge_shield)
+[![Go Report Card](https://goreportcard.com/badge/github.com/GameComponent/economy-service)](https://goreportcard.com/report/github.com/GameComponent/economy-service)
+
+**State of the project:** Unstable and in active development
+
+# :dollar: Economy Service
 
 The economy service is a service to manage your game's economy.
 
@@ -9,7 +13,7 @@ The economy service is a service to manage your game's economy.
 
 The economy services allow you to give your players access to items, currencies and much more. Anything that touches the economy of your game is parts of this service. This services allows you to define item definitions, create currencies, open up shops and much more.
 
-**State of the project:** Unstable and in active development
+
 
 ## Contributing
 
