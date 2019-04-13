@@ -84,3 +84,67 @@ func (r *ConfigRepository) Set(ctx context.Context, key string, value *_struct.S
 		Value: value,
 	}, nil
 }
+
+// List all configs
+func (r *ConfigRepository) List(
+	ctx context.Context,
+	limit int32,
+	offset int32,
+) (
+	[]*v1.Config,
+	int32,
+	error,
+) {
+	// Query configs from the database
+	rows, err := r.db.QueryContext(
+		ctx,
+		`
+			SELECT 
+				key,
+				value,
+				(SELECT COUNT(*) FROM config) AS total_size
+			FROM config
+			LIMIT $1
+			OFFSET $2
+		`,
+		limit,
+		offset,
+	)
+
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	// Unwrap rows into configs
+	configs := []*v1.Config{}
+	totalSize := int32(0)
+
+	for rows.Next() {
+		config := v1.Config{}
+		var jsonString string
+
+		err := rows.Scan(
+			&config.Key,
+			&jsonString,
+			&totalSize,
+		)
+		if err != nil {
+			return nil, 0, err
+		}
+
+		stringReader := strings.NewReader(jsonString)
+		unmarshaler := jsonpb.Unmarshaler{}
+		valueStruct := _struct.Struct{}
+		err = unmarshaler.Unmarshal(stringReader, &valueStruct)
+		if err != nil {
+			return nil, 0, err
+		}
+
+		config.Value = &valueStruct
+
+		configs = append(configs, &config)
+	}
+
+	return configs, totalSize, nil
+}

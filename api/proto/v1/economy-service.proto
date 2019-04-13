@@ -536,6 +536,20 @@ message SetConfigRequest{
 	google.protobuf.Struct value = 3;
 }
 
+// ListConfig
+message ListConfigRequest{
+	string api = 1;
+	int32 page_size = 2;
+	string page_token = 3;
+}
+
+message ListConfigResponse{
+	string api = 1;
+	repeated Config configs = 2;
+	string next_page_token = 3;
+	int32 total_size = 4;
+}
+
 message SetConfigResponse{
 	string api = 1;
 	Config config = 2;

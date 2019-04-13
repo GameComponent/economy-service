@@ -53,6 +53,48 @@
       }
     },
     "/v1/config": {
+      "get": {
+        "summary": "List all configs",
+        "operationId": "ListConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListConfigResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "api",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page_token",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      },
       "post": {
         "summary": "Set a config",
         "operationId": "SetConfig",
@@ -1133,6 +1175,27 @@
         }
       },
       "title": "Main entities"
+    },
+    "v1ListConfigResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "configs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Config"
+          }
+        },
+        "next_page_token": {
+          "type": "string"
+        },
+        "total_size": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
     },
     "v1ListCurrencyResponse": {
       "type": "object",
