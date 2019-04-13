@@ -78,3 +78,13 @@ CREATE TABLE IF NOT EXISTS config (
   
   PRIMARY KEY (key)
 );
+
+CREATE TABLE IF NOT EXISTS account (  
+  id UUID DEFAULT gen_random_uuid() NOT NULL,
+	created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+	updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+	email STRING NOT NULL,
+	password STRING NOT NULL,
+  
+  PRIMARY KEY (id)
+);

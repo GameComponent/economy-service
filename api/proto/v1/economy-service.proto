@@ -177,6 +177,29 @@ service EconomyService {
 		};
 	}
 
+	// List all configs
+	rpc ListConfig(ListConfigRequest) returns (ListConfigResponse) {
+		option (google.api.http) = {
+			get: "/v1/config"
+		};
+	}
+
+	// Authenticate a user
+	rpc Authenticate(AuthenticateRequest) returns (AuthenticateResponse) {
+		option (google.api.http) = {
+			post: "/v1/authenticate"
+			body: "*"
+		};
+	}
+
+	// Register a user
+	rpc Register(RegisterRequest) returns (RegisterResponse) {
+		option (google.api.http) = {
+			post: "/v1/register"
+			body: "*"
+		};
+	}
+
 	// Removes an Item from Storage
 	// rpc DestroyItem(DestroyItemRequest) returns (DestroyItemResponse);
 
@@ -516,4 +539,28 @@ message SetConfigRequest{
 message SetConfigResponse{
 	string api = 1;
 	Config config = 2;
+}
+
+// Authenticate
+message AuthenticateRequest{
+	string api = 1;
+	string email = 2;
+	string password = 3;
+}
+
+message AuthenticateResponse{
+	string api = 1;
+	string token = 2;
+}
+
+// Register
+message RegisterRequest{
+	string api = 1;
+	string email = 2;
+	string password = 3;
+}
+
+message RegisterResponse{
+	string api = 1;
+	string token = 2;
 }

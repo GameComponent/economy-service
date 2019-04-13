@@ -10,6 +10,7 @@ import (
 
 	// "github.com/golang/protobuf/ptypes/struct"
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
+	accountrepository "github.com/GameComponent/economy-service/pkg/repository/account"
 	configrepository "github.com/GameComponent/economy-service/pkg/repository/config"
 	currencyrepository "github.com/GameComponent/economy-service/pkg/repository/currency"
 	itemrepository "github.com/GameComponent/economy-service/pkg/repository/item"
@@ -29,9 +30,10 @@ type economyServiceServer struct {
 	currencyRepository *currencyrepository.CurrencyRepository
 	storageRepository  *storagerepository.StorageRepository
 	configRepository   *configrepository.ConfigRepository
+	accountRepository  *accountrepository.AccountRepository
 }
 
-// NewEconomyServiceServer creates ToDo service
+// NewEconomyServiceServer creates economy service
 func NewEconomyServiceServer(
 	db *sql.DB,
 	itemRepository *itemrepository.ItemRepository,
@@ -39,6 +41,7 @@ func NewEconomyServiceServer(
 	currencyRepository *currencyrepository.CurrencyRepository,
 	storageRepository *storagerepository.StorageRepository,
 	configRepository *configrepository.ConfigRepository,
+	accountRepository *accountrepository.AccountRepository,
 ) v1.EconomyServiceServer {
 	return &economyServiceServer{
 		db,
@@ -47,6 +50,7 @@ func NewEconomyServiceServer(
 		currencyRepository,
 		storageRepository,
 		configRepository,
+		accountRepository,
 	}
 }
 
