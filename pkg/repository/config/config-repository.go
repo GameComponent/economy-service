@@ -3,6 +3,7 @@ package configrepository
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"strings"
 
 	"github.com/golang/protobuf/jsonpb"
@@ -38,9 +39,8 @@ func (r *ConfigRepository) Get(ctx context.Context, key string) (*v1.Config, err
 	}
 
 	stringReader := strings.NewReader(jsonString)
-	valueStruct := _struct.Struct{}
+	valueStruct := _struct.Value{}
 	unmarshaler := jsonpb.Unmarshaler{}
-
 	err = unmarshaler.Unmarshal(stringReader, &valueStruct)
 	if err != nil {
 		return nil, err
@@ -55,12 +55,15 @@ func (r *ConfigRepository) Get(ctx context.Context, key string) (*v1.Config, err
 }
 
 // Set a new config
-func (r *ConfigRepository) Set(ctx context.Context, key string, value *_struct.Struct) (*v1.Config, error) {
+func (r *ConfigRepository) Set(ctx context.Context, key string, value *_struct.Value) (*v1.Config, error) {
 	marshaler := jsonpb.Marshaler{}
 	jsonValue, err := marshaler.MarshalToString(value)
 	if err != nil {
 		return nil, err
 	}
+
+	fmt.Println("set default")
+	fmt.Println(jsonValue)
 
 	_, err = r.db.ExecContext(
 		ctx,
@@ -135,7 +138,7 @@ func (r *ConfigRepository) List(
 
 		stringReader := strings.NewReader(jsonString)
 		unmarshaler := jsonpb.Unmarshaler{}
-		valueStruct := _struct.Struct{}
+		valueStruct := _struct.Value{}
 		err = unmarshaler.Unmarshal(stringReader, &valueStruct)
 		if err != nil {
 			return nil, 0, err

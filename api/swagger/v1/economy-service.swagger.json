@@ -909,7 +909,7 @@
           "type": "string"
         },
         "value": {
-          "$ref": "#/definitions/protobufStruct"
+          "$ref": "#/definitions/protobufValue"
         }
       }
     },
@@ -1414,7 +1414,7 @@
           "type": "string"
         },
         "value": {
-          "$ref": "#/definitions/protobufStruct"
+          "$ref": "#/definitions/protobufValue"
         }
       },
       "title": "SetConfig"

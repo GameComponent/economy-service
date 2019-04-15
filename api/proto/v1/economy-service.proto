@@ -262,7 +262,7 @@ message Player {
 
 message Config {
 	string key = 1;
-	google.protobuf.Struct value = 2;
+	google.protobuf.Value value = 2;
 }
 
 // CreatePlayer
@@ -533,7 +533,7 @@ message GetConfigResponse{
 message SetConfigRequest{
 	string api = 1;
 	string key = 2;
-	google.protobuf.Struct value = 3;
+	google.protobuf.Value value = 3;
 }
 
 // ListConfig
