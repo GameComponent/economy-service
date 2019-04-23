@@ -21,7 +21,7 @@
   "paths": {
     "/v1/authenticate": {
       "post": {
-        "summary": "Authenticate a user",
+        "summary": "Authenticate an account",
         "operationId": "Authenticate",
         "responses": {
           "200": {
@@ -599,7 +599,7 @@
     },
     "/v1/register": {
       "post": {
-        "summary": "Register a user",
+        "summary": "Register an account",
         "operationId": "Register",
         "responses": {
           "200": {
@@ -1455,6 +1455,12 @@
           "items": {
             "$ref": "#/definitions/v1StorageItem"
           }
+        },
+        "currencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1StorageCurrency"
+          }
         }
       }
     },
@@ -1464,16 +1470,8 @@
         "id": {
           "type": "string"
         },
-        "created_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updated_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "currency_id": {
-          "type": "string"
+        "currency": {
+          "$ref": "#/definitions/v1Currency"
         },
         "amount": {
           "type": "string",

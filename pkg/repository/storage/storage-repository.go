@@ -55,13 +55,21 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
       storage.metadata as storageData,
       storage.player_id as playerId,
       storage_item.id as storageItemId,
-      storage_item.metadata as storageItemData,
+			storage_item.metadata as storageItemData,
       item.id as itemId,
       item.name as itemName,
-      item.metadata as itemData
+			item.metadata as itemData,
+			storage_currency.id as storageCurrencyId,
+			storage_currency.amount as storageCurrencyAmount,
+      currency.id as currencyId,
+      currency.name as currencyName,
+      currency.short_name as currencyShortName,
+      currency.symbol as currencySymbol
     FROM storage 
-    LEFT JOIN storage_item on (storage.id = storage_item.storage_id)
-    LEFT JOIN item on (storage_item.item_id = item.id)
+    LEFT JOIN storage_item ON (storage.id = storage_item.storage_id)
+		LEFT JOIN item ON (storage_item.item_id = item.id)
+		LEFT JOIN storage_currency ON (storage.id = storage_currency.storage_id)
+    LEFT JOIN currency ON (storage_currency.currency_id = currency.id)
     WHERE storage.id = $1`,
 		storageID,
 	)
@@ -70,19 +78,26 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 		return nil, err
 	}
 
-	storageItems := []*v1.StorageItem{}
-
 	type row struct {
-		StorageID           string
-		StorageName         string
-		StorageData         string
-		PlayerID            string
-		StorageItemID       sql.NullString
-		StorageItemItemData sql.NullString
-		ItemID              sql.NullString
-		ItemName            sql.NullString
-		ItemData            sql.NullString
+		StorageID             string
+		StorageName           string
+		StorageData           string
+		PlayerID              string
+		StorageItemID         sql.NullString
+		StorageItemItemData   sql.NullString
+		ItemID                sql.NullString
+		ItemName              sql.NullString
+		ItemData              sql.NullString
+		StorageCurrencyID     sql.NullString
+		StorageCurrencyAmount int64
+		CurrencyID            sql.NullString
+		CurrencyName          sql.NullString
+		CurrencyShortName     sql.NullString
+		CurrencySymbol        sql.NullString
 	}
+
+	storageItems := map[string]*v1.StorageItem{}
+	storageCurrencies := map[string]*v1.StorageCurrency{}
 
 	var res row
 	for rows.Next() {
@@ -96,6 +111,12 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 			&res.ItemID,
 			&res.ItemName,
 			&res.ItemData,
+			&res.StorageCurrencyID,
+			&res.StorageCurrencyAmount,
+			&res.CurrencyID,
+			&res.CurrencyName,
+			&res.CurrencyShortName,
+			&res.CurrencySymbol,
 		)
 
 		if err != nil {
@@ -116,17 +137,52 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 			storageItem.Item = item
 		}
 
+		// Extract the Currency
+		currency := &v1.Currency{}
+		if res.CurrencyID.Valid && res.CurrencyName.Valid {
+			currency.Id = res.ItemID.String
+			currency.Name = res.CurrencyName.String
+			currency.ShortName = res.CurrencyShortName.String
+			currency.Symbol = res.CurrencySymbol.String
+		}
+
+		// Extract the StorageCurrency
+		storageCurrency := &v1.StorageCurrency{}
+		if res.StorageCurrencyID.Valid {
+			storageCurrency.Id = res.StorageCurrencyID.String
+			storageCurrency.Amount = res.StorageCurrencyAmount
+			storageCurrency.Currency = currency
+		}
+
 		// Add object to the storageItem if it is set
 		if storageItem.Id != "" {
-			storageItems = append(storageItems, storageItem)
+			storageItems[storageItem.Id] = storageItem
+		}
+
+		// Add object to the storageCurrency if it is set
+		if storageCurrency.Id != "" {
+			storageCurrencies[storageCurrency.Id] = storageCurrency
 		}
 	}
 
+	// Convert item map into item slice
+	items := []*v1.StorageItem{}
+	for _, value := range storageItems {
+		items = append(items, value)
+	}
+
+	// Convert currency map into currency slice
+	currencies := []*v1.StorageCurrency{}
+	for _, value := range storageCurrencies {
+		currencies = append(currencies, value)
+	}
+
 	storage := &v1.Storage{
-		Id:       res.StorageID,
-		PlayerId: res.PlayerID,
-		Name:     res.StorageName,
-		Items:    storageItems,
+		Id:         res.StorageID,
+		PlayerId:   res.PlayerID,
+		Name:       res.StorageName,
+		Items:      items,
+		Currencies: currencies,
 	}
 
 	return storage, nil
@@ -175,9 +231,8 @@ func (r *StorageRepository) GiveCurrency(ctx context.Context, storageID string, 
 	}
 
 	storageCurrency := &v1.StorageCurrency{
-		Id:         storageCurrencyUUID,
-		CurrencyId: currencyID,
-		Amount:     storageCurrencyAmount,
+		Id:     storageCurrencyUUID,
+		Amount: storageCurrencyAmount,
 	}
 
 	return storageCurrency, nil

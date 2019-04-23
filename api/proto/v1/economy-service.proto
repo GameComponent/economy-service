@@ -184,7 +184,7 @@ service EconomyService {
 		};
 	}
 
-	// Authenticate a user
+	// Authenticate an account
 	rpc Authenticate(AuthenticateRequest) returns (AuthenticateResponse) {
 		option (google.api.http) = {
 			post: "/v1/authenticate"
@@ -192,7 +192,7 @@ service EconomyService {
 		};
 	}
 
-	// Register a user
+	// Register an account
 	rpc Register(RegisterRequest) returns (RegisterResponse) {
 		option (google.api.http) = {
 			post: "/v1/register"
@@ -237,10 +237,8 @@ message Currency {
 
 message StorageCurrency {
 	string id = 1;
-	google.protobuf.Timestamp created_at = 2;
-	google.protobuf.Timestamp updated_at = 3;
-	string currency_id = 4;
-	int64 amount = 5;
+	Currency currency = 2;
+	int64 amount = 3;
 }
 
 message Storage {
@@ -250,7 +248,7 @@ message Storage {
 	string player_id = 4;
 	string name = 5;
 	repeated StorageItem items = 6;
-	// repeated StorageCurrency currencies = 5;
+	repeated StorageCurrency currencies = 7;
 	//google.protobuf.Struct metadata = 4;
 }
 
