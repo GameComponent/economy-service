@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS item (
   PRIMARY KEY (id)
 );
 
-CREATE INDEX index_name ON item(name);
+CREATE INDEX IF NOT EXISTS index_name ON item(name);
 
 CREATE TABLE IF NOT EXISTS currency (  
   id UUID DEFAULT gen_random_uuid() NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS player (
 	PRIMARY KEY (id)
 );
 
-CREATE INDEX index_name ON player(name);
+CREATE INDEX IF NOT EXISTS index_name ON player(name);
 
 CREATE TABLE IF NOT EXISTS storage (
   id UUID DEFAULT gen_random_uuid() NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS storage (
 	FOREIGN KEY (player_id) REFERENCES player(id)
 );
 
-CREATE INDEX index_player_id ON storage(player_id);
+CREATE INDEX IF NOT EXISTS index_player_id ON storage(player_id);
 
 CREATE TABLE IF NOT EXISTS storage_item (
   id UUID DEFAULT gen_random_uuid() NOT NULL,
@@ -87,4 +87,57 @@ CREATE TABLE IF NOT EXISTS account (
 	password STRING NOT NULL,
   
   PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS shop (  
+  id UUID DEFAULT gen_random_uuid() NOT NULL,
+	created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+	updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+	name STRING NOT NULL,
+  
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS product (
+  id UUID DEFAULT gen_random_uuid() NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+  updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+	name STRING NOT NULL,
+  
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS product_item (
+  id UUID DEFAULT gen_random_uuid() NOT NULL,
+  item_id UUID NOT NULL,
+  product_id UUID NOT NULL,
+	amount INT64 DEFAULT 0 NOT NULL,
+  FOREIGN KEY (item_id) REFERENCES item(id),
+  FOREIGN KEY (product_id) REFERENCES product(id),
+  
+  PRIMARY KEY (id),
+	UNIQUE (item_id, product_id, amount)
+);
+
+CREATE TABLE IF NOT EXISTS product_price (
+  id UUID DEFAULT gen_random_uuid() NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+  updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+  currency_id UUID NOT NULL,
+  product_id UUID NOT NULL,
+  amount INT64 DEFAULT 0 NOT NULL,
+  
+  PRIMARY KEY (id),
+  FOREIGN KEY (currency_id) REFERENCES currency(id),
+  FOREIGN KEY (product_id) REFERENCES product(id),
+  UNIQUE (currency_id, product_id)
+);
+
+CREATE TABLE IF NOT EXISTS shop_product (
+  shop_id UUID NOT NULL,
+  product_id UUID NOT NULL,
+
+  FOREIGN KEY (shop_id) REFERENCES shop(id),
+  FOREIGN KEY (product_id) REFERENCES product(id)
+	UNIQUE (shop_id, product_id)
 );

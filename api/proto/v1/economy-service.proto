@@ -200,14 +200,72 @@ service EconomyService {
 		};
 	}
 
-	// Removes an Item from Storage
-	// rpc DestroyItem(DestroyItemRequest) returns (DestroyItemResponse);
+	// Get a shop
+	rpc GetShop(GetShopRequest) returns (GetShopResponse) {
+		option (google.api.http) = {
+			get: "/v1/shop/{shop_id}"
+		};
+	}
 
-	// Trade Currency for Item
-	// rpc BuyItem(BuyItemRequest) returns (BuyItemResponse);
+	// Create a shop
+	rpc CreateShop(CreateShopRequest) returns (CreateShopResponse) {
+		option (google.api.http) = {
+			post: "/v1/shop"
+			body: "*"
+		};
+	}	
 
-	// Trade Item for Currency
-	// rpc SellItem(SellItemRequest) returns (SellItemResponse);
+	// List all shops
+	rpc ListShop(ListShopRequest) returns (ListShopResponse) {
+		option (google.api.http) = {
+			get: "/v1/shop"
+		};
+	}
+
+	// Create a product
+	rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse) {
+		option (google.api.http) = {
+			post: "/v1/product"
+			body: "*"
+		};
+	}	
+
+	// Get a product
+	rpc GetProduct(GetProductRequest) returns (GetProductResponse) {
+		option (google.api.http) = {
+			get: "/v1/product/{product_id}"
+		};
+	}
+
+	// Attach item to a product
+	rpc AttachItem(AttachItemRequest) returns (AttachItemResponse) {
+		option (google.api.http) = {
+			post: "/v1/product/attach/item"
+			body: "*"
+		};
+	}	
+
+	// Detach item from a product
+	rpc DetachItem(DetachItemRequest) returns (DetachItemResponse) {
+		option (google.api.http) = {
+			delete: "/v1/product/detach/item/{product_item_id}"
+		};
+	}	
+
+		// Attach product to a shop
+		rpc AttachProduct(AttachProductRequest) returns (AttachProductResponse) {
+			option (google.api.http) = {
+				post: "/v1/shop/attach/product"
+				body: "*"
+			};
+		}	
+	
+		// Detach product from a shop
+		rpc DetachProduct(DetachProductRequest) returns (DetachProductResponse) {
+			option (google.api.http) = {
+				delete: "/v1/shop/detach/product/{shop_product_id}"
+			};
+		}	
 }
 
 // Main entities
@@ -261,6 +319,37 @@ message Player {
 message Config {
 	string key = 1;
 	google.protobuf.Value value = 2;
+}
+
+message Shop {
+	string id = 1;
+	google.protobuf.Timestamp created_at = 2;
+	google.protobuf.Timestamp updated_at = 3;
+	string name = 4;
+	repeated Product products = 5;
+	google.protobuf.Value metadata = 6;
+}
+
+message Product {
+	string id = 1;
+	google.protobuf.Timestamp created_at = 2;
+	google.protobuf.Timestamp updated_at = 3;
+	string name = 4;
+	repeated ProductItem items = 5;
+	repeated ProductPrice prices = 6;	
+	google.protobuf.Value metadata = 7;
+}
+
+message ProductItem {
+	string id = 1;
+	Item item = 2;
+	int64 amount = 3;
+}
+
+message ProductPrice {
+	string id = 1;
+	Currency currency = 2;
+	int64 amount = 3;
 }
 
 // CreatePlayer
@@ -575,4 +664,112 @@ message RegisterRequest{
 message RegisterResponse{
 	string api = 1;
 	string token = 2;
+}
+
+// GetShop
+message GetShopRequest{
+	string api = 1;
+	string shop_id = 2;
+}
+
+message GetShopResponse{
+	string api = 1;
+	Shop shop = 2;
+}
+
+// CreateShop
+message CreateShopRequest{
+	string api = 1;
+	string name = 2;
+	// google.protobuf.Struct metadata = 3;
+}
+
+message CreateShopResponse{
+	string api = 1;
+	Shop shop = 2;
+}
+
+// ListShop
+message ListShopRequest{
+	string api = 1;
+	int32 page_size = 2;
+	string page_token = 3;
+}
+
+message ListShopResponse{
+	string api = 1;
+	repeated Shop shops = 2;
+	string next_page_token = 3;
+	int32 total_size = 4;
+}
+
+// CreateProduct
+message CreateProductRequest{
+	string api = 1;
+	string name = 2;
+	// google.protobuf.Struct metadata = 3;
+}
+
+message CreateProductResponse{
+	string api = 1;
+	Product product = 2;
+}
+
+// GetProcuct
+message GetProductRequest{
+	string api = 1;
+	string product_id = 2;
+}
+
+message GetProductResponse{
+	string api = 1;
+	Product product = 2;
+}
+
+// AttachItem 
+message AttachItemRequest{
+	string api = 1;
+	string product_id = 2;
+	string item_id = 3;
+	int64 amount = 4;
+	// google.protobuf.Struct metadata = 3;
+}
+
+message AttachItemResponse{
+	string api = 1;
+	Product product = 2;
+}
+
+// DetachItem 
+message DetachItemRequest{
+	string api = 1;
+	string product_item_id = 2;
+}
+
+message DetachItemResponse{
+	string api = 1;
+	Product product = 2;
+}
+
+// AttachProduct
+message AttachProductRequest{
+	string api = 1;
+	string shop_id = 2;
+	string product_id = 3;
+}
+
+message AttachProductResponse{
+	string api = 1;
+	Shop shop = 2;
+}
+
+// DetachProduct
+message DetachProductRequest{
+	string api = 1;
+	string shop_product_id = 2;
+}
+
+message DetachProductResponse{
+	string api = 1;
+	Shop shop = 2;
 }

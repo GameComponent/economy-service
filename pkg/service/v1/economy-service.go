@@ -15,6 +15,8 @@ import (
 	currencyrepository "github.com/GameComponent/economy-service/pkg/repository/currency"
 	itemrepository "github.com/GameComponent/economy-service/pkg/repository/item"
 	playerrepository "github.com/GameComponent/economy-service/pkg/repository/player"
+	productrepository "github.com/GameComponent/economy-service/pkg/repository/product"
+	shoprepository "github.com/GameComponent/economy-service/pkg/repository/shop"
 	storagerepository "github.com/GameComponent/economy-service/pkg/repository/storage"
 )
 
@@ -31,6 +33,8 @@ type economyServiceServer struct {
 	storageRepository  *storagerepository.StorageRepository
 	configRepository   *configrepository.ConfigRepository
 	accountRepository  *accountrepository.AccountRepository
+	shopRepository     *shoprepository.ShopRepository
+	productRepository  *productrepository.ProductRepository
 }
 
 // NewEconomyServiceServer creates economy service
@@ -42,6 +46,8 @@ func NewEconomyServiceServer(
 	storageRepository *storagerepository.StorageRepository,
 	configRepository *configrepository.ConfigRepository,
 	accountRepository *accountrepository.AccountRepository,
+	shopRepository *shoprepository.ShopRepository,
+	productRepository *productrepository.ProductRepository,
 ) v1.EconomyServiceServer {
 	return &economyServiceServer{
 		db,
@@ -51,6 +57,8 @@ func NewEconomyServiceServer(
 		storageRepository,
 		configRepository,
 		accountRepository,
+		shopRepository,
+		productRepository,
 	}
 }
 

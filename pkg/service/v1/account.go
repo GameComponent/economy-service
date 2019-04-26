@@ -48,7 +48,8 @@ func (s *economyServiceServer) Authenticate(ctx context.Context, req *v1.Authent
 		return nil, fmt.Errorf("Invalid account credentials2")
 	}
 
-	expirationTime := time.Now().Add(2 * time.Hour)
+	// TODO: Configurable expiration
+	expirationTime := time.Now().Add(2000 * time.Hour)
 	claims := &Claims{
 		Subject: account.ID,
 		Email:   account.Email,
@@ -81,19 +82,24 @@ func (s *economyServiceServer) Register(ctx context.Context, req *v1.RegisterReq
 		return nil, err
 	}
 
+	// TODO: Sanity check on email
+
 	// Hash the password
 	hash, err := hashPassword(req.GetPassword())
 	if err != nil {
 		return nil, err
 	}
 
-	// Check if the user entered to correct credentials
+	// TODO: Check if user with same email exists
+
+	// Create the user
 	account := s.accountRepository.Create(ctx, req.GetEmail(), hash)
 	if account == nil {
 		return nil, fmt.Errorf("Unable to create account")
 	}
 
-	expirationTime := time.Now().Add(2 * time.Hour)
+	// TODO: Configurable expiration
+	expirationTime := time.Now().Add(2000 * time.Hour)
 	claims := &Claims{
 		Subject: account.ID,
 		Email:   account.Email,
