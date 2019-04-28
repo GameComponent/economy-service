@@ -143,8 +143,8 @@ func (r *ProductRepository) Get(ctx context.Context, productID string) (*v1.Prod
 				product_item.id as productItemId,
 				product_item.amount as productItemAmount
 			FROM product
-			LEFT JOIN product_item ON (product_id = product_item.product_id)
-			LEFT JOIN item ON (product_item.item_id = item.id)
+			LEFT JOIN product_item ON (product_item.product_id = product.id)
+			LEFT JOIN item ON (item.id = product_item.item_id)
 			WHERE product.id = $1
 		`,
 		productID,
