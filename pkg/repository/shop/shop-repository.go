@@ -24,27 +24,137 @@ func NewShopRepository(db *sql.DB) *ShopRepository {
 
 // Get a shop
 func (r *ShopRepository) Get(ctx context.Context, shopID string) (*v1.Shop, error) {
-	shop := &v1.Shop{}
-	createdAt := time.Time{}
-	updatedAt := time.Time{}
-
-	err := r.db.QueryRowContext(
+	rows, err := r.db.QueryContext(
 		ctx,
-		`SELECT id, name, created_at, updated_at FROM shop WHERE id = $1`,
+		`
+			SELECT
+				shop.id as shopId,
+				shop.name as shopName,
+				shop.created_at as shopCreatedAt,
+				shop.updated_at as shopUpdatedAt,
+				product.id as productId,
+				product.name as productName,
+				product.created_at as productCreatedAt,
+				product.updated_at as productUpdatedAt,
+				item.id as itemId,
+				item.name as itemName,
+				item.metadata as itemData,
+				product_item.id as productItemId,
+				product_item.amount as productItemAmount
+			FROM shop
+      LEFT JOIN shop_product ON (shop_product.shop_id = shop.id)
+      LEFT JOIN product ON (product.id = shop_product.product_id)
+      LEFT JOIN product_item ON (product_item.product_id = product.id)
+      LEFT JOIN item ON (product_item.item_id = item.id)
+			WHERE shop.id = $1
+		`,
 		shopID,
-	).Scan(
-		&shop.Id,
-		&shop.Name,
-		&createdAt,
-		&updatedAt,
 	)
+
 	if err != nil {
 		return nil, err
 	}
 
+	type row struct {
+		ShopID            string
+		ShopName          string
+		ShopCreatedAt     time.Time
+		ShopUpdatedAt     time.Time
+		ProductID         string
+		ProductName       string
+		ProductCreatedAt  time.Time
+		ProductUpdatedAt  time.Time
+		ItemID            sql.NullString
+		ItemName          sql.NullString
+		ItemData          sql.NullString
+		ProductItemID     sql.NullString
+		ProductItemAmount sql.NullInt64
+	}
+
+	productItems := map[string]map[string]*v1.ProductItem{}
+	shopProducts := map[string]*v1.Product{}
+
+	var res row
+	for rows.Next() {
+		err = rows.Scan(
+			&res.ShopID,
+			&res.ShopName,
+			&res.ShopCreatedAt,
+			&res.ShopUpdatedAt,
+			&res.ProductID,
+			&res.ProductName,
+			&res.ProductCreatedAt,
+			&res.ProductUpdatedAt,
+			&res.ItemID,
+			&res.ItemName,
+			&res.ItemData,
+			&res.ProductItemID,
+			&res.ProductItemAmount,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		// Create the products
+		if shopProducts[res.ProductID] == nil {
+			product := &v1.Product{
+				Id:   res.ProductID,
+				Name: res.ProductName,
+			}
+
+			product.CreatedAt, _ = ptypes.TimestampProto(res.ProductCreatedAt)
+			product.UpdatedAt, _ = ptypes.TimestampProto(res.ProductUpdatedAt)
+
+			shopProducts[res.ProductID] = product
+		}
+
+		// Extract the Item
+		item := &v1.Item{}
+		if res.ItemID.Valid && res.ItemName.Valid {
+			item.Id = res.ItemID.String
+			item.Name = res.ItemName.String
+		}
+
+		// Extract the ProductItem
+		productItem := &v1.ProductItem{}
+		if res.ProductItemID.Valid {
+			productItem.Id = res.ProductItemID.String
+			productItem.Amount = res.ProductItemAmount.Int64
+			productItem.Item = item
+		}
+
+		// Add object to the productItems if it is set
+		if productItem.Item != nil {
+			if productItems[res.ProductID] == nil {
+				productItems[res.ProductID] = map[string]*v1.ProductItem{}
+			}
+			productItems[res.ProductID][productItem.Id] = productItem
+		}
+	}
+
+	// Convert item map into item slice
+	products := []*v1.Product{}
+	for shopProductKey, shopProductValue := range shopProducts {
+		shopProductItems := []*v1.ProductItem{}
+		for _, productItemValue := range productItems[shopProductKey] {
+			shopProductItems = append(shopProductItems, productItemValue)
+		}
+
+		shopProductValue.Items = shopProductItems
+
+		products = append(products, shopProductValue)
+	}
+
+	shop := &v1.Shop{
+		Id:       res.ShopID,
+		Name:     res.ShopName,
+		Products: products,
+	}
+
 	// Convert created_at to timestamp
-	shop.CreatedAt, _ = ptypes.TimestampProto(createdAt)
-	shop.UpdatedAt, _ = ptypes.TimestampProto(updatedAt)
+	shop.CreatedAt, _ = ptypes.TimestampProto(res.ShopCreatedAt)
+	shop.UpdatedAt, _ = ptypes.TimestampProto(res.ShopUpdatedAt)
 
 	return shop, nil
 }

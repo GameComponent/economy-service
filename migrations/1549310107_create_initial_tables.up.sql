@@ -138,6 +138,6 @@ CREATE TABLE IF NOT EXISTS shop_product (
   product_id UUID NOT NULL,
 
   FOREIGN KEY (shop_id) REFERENCES shop(id),
-  FOREIGN KEY (product_id) REFERENCES product(id)
+  FOREIGN KEY (product_id) REFERENCES product(id),
 	UNIQUE (shop_id, product_id)
 );
