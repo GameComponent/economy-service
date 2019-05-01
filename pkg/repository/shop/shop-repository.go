@@ -252,7 +252,7 @@ func (r *ShopRepository) DetachProduct(ctx context.Context, shopProductID string
 	shopID := ""
 	err := r.db.QueryRowContext(
 		ctx,
-		`DELETE FROM shop_product WHERE id = $1 RETURNING shop_id`,
+		`DELETE FROM shop_product WHERE product_id = $1 RETURNING shop_id`,
 		shopProductID,
 	).Scan(&shopID)
 
