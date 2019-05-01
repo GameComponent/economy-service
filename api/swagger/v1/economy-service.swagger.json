@@ -598,6 +598,48 @@
       }
     },
     "/v1/product": {
+      "get": {
+        "summary": "List all product",
+        "operationId": "ListProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListProductResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "api",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page_token",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      },
       "post": {
         "summary": "Create a product",
         "operationId": "CreateProduct",
@@ -1717,6 +1759,27 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/v1Player"
+          }
+        },
+        "next_page_token": {
+          "type": "string"
+        },
+        "total_size": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "v1ListProductResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "products": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Product"
           }
         },
         "next_page_token": {

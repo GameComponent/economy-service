@@ -230,6 +230,13 @@ service EconomyService {
 		};
 	}	
 
+	// List all product
+	rpc ListProduct(ListProductRequest) returns (ListProductResponse) {
+		option (google.api.http) = {
+			get: "/v1/product"
+		};
+	}
+
 	// Get a product
 	rpc GetProduct(GetProductRequest) returns (GetProductResponse) {
 		option (google.api.http) = {
@@ -252,20 +259,20 @@ service EconomyService {
 		};
 	}	
 
-		// Attach product to a shop
-		rpc AttachProduct(AttachProductRequest) returns (AttachProductResponse) {
-			option (google.api.http) = {
-				post: "/v1/shop/attach/product"
-				body: "*"
-			};
-		}	
-	
-		// Detach product from a shop
-		rpc DetachProduct(DetachProductRequest) returns (DetachProductResponse) {
-			option (google.api.http) = {
-				delete: "/v1/shop/detach/product/{shop_product_id}"
-			};
-		}	
+	// Attach product to a shop
+	rpc AttachProduct(AttachProductRequest) returns (AttachProductResponse) {
+		option (google.api.http) = {
+			post: "/v1/shop/attach/product"
+			body: "*"
+		};
+	}	
+
+	// Detach product from a shop
+	rpc DetachProduct(DetachProductRequest) returns (DetachProductResponse) {
+		option (google.api.http) = {
+			delete: "/v1/shop/detach/product/{shop_product_id}"
+		};
+	}	
 }
 
 // Main entities
@@ -724,6 +731,21 @@ message GetProductRequest{
 message GetProductResponse{
 	string api = 1;
 	Product product = 2;
+}
+
+
+// ListProduct
+message ListProductRequest{
+	string api = 1;
+	int32 page_size = 2;
+	string page_token = 3;
+}
+
+message ListProductResponse{
+	string api = 1;
+	repeated Product products = 2;
+	string next_page_token = 3;
+	int32 total_size = 4;
 }
 
 // AttachItem 
