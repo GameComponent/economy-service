@@ -89,7 +89,7 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 		ItemName              sql.NullString
 		ItemData              sql.NullString
 		StorageCurrencyID     sql.NullString
-		StorageCurrencyAmount int64
+		StorageCurrencyAmount sql.NullInt64
 		CurrencyID            sql.NullString
 		CurrencyName          sql.NullString
 		CurrencyShortName     sql.NullString
@@ -150,7 +150,7 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 		storageCurrency := &v1.StorageCurrency{}
 		if res.StorageCurrencyID.Valid {
 			storageCurrency.Id = res.StorageCurrencyID.String
-			storageCurrency.Amount = res.StorageCurrencyAmount
+			storageCurrency.Amount = res.StorageCurrencyAmount.Int64
 			storageCurrency.Currency = currency
 		}
 
