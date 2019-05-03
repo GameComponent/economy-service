@@ -359,3 +359,64 @@ func TestGet2Items(t *testing.T) {
 		t.Errorf("itemb.GetName() does not match")
 	}
 }
+func TestGetNoProductShouldReturnShop(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+
+	columns := sqlmock.NewRows([]string{
+		"shop.id",
+		"shop.name",
+		"shop.created_at",
+		"shop.updated_at",
+		"product.id",
+		"product.name",
+		"product.created_at",
+		"product.updated_at",
+		"item.id",
+		"item.name",
+		"item.metadata",
+		"product_item.id",
+		"product_item.amount",
+	}).AddRow(
+		"shop.id",
+		"shop.name",
+		time.Now(),
+		time.Now(),
+		nil,
+		nil,
+		nil,
+		nil,
+		nil,
+		nil,
+		nil,
+		nil,
+		nil,
+	)
+	mock.ExpectQuery("SELECT (.+)").WillReturnRows(columns)
+
+	shopRepository := shoprepository.NewShopRepository(db)
+	result, err := shopRepository.Get(context.Background(), "shop.id")
+	if err != nil {
+		t.Error(err)
+	}
+
+	if result == nil {
+		t.Errorf("Result is nil")
+	}
+
+	if result.GetId() != "shop.id" {
+		t.Errorf("result.GetId() does not match")
+	}
+
+	if result.GetName() != "shop.name" {
+		t.Errorf("result.GetName() does not match")
+	}
+
+	products := result.GetProducts()
+	if len(products) != 0 {
+		t.Errorf("result.GetProducts() should return 0 products")
+	}
+}

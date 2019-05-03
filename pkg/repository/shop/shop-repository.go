@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/lib/pq"
+
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
 	"github.com/golang/protobuf/ptypes"
 )
@@ -60,10 +62,10 @@ func (r *ShopRepository) Get(ctx context.Context, shopID string) (*v1.Shop, erro
 		ShopName          string
 		ShopCreatedAt     time.Time
 		ShopUpdatedAt     time.Time
-		ProductID         string
-		ProductName       string
-		ProductCreatedAt  time.Time
-		ProductUpdatedAt  time.Time
+		ProductID         sql.NullString
+		ProductName       sql.NullString
+		ProductCreatedAt  pq.NullTime
+		ProductUpdatedAt  pq.NullTime
 		ItemID            sql.NullString
 		ItemName          sql.NullString
 		ItemData          sql.NullString
@@ -97,16 +99,16 @@ func (r *ShopRepository) Get(ctx context.Context, shopID string) (*v1.Shop, erro
 		}
 
 		// Create the products
-		if shopProducts[res.ProductID] == nil {
+		if res.ProductID.Valid && shopProducts[res.ProductID.String] == nil {
 			product := &v1.Product{
-				Id:   res.ProductID,
-				Name: res.ProductName,
+				Id:   res.ProductID.String,
+				Name: res.ProductName.String,
 			}
 
-			product.CreatedAt, _ = ptypes.TimestampProto(res.ProductCreatedAt)
-			product.UpdatedAt, _ = ptypes.TimestampProto(res.ProductUpdatedAt)
+			product.CreatedAt, _ = ptypes.TimestampProto(res.ProductCreatedAt.Time)
+			product.UpdatedAt, _ = ptypes.TimestampProto(res.ProductUpdatedAt.Time)
 
-			shopProducts[res.ProductID] = product
+			shopProducts[res.ProductID.String] = product
 		}
 
 		// Extract the Item
@@ -125,11 +127,11 @@ func (r *ShopRepository) Get(ctx context.Context, shopID string) (*v1.Shop, erro
 		}
 
 		// Add object to the productItems if it is set
-		if productItem.Item != nil {
-			if productItems[res.ProductID] == nil {
-				productItems[res.ProductID] = map[string]*v1.ProductItem{}
+		if res.ProductItemID.Valid && res.ItemID.Valid {
+			if productItems[res.ProductID.String] == nil {
+				productItems[res.ProductID.String] = map[string]*v1.ProductItem{}
 			}
-			productItems[res.ProductID][productItem.Id] = productItem
+			productItems[res.ProductID.String][productItem.Id] = productItem
 		}
 	}
 
@@ -261,7 +263,7 @@ func (r *ShopRepository) DetachProduct(ctx context.Context, shopProductID string
 	}
 
 	if shopID == "" {
-		return nil, fmt.Errorf("unable to retrieve the old product_id")
+		return nil, fmt.Errorf("unable to retrieve the old shop_id")
 	}
 
 	return r.Get(ctx, shopID)
