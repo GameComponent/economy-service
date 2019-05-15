@@ -22,7 +22,61 @@ func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemReq
 		return nil, err
 	}
 
-	storageItemID, err := s.storageRepository.GiveItem(ctx, req.GetStorageId(), req.GetItemId())
+	fmt.Println("item", item)
+
+	if item.Stackable && item.StackBalancingMethod == v1.Item_UNBALANCED_FILL_EXISTING_STACKS {
+		return nil, fmt.Errorf("unimplemented")
+	}
+
+	if item.Stackable &&
+		item.StackBalancingMethod != v1.Item_DEFAULT &&
+		item.StackBalancingMethod != v1.Item_UNBALANCED_CREATE_NEW_STACKS {
+		storage, err := s.storageRepository.Get(ctx, req.GetStorageId())
+		if err != nil {
+			return nil, err
+		}
+
+		existingStorageItems := []*v1.StorageItem{}
+		for _, storageItem := range storage.Items {
+			if storageItem.Item.Id != req.GetItemId() {
+				continue
+			}
+
+			if storageItem.Item.StackMaxCount > 0 && storageItem.Amount >= storageItem.Item.StackMaxCount {
+				continue
+			}
+
+			existingStorageItems = append(existingStorageItems, storageItem)
+		}
+
+		if len(existingStorageItems) > 0 {
+			storageItem := existingStorageItems[0]
+
+			err := s.storageRepository.IncreaseItemAmount(
+				ctx,
+				storageItem.Id,
+				req.GetAmount(),
+			)
+			if err != nil {
+				return nil, err
+			}
+
+			return &v1.GiveItemResponse{
+				Api:       apiVersion,
+				StorageId: req.GetStorageId(),
+				Item:      storageItem,
+			}, nil
+		}
+	}
+
+	// For new stacks and full stack for unstackable items
+	// and DEFAULT & UNBALANCED_CREATE_NEW_STACKS stack balancing methods
+	storageItemID, err := s.storageRepository.GiveItem(
+		ctx,
+		req.GetStorageId(),
+		req.GetItemId(),
+		req.GetAmount(),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +84,6 @@ func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemReq
 	storageItem := &v1.StorageItem{
 		Id:   *storageItemID,
 		Item: item,
-		// Metadata: metadata,
 	}
 
 	return &v1.GiveItemResponse{

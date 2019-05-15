@@ -1174,6 +1174,17 @@
     }
   },
   "definitions": {
+    "ItemStackBalancingMethod": {
+      "type": "string",
+      "enum": [
+        "DEFAULT",
+        "UNBALANCED_CREATE_NEW_STACKS",
+        "BALANCED_FILL_EXISTING_STACKS",
+        "UNBALANCED_FILL_EXISTING_STACKS"
+      ],
+      "default": "DEFAULT",
+      "description": " - DEFAULT: Same as the UNBALANCED_CREATE_NEW_STACKS method\n - UNBALANCED_CREATE_NEW_STACKS: Multiple stacks exists and can have varying amounts of items in them.\nWhenever new items are added to the stack it will create new stacks\n - BALANCED_FILL_EXISTING_STACKS: There can be only 1 stack that's not the stack_max_count,\nif there are 2 stack's with less than the stack_max_count\none stack will be reduced till the other fill up till the stack_max_count.\nWhenever new items are added to the stack it will try to fill up existing stacks till the stack_max_count.\n - UNBALANCED_FILL_EXISTING_STACKS: Multiple stacks exists and can have varying amounts of items in them.\nWhenever new items are added to the stack it will try to fill up existing stacks till the stack_max_count."
+    },
     "protobufListValue": {
       "type": "object",
       "properties": {
@@ -1370,6 +1381,10 @@
         },
         "name": {
           "type": "string"
+        },
+        "stackable": {
+          "type": "boolean",
+          "format": "boolean"
         }
       },
       "title": "CreateItem"
@@ -1648,6 +1663,10 @@
         },
         "item_id": {
           "type": "string"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
         }
       },
       "title": "GiveItem"
@@ -1682,6 +1701,17 @@
         },
         "name": {
           "type": "string"
+        },
+        "stackable": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "stack_max_count": {
+          "type": "string",
+          "format": "int64"
+        },
+        "stack_balancing_method": {
+          "$ref": "#/definitions/ItemStackBalancingMethod"
         }
       },
       "title": "Main entities"
@@ -1905,8 +1935,43 @@
         "id": {
           "type": "string"
         },
+        "currencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1ProductPriceCurrency"
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1ProductPriceItem"
+          }
+        }
+      }
+    },
+    "v1ProductPriceCurrency": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
         "currency": {
           "$ref": "#/definitions/v1Currency"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v1ProductPriceItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "item": {
+          "$ref": "#/definitions/v1Item"
         },
         "amount": {
           "type": "string",
@@ -2139,6 +2204,10 @@
         },
         "item": {
           "$ref": "#/definitions/v1Item"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
         }
       }
     },

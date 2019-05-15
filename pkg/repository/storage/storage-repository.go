@@ -55,9 +55,13 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
       storage.metadata as storageData,
       storage.player_id as playerId,
       storage_item.id as storageItemId,
+      storage_item.amount as storageItemAmount,
 			storage_item.metadata as storageItemData,
       item.id as itemId,
-      item.name as itemName,
+			item.name as itemName,
+			item.stackable as itemStackable,
+			item.stack_max_count as itemStackMaxCount,
+			item.stack_balancing_method as itemStackBalancingMethod,
 			item.metadata as itemData,
 			storage_currency.id as storageCurrencyId,
 			storage_currency.amount as storageCurrencyAmount,
@@ -79,21 +83,25 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 	}
 
 	type row struct {
-		StorageID             string
-		StorageName           string
-		StorageData           string
-		PlayerID              string
-		StorageItemID         sql.NullString
-		StorageItemItemData   sql.NullString
-		ItemID                sql.NullString
-		ItemName              sql.NullString
-		ItemData              sql.NullString
-		StorageCurrencyID     sql.NullString
-		StorageCurrencyAmount sql.NullInt64
-		CurrencyID            sql.NullString
-		CurrencyName          sql.NullString
-		CurrencyShortName     sql.NullString
-		CurrencySymbol        sql.NullString
+		StorageID                string
+		StorageName              string
+		StorageData              string
+		PlayerID                 string
+		StorageItemID            sql.NullString
+		StorageItemAmount        sql.NullInt64
+		StorageItemItemData      sql.NullString
+		ItemID                   sql.NullString
+		ItemName                 sql.NullString
+		ItemStackable            sql.NullBool
+		ItemStackMaxCount        sql.NullInt64
+		ItemStackBalancingMethod sql.NullInt64
+		ItemData                 sql.NullString
+		StorageCurrencyID        sql.NullString
+		StorageCurrencyAmount    sql.NullInt64
+		CurrencyID               sql.NullString
+		CurrencyName             sql.NullString
+		CurrencyShortName        sql.NullString
+		CurrencySymbol           sql.NullString
 	}
 
 	storageItems := map[string]*v1.StorageItem{}
@@ -107,9 +115,13 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 			&res.StorageData,
 			&res.PlayerID,
 			&res.StorageItemID,
+			&res.StorageItemAmount,
 			&res.StorageItemItemData,
 			&res.ItemID,
 			&res.ItemName,
+			&res.ItemStackable,
+			&res.ItemStackMaxCount,
+			&res.ItemStackBalancingMethod,
 			&res.ItemData,
 			&res.StorageCurrencyID,
 			&res.StorageCurrencyAmount,
@@ -128,6 +140,9 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 		if res.ItemID.Valid && res.ItemName.Valid {
 			item.Id = res.ItemID.String
 			item.Name = res.ItemName.String
+			item.Stackable = res.ItemStackable.Bool
+			item.StackMaxCount = res.ItemStackMaxCount.Int64
+			item.StackBalancingMethod = v1.Item_StackBalancingMethod(res.ItemStackBalancingMethod.Int64)
 		}
 
 		// Extract the StorageItem
@@ -135,6 +150,11 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 		if res.StorageItemID.Valid {
 			storageItem.Id = res.StorageItemID.String
 			storageItem.Item = item
+
+			// Only show the amount if the item is stackable
+			if res.ItemStackable.Bool {
+				storageItem.Amount = res.StorageItemAmount.Int64
+			}
 		}
 
 		// Extract the Currency
@@ -189,14 +209,15 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 }
 
 // GiveItem to a storage
-func (r *StorageRepository) GiveItem(ctx context.Context, storageID string, itemID string) (*string, error) {
+func (r *StorageRepository) GiveItem(ctx context.Context, storageID string, itemID string, amount int64) (*string, error) {
 	// Add item to the databased return the generated UUID
 	lastInsertUUID := ""
 	err := r.db.QueryRowContext(
 		ctx,
-		`INSERT INTO storage_item(item_id, storage_id) VALUES ($1, $2) RETURNING id`,
+		`INSERT INTO storage_item(item_id, storage_id, amount) VALUES ($1, $2, $3) RETURNING id`,
 		itemID,
 		storageID,
+		amount,
 	).Scan(&lastInsertUUID)
 
 	if err != nil {
@@ -204,6 +225,22 @@ func (r *StorageRepository) GiveItem(ctx context.Context, storageID string, item
 	}
 
 	return &lastInsertUUID, nil
+}
+
+// IncreaseItemAmount to a storage
+func (r *StorageRepository) IncreaseItemAmount(ctx context.Context, storageItemID string, amount int64) error {
+	_, err := r.db.ExecContext(
+		ctx,
+		`UPDATE storage_item SET amount = amount + $1 WHERE id = $2`,
+		amount,
+		storageItemID,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // GiveCurrency to a storage

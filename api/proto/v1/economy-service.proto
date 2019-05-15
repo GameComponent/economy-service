@@ -281,6 +281,29 @@ message Item {
 	google.protobuf.Timestamp created_at = 2;
 	google.protobuf.Timestamp updated_at = 3;
 	string name = 4;
+	bool stackable = 5;
+	int64 stack_max_count = 6;
+
+	enum StackBalancingMethod {
+		// Same as the UNBALANCED_CREATE_NEW_STACKS method 
+		DEFAULT = 0;
+
+		// Multiple stacks exists and can have varying amounts of items in them.
+		// Whenever new items are added to the stack it will create new stacks
+		UNBALANCED_CREATE_NEW_STACKS = 1;
+
+		// There can be only 1 stack that's not the stack_max_count,
+		// if there are 2 stack's with less than the stack_max_count
+		// one stack will be reduced till the other fill up till the stack_max_count.
+		// Whenever new items are added to the stack it will try to fill up existing stacks till the stack_max_count.
+		BALANCED_FILL_EXISTING_STACKS = 2;
+		
+		// Multiple stacks exists and can have varying amounts of items in them.
+		// Whenever new items are added to the stack it will try to fill up existing stacks till the stack_max_count.
+    UNBALANCED_FILL_EXISTING_STACKS = 3;
+	}
+	
+	StackBalancingMethod stack_balancing_method = 7;
 }
 
 message StorageItem {
@@ -288,6 +311,7 @@ message StorageItem {
 	google.protobuf.Timestamp created_at = 2;
 	google.protobuf.Timestamp updated_at = 3;
 	Item item = 4;
+	int64 amount = 5;
 	//google.protobuf.Struct metadata = 3;
 }
 
@@ -355,7 +379,19 @@ message ProductItem {
 
 message ProductPrice {
 	string id = 1;
+	repeated ProductPriceCurrency currencies = 2;
+	repeated ProductPriceItem items = 3;
+}
+
+message ProductPriceCurrency {
+	string id = 1;
 	Currency currency = 2;
+	int64 amount = 3;
+}
+
+message ProductPriceItem {
+	string id = 1;
+	Item item = 2;
 	int64 amount = 3;
 }
 
@@ -376,6 +412,7 @@ message GiveItemRequest{
 	string api = 1;
 	string storage_id = 2;
 	string item_id = 3;
+	int64 amount = 4;
 	// google.protobuf.Struct metadata = 4;
 }
 
@@ -499,6 +536,7 @@ message SearchPlayerResponse{
 message CreateItemRequest{
 	string api = 1;
 	string name = 2;
+	bool stackable = 3;
 	// google.protobuf.Struct metadata = 3;
 }
 

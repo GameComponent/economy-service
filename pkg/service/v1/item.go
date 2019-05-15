@@ -17,7 +17,11 @@ func (s *economyServiceServer) CreateItem(ctx context.Context, req *v1.CreateIte
 	}
 
 	// Add item to the databased return the generated UUID
-	item, err := s.itemRepository.Create(ctx, req.GetName())
+	item, err := s.itemRepository.Create(
+		ctx,
+		req.GetName(),
+		req.GetStackable(),
+	)
 	if err != nil {
 		return nil, err
 	}

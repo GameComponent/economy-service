@@ -23,12 +23,13 @@ func NewItemRepository(db *sql.DB) *ItemRepository {
 }
 
 // Create a new item
-func (r *ItemRepository) Create(ctx context.Context, name string) (*v1.Item, error) {
+func (r *ItemRepository) Create(ctx context.Context, name string, stackable bool) (*v1.Item, error) {
 	lastInsertUUID := ""
 	err := r.db.QueryRowContext(
 		ctx,
-		`INSERT INTO item(name) VALUES ($1) RETURNING id`,
+		`INSERT INTO item(name, stackable) VALUES ($1, $2) RETURNING id`,
 		name,
+		stackable,
 	).Scan(&lastInsertUUID)
 
 	if err != nil {
@@ -135,11 +136,25 @@ func (r *ItemRepository) Get(ctx context.Context, itemID string) (*v1.Item, erro
 
 	err := r.db.QueryRowContext(
 		ctx,
-		`SELECT id, name, created_at, updated_at FROM item WHERE id = $1`,
+		`
+			SELECT
+				id,
+				name,
+				stackable,
+				stack_max_count,
+				stack_balancing_method,
+				created_at,
+				updated_at
+			FROM item
+			WHERE id = $1
+		`,
 		itemID,
 	).Scan(
 		&item.Id,
 		&item.Name,
+		&item.Stackable,
+		&item.StackMaxCount,
+		&item.StackBalancingMethod,
 		&createdAt,
 		&updatedAt,
 	)

@@ -3,7 +3,10 @@ CREATE TABLE IF NOT EXISTS item (
 	created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
 	updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
   name STRING DEFAULT '' NOT NULL,
-  metadata JSONB DEFAULT '{}' NOT null,
+  metadata JSONB DEFAULT '{}' NOT NULL,
+	stackable BOOLEAN DEFAULT FALSE NOT NULL,
+	stack_max_count INT64 DEFAULT 0 NOT NULL,
+  stack_balancing_method INT64 DEFAULT 0 NOT NULL,
   
   PRIMARY KEY (id)
 );
@@ -52,6 +55,7 @@ CREATE TABLE IF NOT EXISTS storage_item (
   item_id UUID NOT NULL,
   storage_id UUID NOT NULL,
   metadata JSONB DEFAULT '{}' NOT null,
+	amount INT64 DEFAULT 1 NOT NULL,
   
   PRIMARY KEY (id),
   FOREIGN KEY (item_id) REFERENCES item(id),
