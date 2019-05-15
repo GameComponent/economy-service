@@ -69,6 +69,21 @@ func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemReq
 		}
 	}
 
+	// Create multiple unstackable items
+	if item.Stackable == false && req.GetAmount() > 1 {
+		for i := 1; i < int(req.GetAmount()); i++ {
+			_, err := s.storageRepository.GiveItem(
+				ctx,
+				req.GetStorageId(),
+				req.GetItemId(),
+				req.GetAmount(),
+			)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
 	// For new stacks and full stack for unstackable items
 	// and DEFAULT & UNBALANCED_CREATE_NEW_STACKS stack balancing methods
 	storageItemID, err := s.storageRepository.GiveItem(
