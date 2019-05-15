@@ -93,14 +93,10 @@ func migrateDatabase(connectString string) (bool, error) {
 	}
 	defer db.Close()
 
-	fmt.Println("1")
-
 	driver, err := cockroachdb.WithInstance(db, &cockroachdb.Config{})
 	if err != nil {
 		return false, err
 	}
-
-	fmt.Println("2")
 
 	m, err := migrate.NewWithDatabaseInstance(
 		"file://../../migrations/",
@@ -110,15 +106,6 @@ func migrateDatabase(connectString string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-
-	fmt.Println("m")
-	fmt.Println(m)
-
-	fmt.Println("3")
-
-	m.Steps(2)
-
-	fmt.Println("4")
 
 	return true, nil
 }
