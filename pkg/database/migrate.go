@@ -98,7 +98,7 @@ func migrateDatabase(connectString string) (bool, error) {
 		return false, err
 	}
 
-	m, err := migrate.NewWithDatabaseInstance(
+	_, err = migrate.NewWithDatabaseInstance(
 		"file://../../migrations/",
 		"cockroachdb",
 		driver,
