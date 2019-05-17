@@ -1251,6 +1251,20 @@
       },
       "description": "`Value` represents a dynamically typed value which can be either\nnull, a number, a string, a boolean, a recursive struct value, or a\nlist of values. A producer of value is expected to set one of that\nvariants, absence of any variant indicates an error.\n\nThe JSON representation for `Value` is JSON value."
     },
+    "v1Amount": {
+      "type": "object",
+      "properties": {
+        "min_amount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "max_amount": {
+          "type": "string",
+          "format": "int64"
+        }
+      },
+      "title": "If the max_amount is smaller than the min_amount the amount will be the min_amount\nIf the min_amount and max_amount are the same that amount will be given\nIf max_amount is higher than min_amount a random number between min_amount and max_amount will be chosen"
+    },
     "v1AttachItemRequest": {
       "type": "object",
       "properties": {
@@ -1635,8 +1649,7 @@
           "type": "string"
         },
         "amount": {
-          "type": "string",
-          "format": "int64"
+          "$ref": "#/definitions/v1Amount"
         }
       },
       "title": "GiveCurrency"
@@ -1665,8 +1678,7 @@
           "type": "string"
         },
         "amount": {
-          "type": "string",
-          "format": "int64"
+          "$ref": "#/definitions/v1Amount"
         }
       },
       "title": "GiveItem"
@@ -1680,8 +1692,9 @@
         "storage_id": {
           "type": "string"
         },
-        "item": {
-          "$ref": "#/definitions/v1StorageItem"
+        "amount": {
+          "type": "string",
+          "format": "int64"
         }
       }
     },

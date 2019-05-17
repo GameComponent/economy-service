@@ -289,17 +289,17 @@ message Item {
 		DEFAULT = 0;
 
 		// Multiple stacks exists and can have varying amounts of items in them.
-		// Whenever new items are added to the stack it will create new stacks
+		// Whenever new items are added it will create new stacks
 		UNBALANCED_CREATE_NEW_STACKS = 1;
 
 		// There can be only 1 stack that's not the stack_max_count,
 		// if there are 2 stack's with less than the stack_max_count
 		// one stack will be reduced till the other fill up till the stack_max_count.
-		// Whenever new items are added to the stack it will try to fill up existing stacks till the stack_max_count.
+		// Whenever new items are added it will try to fill up existing stacks till the stack_max_count.
 		BALANCED_FILL_EXISTING_STACKS = 2;
 		
 		// Multiple stacks exists and can have varying amounts of items in them.
-		// Whenever new items are added to the stack it will try to fill up existing stacks till the stack_max_count.
+		// Whenever new items are added it will try to fill up existing stacks till the stack_max_count.
     UNBALANCED_FILL_EXISTING_STACKS = 3;
 	}
 	
@@ -313,6 +313,14 @@ message StorageItem {
 	Item item = 4;
 	int64 amount = 5;
 	//google.protobuf.Struct metadata = 3;
+}
+
+// If the max_amount is smaller than the min_amount the amount will be the min_amount
+// If the min_amount and max_amount are the same that amount will be given
+// If max_amount is higher than min_amount a random number between min_amount and max_amount will be chosen
+message Amount {
+	int64 min_amount = 1;
+	int64 max_amount = 2;
 }
 
 message Currency {
@@ -412,14 +420,15 @@ message GiveItemRequest{
 	string api = 1;
 	string storage_id = 2;
 	string item_id = 3;
-	int64 amount = 4;
+	Amount amount = 4;
 	// google.protobuf.Struct metadata = 4;
 }
 
 message GiveItemResponse{
 	string api = 1;
 	string storage_id = 2;
-	StorageItem item = 3;
+	int64 amount = 3;
+	// StorageItem item = 3;
 }
 
 // DestroyItem
@@ -617,7 +626,7 @@ message GiveCurrencyRequest{
 	string api = 1;
 	string storage_id = 2;
 	string currency_id = 3;
-	int64 amount = 4;
+	Amount amount = 4;
 }
 
 message GiveCurrencyResponse{
