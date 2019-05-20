@@ -1,3 +1,4 @@
+.vscode
 /pkg/api
 /cmd
 !/cmd/server/main.go
