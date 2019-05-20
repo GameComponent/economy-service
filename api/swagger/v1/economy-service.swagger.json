@@ -1174,17 +1174,6 @@
     }
   },
   "definitions": {
-    "ItemStackBalancingMethod": {
-      "type": "string",
-      "enum": [
-        "DEFAULT",
-        "UNBALANCED_CREATE_NEW_STACKS",
-        "BALANCED_FILL_EXISTING_STACKS",
-        "UNBALANCED_FILL_EXISTING_STACKS"
-      ],
-      "default": "DEFAULT",
-      "description": " - DEFAULT: Same as the UNBALANCED_CREATE_NEW_STACKS method\n - UNBALANCED_CREATE_NEW_STACKS: Multiple stacks exists and can have varying amounts of items in them.\nWhenever new items are added to the stack it will create new stacks\n - BALANCED_FILL_EXISTING_STACKS: There can be only 1 stack that's not the stack_max_count,\nif there are 2 stack's with less than the stack_max_count\none stack will be reduced till the other fill up till the stack_max_count.\nWhenever new items are added to the stack it will try to fill up existing stacks till the stack_max_count.\n - UNBALANCED_FILL_EXISTING_STACKS: Multiple stacks exists and can have varying amounts of items in them.\nWhenever new items are added to the stack it will try to fill up existing stacks till the stack_max_count."
-    },
     "protobufListValue": {
       "type": "object",
       "properties": {
@@ -1399,6 +1388,13 @@
         "stackable": {
           "type": "boolean",
           "format": "boolean"
+        },
+        "stack_max_amount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "stack_balancing_method": {
+          "$ref": "#/definitions/v1StackBalancingMethod"
         }
       },
       "title": "CreateItem"
@@ -1719,15 +1715,14 @@
           "type": "boolean",
           "format": "boolean"
         },
-        "stack_max_count": {
+        "stack_max_amount": {
           "type": "string",
           "format": "int64"
         },
         "stack_balancing_method": {
-          "$ref": "#/definitions/ItemStackBalancingMethod"
+          "$ref": "#/definitions/v1StackBalancingMethod"
         }
-      },
-      "title": "Main entities"
+      }
     },
     "v1ListConfigResponse": {
       "type": "object",
@@ -2151,6 +2146,18 @@
           "$ref": "#/definitions/protobufValue"
         }
       }
+    },
+    "v1StackBalancingMethod": {
+      "type": "string",
+      "enum": [
+        "DEFAULT",
+        "UNBALANCED_CREATE_NEW_STACKS",
+        "BALANCED_FILL_EXISTING_STACKS",
+        "UNBALANCED_FILL_EXISTING_STACKS"
+      ],
+      "default": "DEFAULT",
+      "description": "- DEFAULT: Same as the UNBALANCED_CREATE_NEW_STACKS method\n - UNBALANCED_CREATE_NEW_STACKS: Multiple stacks exists and can have varying amounts of items in them.\nWhenever new items are added it will create new stacks\n - BALANCED_FILL_EXISTING_STACKS: There can be only 1 stack that's not the stack_max_amountj,\nif there are 2 stack's with less than the stack_max_amount\none stack will be reduced till the other fill up till the stack_max_amount.\nWhenever new items are added it will try to fill up existing stacks till the stack_max_amount.\n - UNBALANCED_FILL_EXISTING_STACKS: Multiple stacks exists and can have varying amounts of items in them.\nWhenever new items are added it will try to fill up existing stacks till the stack_max_amount.",
+      "title": "Main entities"
     },
     "v1Storage": {
       "type": "object",

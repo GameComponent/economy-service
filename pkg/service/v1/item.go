@@ -21,6 +21,8 @@ func (s *economyServiceServer) CreateItem(ctx context.Context, req *v1.CreateIte
 		ctx,
 		req.GetName(),
 		req.GetStackable(),
+		req.GetStackMaxAmount(),
+		int64(req.GetStackBalancingMethod()),
 	)
 	if err != nil {
 		return nil, err

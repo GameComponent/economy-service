@@ -5,9 +5,9 @@ CREATE TABLE IF NOT EXISTS item (
   name STRING DEFAULT '' NOT NULL,
   metadata JSONB DEFAULT '{}' NOT NULL,
 	stackable BOOLEAN DEFAULT FALSE NOT NULL,
-	stack_max_count INT64 DEFAULT 0 NOT NULL,
+	stack_max_amount INT64 DEFAULT 0 NOT NULL,
   stack_balancing_method INT64 DEFAULT 0 NOT NULL,
-  
+
   PRIMARY KEY (id)
 );
 

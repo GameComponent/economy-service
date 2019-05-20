@@ -192,21 +192,25 @@ func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemReq
 	if item.Stackable == true && remainder > 0 {
 		resultAmounts := []int64{}
 
-		if item.StackMaxCount == 0 {
+		if item.StackMaxAmount == 0 {
 			resultAmounts = append(resultAmounts, remainder)
 		}
 
-		if item.StackMaxCount > 0 {
-			fullStacksToCreate := math.Floor(float64(remainder) / float64(item.StackMaxCount))
+		if item.StackMaxAmount > 0 {
+			fullStacksToCreate := math.Floor(float64(remainder) / float64(item.StackMaxAmount))
 
 			for i := 0; i < int(fullStacksToCreate); i++ {
-				resultAmounts = append(resultAmounts, item.StackMaxCount)
+				resultAmounts = append(resultAmounts, item.StackMaxAmount)
 			}
 
-			resultAmounts = append(resultAmounts, remainder%item.StackMaxCount)
+			resultAmounts = append(resultAmounts, remainder%item.StackMaxAmount)
 		}
 
 		for _, resultAmount := range resultAmounts {
+			if resultAmount == 0 {
+				continue
+			}
+
 			_, err := s.storageRepository.GiveItem(
 				ctx,
 				req.GetStorageId(),
@@ -246,7 +250,7 @@ func (s *economyServiceServer) GetExistingStorageItems(ctx context.Context, stor
 			continue
 		}
 
-		if storageItem.Item.StackMaxCount > 0 && storageItem.Amount >= storageItem.Item.StackMaxCount {
+		if storageItem.Item.StackMaxAmount > 0 && storageItem.Amount >= storageItem.Item.StackMaxAmount {
 			continue
 		}
 
@@ -262,7 +266,7 @@ func (s *economyServiceServer) GiveToExistingStorageItems(ctx context.Context, s
 	}
 
 	// Checks if item is stackable and new items should be added to existing stacks
-	if item.StackBalancingMethod != v1.Item_BALANCED_FILL_EXISTING_STACKS && item.StackBalancingMethod != v1.Item_UNBALANCED_FILL_EXISTING_STACKS {
+	if item.StackBalancingMethod != v1.StackBalancingMethod_BALANCED_FILL_EXISTING_STACKS && item.StackBalancingMethod != v1.StackBalancingMethod_UNBALANCED_FILL_EXISTING_STACKS {
 		return remainder, nil
 	}
 
@@ -283,7 +287,7 @@ func (s *economyServiceServer) GiveToExistingStorageItems(ctx context.Context, s
 
 	// An existing stack already exists,
 	// It does not have a max_amount so lets increase that one instead
-	if item.StackMaxCount == 0 {
+	if item.StackMaxAmount == 0 {
 		storageItem := existingStorageItems[0]
 
 		err := s.storageRepository.IncreaseItemAmount(
@@ -300,10 +304,10 @@ func (s *economyServiceServer) GiveToExistingStorageItems(ctx context.Context, s
 
 	// Because there is a stack_max_amount we should not accidentally overflow it
 	// So we'll first try to spread if over the existing stacks
-	if item.StackMaxCount > 0 {
+	if item.StackMaxAmount > 0 {
 		for _, existingStorageItem := range existingStorageItems {
 			// Calculate the remaining space
-			existingStorageItemRemainder := item.StackMaxCount - existingStorageItem.Amount
+			existingStorageItemRemainder := item.StackMaxAmount - existingStorageItem.Amount
 
 			// Calculate the amount to increase
 			existingStorageItemIncrease := remainder

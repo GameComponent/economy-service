@@ -60,7 +60,7 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
       item.id as itemId,
 			item.name as itemName,
 			item.stackable as itemStackable,
-			item.stack_max_count as itemStackMaxCount,
+			item.stack_max_amount as itemStackMaxAmount,
 			item.stack_balancing_method as itemStackBalancingMethod,
 			item.metadata as itemData,
 			storage_currency.id as storageCurrencyId,
@@ -93,7 +93,7 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 		ItemID                   sql.NullString
 		ItemName                 sql.NullString
 		ItemStackable            sql.NullBool
-		ItemStackMaxCount        sql.NullInt64
+		ItemStackMaxAmount       sql.NullInt64
 		ItemStackBalancingMethod sql.NullInt64
 		ItemData                 sql.NullString
 		StorageCurrencyID        sql.NullString
@@ -120,7 +120,7 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 			&res.ItemID,
 			&res.ItemName,
 			&res.ItemStackable,
-			&res.ItemStackMaxCount,
+			&res.ItemStackMaxAmount,
 			&res.ItemStackBalancingMethod,
 			&res.ItemData,
 			&res.StorageCurrencyID,
@@ -141,8 +141,8 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 			item.Id = res.ItemID.String
 			item.Name = res.ItemName.String
 			item.Stackable = res.ItemStackable.Bool
-			item.StackMaxCount = res.ItemStackMaxCount.Int64
-			item.StackBalancingMethod = v1.Item_StackBalancingMethod(res.ItemStackBalancingMethod.Int64)
+			item.StackMaxAmount = res.ItemStackMaxAmount.Int64
+			item.StackBalancingMethod = v1.StackBalancingMethod(res.ItemStackBalancingMethod.Int64)
 		}
 
 		// Extract the StorageItem

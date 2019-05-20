@@ -276,33 +276,32 @@ service EconomyService {
 }
 
 // Main entities
+enum StackBalancingMethod {
+	// Same as the UNBALANCED_CREATE_NEW_STACKS method 
+	DEFAULT = 0;
+
+	// Multiple stacks exists and can have varying amounts of items in them.
+	// Whenever new items are added it will create new stacks
+	UNBALANCED_CREATE_NEW_STACKS = 1;
+
+	// There can be only 1 stack that's not the stack_max_amountj,
+	// if there are 2 stack's with less than the stack_max_amount
+	// one stack will be reduced till the other fill up till the stack_max_amount.
+	// Whenever new items are added it will try to fill up existing stacks till the stack_max_amount.
+	BALANCED_FILL_EXISTING_STACKS = 2;
+	
+	// Multiple stacks exists and can have varying amounts of items in them.
+	// Whenever new items are added it will try to fill up existing stacks till the stack_max_amount.
+	UNBALANCED_FILL_EXISTING_STACKS = 3;
+}
+
 message Item {
 	string id = 1;
 	google.protobuf.Timestamp created_at = 2;
 	google.protobuf.Timestamp updated_at = 3;
 	string name = 4;
 	bool stackable = 5;
-	int64 stack_max_count = 6;
-
-	enum StackBalancingMethod {
-		// Same as the UNBALANCED_CREATE_NEW_STACKS method 
-		DEFAULT = 0;
-
-		// Multiple stacks exists and can have varying amounts of items in them.
-		// Whenever new items are added it will create new stacks
-		UNBALANCED_CREATE_NEW_STACKS = 1;
-
-		// There can be only 1 stack that's not the stack_max_count,
-		// if there are 2 stack's with less than the stack_max_count
-		// one stack will be reduced till the other fill up till the stack_max_count.
-		// Whenever new items are added it will try to fill up existing stacks till the stack_max_count.
-		BALANCED_FILL_EXISTING_STACKS = 2;
-		
-		// Multiple stacks exists and can have varying amounts of items in them.
-		// Whenever new items are added it will try to fill up existing stacks till the stack_max_count.
-    UNBALANCED_FILL_EXISTING_STACKS = 3;
-	}
-	
+	int64 stack_max_amount = 6;
 	StackBalancingMethod stack_balancing_method = 7;
 }
 
@@ -546,6 +545,8 @@ message CreateItemRequest{
 	string api = 1;
 	string name = 2;
 	bool stackable = 3;
+	int64 stack_max_amount = 4;
+	StackBalancingMethod stack_balancing_method = 5;
 	// google.protobuf.Struct metadata = 3;
 }
 

@@ -5,8 +5,10 @@ import (
 
 	"database/sql"
 
+	"github.com/golang-migrate/migrate/database/cockroachdb"
 	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/cockroachdb"
+
+	// Needed for the source file driver
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	pq "github.com/lib/pq"
 )
@@ -98,7 +100,7 @@ func migrateDatabase(connectString string) (bool, error) {
 		return false, err
 	}
 
-	_, err = migrate.NewWithDatabaseInstance(
+	instance, err := migrate.NewWithDatabaseInstance(
 		"file://../../migrations/",
 		"cockroachdb",
 		driver,
@@ -106,6 +108,8 @@ func migrateDatabase(connectString string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
+
+	instance.Up()
 
 	return true, nil
 }
