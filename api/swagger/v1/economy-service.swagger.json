@@ -597,6 +597,216 @@
         ]
       }
     },
+    "/v1/price": {
+      "post": {
+        "summary": "Create a price",
+        "operationId": "CreatePrice",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreatePriceResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreatePriceRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
+    "/v1/price/attach/currency": {
+      "post": {
+        "summary": "Attach currency to a Price",
+        "operationId": "AttachPriceCurrency",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AttachPriceCurrencyResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1AttachPriceCurrencyRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
+    "/v1/price/attach/item": {
+      "post": {
+        "summary": "Attach item to a Price",
+        "operationId": "AttachPriceItem",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AttachPriceItemResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1AttachPriceItemRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
+    "/v1/price/detach/currency/{price_currency_id}": {
+      "delete": {
+        "summary": "Detach currency from a Price",
+        "operationId": "DetachPriceCurrency",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DetachPriceCurrencyResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "price_currency_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "api",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
+    "/v1/price/detach/item/{price_item_id}": {
+      "delete": {
+        "summary": "Detach item to a Price",
+        "operationId": "DetachPriceItem",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DetachPriceItemResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "price_item_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "api",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
+    "/v1/price/{price_id}": {
+      "get": {
+        "summary": "Get a Price",
+        "operationId": "GetPrice",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetPriceResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "price_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "api",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
     "/v1/product": {
       "get": {
         "summary": "List all product",
@@ -751,6 +961,43 @@
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/v1GetProductResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "api",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
+    "/v1/product/{product_id}/price": {
+      "get": {
+        "summary": "Create a price",
+        "operationId": "ListProductPrice",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListProductPriceResponse"
             }
           },
           "404": {
@@ -1284,6 +1531,66 @@
         }
       }
     },
+    "v1AttachPriceCurrencyRequest": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "price_id": {
+          "type": "string"
+        },
+        "currency_id": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        }
+      },
+      "title": "AttachPriceCurrencyRequest"
+    },
+    "v1AttachPriceCurrencyResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "price": {
+          "$ref": "#/definitions/v1Price"
+        }
+      }
+    },
+    "v1AttachPriceItemRequest": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "price_id": {
+          "type": "string"
+        },
+        "item_id": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        }
+      },
+      "title": "AttachPriceItemRequest"
+    },
+    "v1AttachPriceItemResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "price": {
+          "$ref": "#/definitions/v1Price"
+        }
+      }
+    },
     "v1AttachProductRequest": {
       "type": "object",
       "properties": {
@@ -1436,6 +1743,29 @@
         }
       }
     },
+    "v1CreatePriceRequest": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "product_id": {
+          "type": "string"
+        }
+      },
+      "title": "CreatePrice"
+    },
+    "v1CreatePriceResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "price": {
+          "$ref": "#/definitions/v1Price"
+        }
+      }
+    },
     "v1CreateProductRequest": {
       "type": "object",
       "properties": {
@@ -1544,6 +1874,28 @@
         }
       }
     },
+    "v1DetachPriceCurrencyResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "price": {
+          "$ref": "#/definitions/v1Price"
+        }
+      }
+    },
+    "v1DetachPriceItemResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "price": {
+          "$ref": "#/definitions/v1Price"
+        }
+      }
+    },
     "v1DetachProductResponse": {
       "type": "object",
       "properties": {
@@ -1596,6 +1948,17 @@
         },
         "player": {
           "$ref": "#/definitions/v1Player"
+        }
+      }
+    },
+    "v1GetPriceResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "price": {
+          "$ref": "#/definitions/v1Price"
         }
       }
     },
@@ -1808,6 +2171,20 @@
         }
       }
     },
+    "v1ListProductPriceResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "prices": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Price"
+          }
+        }
+      }
+    },
     "v1ListProductResponse": {
       "type": "object",
       "properties": {
@@ -1888,6 +2265,64 @@
         }
       }
     },
+    "v1Price": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "currencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1PriceCurrency"
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1PriceItem"
+          }
+        }
+      }
+    },
+    "v1PriceCurrency": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "currency": {
+          "$ref": "#/definitions/v1Currency"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v1PriceItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "item": {
+          "$ref": "#/definitions/v1Item"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
     "v1Product": {
       "type": "object",
       "properties": {
@@ -1914,7 +2349,7 @@
         "prices": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/v1ProductPrice"
+            "$ref": "#/definitions/v1Price"
           }
         },
         "metadata": {
@@ -1923,56 +2358,6 @@
       }
     },
     "v1ProductItem": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "item": {
-          "$ref": "#/definitions/v1Item"
-        },
-        "amount": {
-          "type": "string",
-          "format": "int64"
-        }
-      }
-    },
-    "v1ProductPrice": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "currencies": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/v1ProductPriceCurrency"
-          }
-        },
-        "items": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/v1ProductPriceItem"
-          }
-        }
-      }
-    },
-    "v1ProductPriceCurrency": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "currency": {
-          "$ref": "#/definitions/v1Currency"
-        },
-        "amount": {
-          "type": "string",
-          "format": "int64"
-        }
-      }
-    },
-    "v1ProductPriceItem": {
       "type": "object",
       "properties": {
         "id": {

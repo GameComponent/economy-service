@@ -123,25 +123,38 @@ CREATE TABLE IF NOT EXISTS product_item (
 	UNIQUE (item_id, product_id, amount)
 );
 
-CREATE TABLE IF NOT EXISTS product_price (
+CREATE TABLE IF NOT EXISTS price (
   id UUID DEFAULT gen_random_uuid() NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
   updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-  currency_id UUID NOT NULL,
   product_id UUID NOT NULL,
+  
+  PRIMARY KEY (id),
+  FOREIGN KEY (product_id) REFERENCES product(id)
+);
+
+CREATE TABLE IF NOT EXISTS price_currency (
+  id UUID DEFAULT gen_random_uuid() NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+  updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+	price_id UUID NOT NULL,
+  currency_id UUID NOT NULL,
   amount INT64 DEFAULT 0 NOT NULL,
   
   PRIMARY KEY (id),
-  FOREIGN KEY (currency_id) REFERENCES currency(id),
-  FOREIGN KEY (product_id) REFERENCES product(id),
-  UNIQUE (currency_id, product_id)
+	FOREIGN KEY (price_id) REFERENCES price(id),
+  FOREIGN KEY (currency_id) REFERENCES currency(id)
 );
 
-CREATE TABLE IF NOT EXISTS shop_product (
-  shop_id UUID NOT NULL,
-  product_id UUID NOT NULL,
-
-  FOREIGN KEY (shop_id) REFERENCES shop(id),
-  FOREIGN KEY (product_id) REFERENCES product(id),
-	UNIQUE (shop_id, product_id)
+CREATE TABLE IF NOT EXISTS price_item (
+  id UUID DEFAULT gen_random_uuid() NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+  updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+	price_id UUID NOT NULL,
+  item_id UUID NOT NULL,
+  amount INT64 DEFAULT 0 NOT NULL,
+  
+  PRIMARY KEY (id),
+	FOREIGN KEY (price_id) REFERENCES price(id),
+  FOREIGN KEY (item_id) REFERENCES item(id)
 );

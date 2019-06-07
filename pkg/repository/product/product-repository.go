@@ -1,4 +1,4 @@
-package ProductRepository
+package productrepository
 
 import (
 	"context"
@@ -327,4 +327,57 @@ func (r *ProductRepository) DetachItem(ctx context.Context, productItemID string
 	}
 
 	return r.Get(ctx, productID)
+}
+
+// ListPrice for the product
+func (r *ProductRepository) ListPrice(
+	ctx context.Context,
+	productID string,
+) (
+	[]*v1.Price,
+	error,
+) {
+	// Query products from the database
+	rows, err := r.db.QueryContext(
+		ctx,
+		`
+			SELECT 
+				id,
+				created_at,
+				updated_at
+			FROM price
+			ORDER BY created_at DESC 
+		`,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Unwrap rows into prices
+	prices := []*v1.Price{}
+
+	for rows.Next() {
+		price := v1.Price{}
+		createdAt := time.Time{}
+		updatedAt := time.Time{}
+
+		err := rows.Scan(
+			&price.Id,
+			&createdAt,
+			&updatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		// Convert created_at to timestamp
+		price.CreatedAt, _ = ptypes.TimestampProto(createdAt)
+		price.UpdatedAt, _ = ptypes.TimestampProto(updatedAt)
+
+		prices = append(prices, &price)
+	}
+
+	return prices, nil
 }

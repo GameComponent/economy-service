@@ -139,3 +139,26 @@ func (s *economyServiceServer) DetachItem(ctx context.Context, req *v1.DetachIte
 		Product: product,
 	}, nil
 }
+
+func (s *economyServiceServer) ListProductPrice(ctx context.Context, req *v1.ListProductPriceRequest) (*v1.ListProductPriceResponse, error) {
+	fmt.Println("ListProductPrice")
+
+	// check if the API version requested by client is supported by server
+	if err := s.checkAPI(req.Api); err != nil {
+		return nil, err
+	}
+
+	if req.GetProductId() == "" {
+		return nil, fmt.Errorf("please enter a product_id")
+	}
+
+	prices, err := s.productRepository.ListPrice(ctx, req.GetProductId())
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.ListProductPriceResponse{
+		Api:    apiVersion,
+		Prices: prices,
+	}, nil
+}
