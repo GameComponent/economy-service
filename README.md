@@ -13,7 +13,14 @@ The economy service is a service to manage your game's economy.
 
 The economy services allow you to give your players access to items, currencies and much more. Anything that touches the economy of your game is parts of this service. This services allows you to define item definitions, create currencies, open up shops and much more.
 
+## Requirements
+Make sure you have `go` (atleast version 1.11), `make`, `protoc`, `docker` and `docker-compose` installed on your system.
 
+## Setup
+1. `make api`. This will generate Go bindings, a REST gateway and a Swagger JSON document.
+2. `make build`. This will build the Go project.
+3. `docker-compose up -d`. This will run a single node CockroachDB database.
+4. `./bin/server/server`. Run the server. Too see all available arguments run `./bin/server/server --help`.
 
 ## Contributing
 
