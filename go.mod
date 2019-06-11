@@ -1,7 +1,7 @@
 module github.com/GameComponent/economy-service
 
 require (
-	github.com/go-sql-driver/mysql v1.4.0
+	github.com/go-sql-driver/mysql v1.4.1
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
 	github.com/golang/protobuf v1.3.1
 	golang.org/x/net v0.0.0-20180906233101-161cd47e91fd
