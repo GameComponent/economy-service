@@ -9,6 +9,6 @@ require (
 	golang.org/x/sys v0.0.0-20180907202204-917fdcba135d // indirect
 	golang.org/x/text v0.3.0 // indirect
 	google.golang.org/genproto v0.0.0-20180831171423-11092d34479b // indirect
-	google.golang.org/grpc v1.14.0
+	google.golang.org/grpc v1.21.1
 	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.3.0
 )
