@@ -8,10 +8,14 @@
 The economy service is a service to manage your game's economy.
 
 - [What is the economy service?](#what-is-the-economy-service)
+- [Requirements](#requirements)
+- [Setup](#setup)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## What is the economy service?
 
-The economy services allow you to give your players access to items, currencies and much more. Anything that touches the economy of your game is parts of this service. This services allows you to define item definitions, create currencies, open up shops and much more.
+The economy service allows you to give your players access to items, currencies and much more. Anything that touches the economy of your game is parts of this service. This services allows you to define item definitions, create currencies, open up shops and much more.
 
 ## Requirements
 Make sure you have `go` (atleast version 1.11), `make`, `protoc`, `docker` and `docker-compose` installed on your system.
