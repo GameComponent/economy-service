@@ -158,3 +158,12 @@ CREATE TABLE IF NOT EXISTS price_item (
 	FOREIGN KEY (price_id) REFERENCES price(id),
   FOREIGN KEY (item_id) REFERENCES item(id)
 );
+
+CREATE TABLE IF NOT EXISTS shop_product (
+  shop_id UUID NOT NULL,
+  product_id UUID NOT NULL,
+
+  FOREIGN KEY (shop_id) REFERENCES shop(id),
+  FOREIGN KEY (product_id) REFERENCES product(id),
+	UNIQUE (shop_id, product_id)
+);
