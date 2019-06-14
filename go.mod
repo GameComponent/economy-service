@@ -2,6 +2,7 @@ module github.com/GameComponent/economy-service
 
 require (
 	cloud.google.com/go v0.40.0 // indirect
+	github.com/DATA-DOG/go-sqlmock v1.3.3
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/golang-migrate/migrate v3.5.4+incompatible
