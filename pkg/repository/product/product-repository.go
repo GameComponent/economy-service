@@ -165,9 +165,9 @@ func (r *ProductRepository) Get(ctx context.Context, productID string) (*v1.Prod
 				item.id AS itemId,
 				item.name AS itemName,
 				item.stackable AS itemtackable,
-				item.stack_max_amount AS temStackMaxAmount,
-				item.stack_balancing_method AS temStackBalancingMethod,
-				item.created_at AS temCreatedAt,
+				item.stack_max_amount AS itemStackMaxAmount,
+				item.stack_balancing_method AS itemStackBalancingMethod,
+				item.created_at AS itemCreatedAt,
 				item.updated_at AS itemUpdatedAt,
 				currency.id AS currencyId,
 				currency.name AS currencyName,
@@ -381,8 +381,7 @@ func (r *ProductRepository) Get(ctx context.Context, productID string) (*v1.Prod
 			productPriceCurrencies[price.Id] = map[string]*v1.PriceCurrency{}
 		}
 
-		// Add object to the productItems if it is set
-		if productItem.Item != nil {
+		if productItem.Id != "" {
 			productItems[productItem.Id] = productItem
 		}
 
