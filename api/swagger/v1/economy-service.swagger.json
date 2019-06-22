@@ -2346,6 +2346,12 @@
             "$ref": "#/definitions/v1ProductItem"
           }
         },
+        "currencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1ProductCurrency"
+          }
+        },
         "prices": {
           "type": "array",
           "items": {
@@ -2354,6 +2360,21 @@
         },
         "metadata": {
           "$ref": "#/definitions/protobufValue"
+        }
+      }
+    },
+    "v1ProductCurrency": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "currency": {
+          "$ref": "#/definitions/v1Currency"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
         }
       }
     },

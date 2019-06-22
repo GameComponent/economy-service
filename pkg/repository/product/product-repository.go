@@ -3,6 +3,7 @@ package productrepository
 import (
 	"context"
 	"database/sql"
+	"database/sql/driver"
 	"fmt"
 	"time"
 
@@ -14,6 +15,26 @@ import (
 // ProductRepository struct
 type ProductRepository struct {
 	db *sql.DB
+}
+
+// NullTime is a nullable time.Time
+type NullTime struct {
+	Time  time.Time
+	Valid bool // Valid is true if Time is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (nt *NullTime) Scan(value interface{}) error {
+	nt.Time, nt.Valid = value.(time.Time)
+	return nil
+}
+
+// Value implements the driver Valuer interface.
+func (nt NullTime) Value() (driver.Value, error) {
+	if !nt.Valid {
+		return nil, nil
+	}
+	return nt.Time, nil
 }
 
 // NewProductRepository constructor
@@ -133,18 +154,51 @@ func (r *ProductRepository) Get(ctx context.Context, productID string) (*v1.Prod
 		ctx,
 		`
 			SELECT
-				product.id as productId,
-				product.name as productName,
-				product.created_at as productCreatedAt,
-				product.updated_at as productUpdatedAt,
-				item.id as itemId,
-				item.name as itemName,
-				item.metadata as itemData,
-				product_item.id as productItemId,
-				product_item.amount as productItemAmount
+				product.id AS productId,
+				product.name AS productName,
+				product.created_at AS productCreatedAt,
+				product.updated_at AS productUpdatedAt,
+				product_item.id AS productItemId,
+				product_item.amount AS productItemAmount,
+				product_currency.id AS productCurrencyId,
+				product_currency.amount AS productCurrencyAmount,
+				item.id AS itemId,
+				item.name AS itemName,
+				item.stackable AS itemtackable,
+				item.stack_max_amount AS temStackMaxAmount,
+				item.stack_balancing_method AS temStackBalancingMethod,
+				item.created_at AS temCreatedAt,
+				item.updated_at AS itemUpdatedAt,
+				currency.id AS currencyId,
+				currency.name AS currencyName,
+				currency.short_name AS currencyShortName,
+				currency.symbol AS currencySymbol,
+				price.id AS priceId,
+				price_currency.id AS priceCurrecyId,
+				price_currency.amount AS priceCurrencyAmount,
+				price_item.id AS priceItemId,
+				price_item.amount AS priceItemAmount,
+				price_currency_currency.id AS priceCurrencyCurrencyId,
+				price_currency_currency.name AS priceCurrencyCurrencyName,
+				price_currency_currency.short_name AS priceCurrencyCurrencyShortName,
+				price_currency_currency.symbol AS priceCurrencyCurrencySymbol,
+				price_item_item.id AS priceItemItemId,
+				price_item_item.name AS priceItemItemName,
+				price_item_item.stackable AS priceItemItemtackable,
+				price_item_item.stack_max_amount AS priceItemItemStackMaxAmount,
+				price_item_item.stack_balancing_method AS priceItemItemStackBalancingMethod,
+				price_item_item.created_at AS priceItemItemCreatedAt,
+				price_item_item.updated_at AS priceItemItemUpdatedAt
 			FROM product
 			LEFT JOIN product_item ON (product_item.product_id = product.id)
 			LEFT JOIN item ON (item.id = product_item.item_id)
+			LEFT JOIN product_currency ON (product_currency.product_id = product.id)
+			LEFT JOIN currency ON (currency.id = product_currency.currency_id)
+			LEFT JOIN price ON (price.product_id = product.id)
+			LEFT JOIN price_currency ON (price_currency.price_id = price.id)
+			LEFT JOIN price_item ON (price_item.price_id = price.id)
+			LEFT JOIN currency price_currency_currency ON (price_currency_currency.id = price_currency.currency_id)
+			LEFT JOIN item price_item_item ON (price_item_item.id = price_item.item_id)
 			WHERE product.id = $1
 		`,
 		productID,
@@ -155,18 +209,48 @@ func (r *ProductRepository) Get(ctx context.Context, productID string) (*v1.Prod
 	}
 
 	type row struct {
-		ProductID         string
-		ProductName       string
-		ProductCreatedAt  time.Time
-		ProductUpdatedAt  time.Time
-		ItemID            sql.NullString
-		ItemName          sql.NullString
-		ItemData          sql.NullString
-		ProductItemID     sql.NullString
-		ProductItemAmount sql.NullInt64
+		ProductID                         string
+		ProductName                       string
+		ProductCreatedAt                  time.Time
+		ProductUpdatedAt                  time.Time
+		ProductItemID                     sql.NullString
+		ProductItemAmount                 sql.NullInt64
+		ProductCurrencyID                 sql.NullString
+		ProductCurrencyAmount             sql.NullInt64
+		ItemID                            sql.NullString
+		ItemName                          sql.NullString
+		ItemStackable                     sql.NullBool
+		ItemStackMaxAmount                sql.NullInt64
+		ItemStackBalancingMethod          sql.NullInt64
+		ItemCreatedAt                     NullTime
+		ItemUpdatedAt                     NullTime
+		CurrencyID                        sql.NullString
+		CurrencyName                      sql.NullString
+		CurrencyShortName                 sql.NullString
+		CurrencySymbol                    sql.NullString
+		PriceID                           sql.NullString
+		PriceCurrecyID                    sql.NullString
+		PriceCurrencyAmount               sql.NullInt64
+		PriceItemID                       sql.NullString
+		PriceItemAmount                   sql.NullInt64
+		PriceCurrencyCurrencyID           sql.NullString
+		PriceCurrencyCurrencyName         sql.NullString
+		PriceCurrencyCurrencyShortName    sql.NullString
+		PriceCurrencyCurrencySymbol       sql.NullString
+		PriceItemItemID                   sql.NullString
+		PriceItemItemName                 sql.NullString
+		PriceItemItemStackable            sql.NullBool
+		PriceItemItemStackMaxAmount       sql.NullInt64
+		PriceItemItemStackBalancingMethod sql.NullInt64
+		PriceItemItemCreatedAt            NullTime
+		PriceItemItemUpdatedAt            NullTime
 	}
 
 	productItems := map[string]*v1.ProductItem{}
+	productCurrencies := map[string]*v1.ProductCurrency{}
+	productPrices := map[string]*v1.Price{}
+	productPriceItems := map[string]map[string]*v1.PriceItem{}
+	productPriceCurrencies := map[string]map[string]*v1.PriceCurrency{}
 
 	var res row
 	for rows.Next() {
@@ -175,11 +259,37 @@ func (r *ProductRepository) Get(ctx context.Context, productID string) (*v1.Prod
 			&res.ProductName,
 			&res.ProductCreatedAt,
 			&res.ProductUpdatedAt,
-			&res.ItemID,
-			&res.ItemName,
-			&res.ItemData,
 			&res.ProductItemID,
 			&res.ProductItemAmount,
+			&res.ProductCurrencyID,
+			&res.ProductCurrencyAmount,
+			&res.ItemID,
+			&res.ItemName,
+			&res.ItemStackable,
+			&res.ItemStackMaxAmount,
+			&res.ItemStackBalancingMethod,
+			&res.ItemCreatedAt,
+			&res.ItemUpdatedAt,
+			&res.CurrencyID,
+			&res.CurrencyName,
+			&res.CurrencyShortName,
+			&res.CurrencySymbol,
+			&res.PriceID,
+			&res.PriceCurrecyID,
+			&res.PriceCurrencyAmount,
+			&res.PriceItemID,
+			&res.PriceItemAmount,
+			&res.PriceCurrencyCurrencyID,
+			&res.PriceCurrencyCurrencyName,
+			&res.PriceCurrencyCurrencyShortName,
+			&res.PriceCurrencyCurrencySymbol,
+			&res.PriceItemItemID,
+			&res.PriceItemItemName,
+			&res.PriceItemItemStackable,
+			&res.PriceItemItemStackMaxAmount,
+			&res.PriceItemItemStackBalancingMethod,
+			&res.PriceItemItemCreatedAt,
+			&res.PriceItemItemUpdatedAt,
 		)
 
 		if err != nil {
@@ -188,9 +298,14 @@ func (r *ProductRepository) Get(ctx context.Context, productID string) (*v1.Prod
 
 		// Extract the Item
 		item := &v1.Item{}
-		if res.ItemID.Valid && res.ItemName.Valid {
+		if res.ItemID.Valid {
 			item.Id = res.ItemID.String
 			item.Name = res.ItemName.String
+			item.Stackable = res.PriceItemItemStackable.Bool
+			item.StackMaxAmount = res.PriceItemItemStackMaxAmount.Int64
+			item.StackBalancingMethod = v1.StackBalancingMethod(res.PriceItemItemStackBalancingMethod.Int64)
+			item.CreatedAt, _ = ptypes.TimestampProto(res.ItemCreatedAt.Time)
+			item.UpdatedAt, _ = ptypes.TimestampProto(res.ItemUpdatedAt.Time)
 		}
 
 		// Extract the ProductItem
@@ -201,9 +316,88 @@ func (r *ProductRepository) Get(ctx context.Context, productID string) (*v1.Prod
 			productItem.Item = item
 		}
 
+		// Extract the Item
+		currency := &v1.Currency{}
+		if res.CurrencyID.Valid {
+			currency.Id = res.CurrencyID.String
+			currency.Name = res.CurrencyName.String
+			currency.ShortName = res.CurrencyShortName.String
+			currency.Symbol = res.CurrencySymbol.String
+		}
+
+		// Extract the ProductCurrency
+		productCurrency := &v1.ProductCurrency{}
+		if res.ProductCurrencyID.Valid {
+			productCurrency.Id = res.ProductCurrencyID.String
+			productCurrency.Amount = res.ProductCurrencyAmount.Int64
+			productCurrency.Currency = currency
+		}
+
+		// Extract Price
+		price := &v1.Price{}
+		if res.PriceID.Valid {
+			price.Id = res.PriceID.String
+		}
+
+		// Extract PriceCurrency
+		priceCurrency := &v1.PriceCurrency{}
+		if res.PriceCurrecyID.Valid {
+			priceCurrency.Id = res.PriceCurrecyID.String
+			priceCurrency.Amount = res.PriceCurrencyAmount.Int64
+		}
+
+		// Extract Currency
+		priceCurrencyCurrency := &v1.Currency{}
+		if res.PriceCurrencyCurrencyID.Valid {
+			priceCurrencyCurrency.Id = res.PriceCurrencyCurrencyID.String
+			priceCurrencyCurrency.Name = res.PriceCurrencyCurrencyName.String
+			priceCurrencyCurrency.ShortName = res.PriceCurrencyCurrencyShortName.String
+			priceCurrencyCurrency.Symbol = res.PriceCurrencyCurrencySymbol.String
+		}
+
+		// Extract PriceItem
+		priceItem := &v1.PriceItem{}
+		if res.PriceItemID.Valid {
+			priceItem.Id = res.PriceItemID.String
+			priceItem.Amount = res.PriceItemAmount.Int64
+		}
+
+		// Extract Item
+		priceItemItem := &v1.Item{}
+		if res.PriceItemItemID.Valid {
+			priceItemItem.Id = res.PriceItemItemID.String
+			priceItemItem.Name = res.PriceItemItemName.String
+			priceItemItem.Stackable = res.PriceItemItemStackable.Bool
+			priceItemItem.StackMaxAmount = res.PriceItemItemStackMaxAmount.Int64
+			priceItemItem.StackBalancingMethod = v1.StackBalancingMethod(res.PriceItemItemStackBalancingMethod.Int64)
+			priceItemItem.CreatedAt, _ = ptypes.TimestampProto(res.PriceItemItemCreatedAt.Time)
+			priceItemItem.UpdatedAt, _ = ptypes.TimestampProto(res.PriceItemItemUpdatedAt.Time)
+		}
+
+		// Create map for price
+		if price.Id != "" {
+			productPrices[price.Id] = price
+			productPriceItems[price.Id] = map[string]*v1.PriceItem{}
+			productPriceCurrencies[price.Id] = map[string]*v1.PriceCurrency{}
+		}
+
 		// Add object to the productItems if it is set
 		if productItem.Item != nil {
 			productItems[productItem.Id] = productItem
+		}
+
+		if productCurrency.Id != "" {
+			productCurrencies[productCurrency.Id] = productCurrency
+		}
+
+		if priceItem.Id != "" {
+			priceItem.Item = priceItemItem
+			productPriceItems[price.Id][priceItem.Id] = priceItem
+		}
+
+		if priceCurrency.Id != "" {
+			priceCurrency.Currency = priceCurrencyCurrency
+			productPriceCurrencies[price.Id][priceCurrency.Id] = priceCurrency
 		}
 	}
 
@@ -213,10 +407,43 @@ func (r *ProductRepository) Get(ctx context.Context, productID string) (*v1.Prod
 		items = append(items, value)
 	}
 
+	// Convert currency map into currency slice
+	currencies := []*v1.ProductCurrency{}
+	for _, value := range productCurrencies {
+		currencies = append(currencies, value)
+	}
+
+	prices := []*v1.Price{}
+	for _, value := range productPrices {
+		prices = append(prices, value)
+	}
+
+	for _, price := range prices {
+		priceItems := []*v1.PriceItem{}
+
+		for _, item := range productPriceItems[price.Id] {
+			priceItems = append(priceItems, item)
+		}
+
+		price.Items = priceItems
+	}
+
+	for _, price := range prices {
+		priceCurrencies := []*v1.PriceCurrency{}
+
+		for _, currency := range productPriceCurrencies[price.Id] {
+			priceCurrencies = append(priceCurrencies, currency)
+		}
+
+		price.Currencies = priceCurrencies
+	}
+
 	product := &v1.Product{
-		Id:    res.ProductID,
-		Name:  res.ProductName,
-		Items: items,
+		Id:         res.ProductID,
+		Name:       res.ProductName,
+		Items:      items,
+		Currencies: currencies,
+		Prices:     prices,
 	}
 
 	// Convert created_at to timestamp

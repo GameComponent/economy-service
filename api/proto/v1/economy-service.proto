@@ -426,13 +426,20 @@ message Product {
 	google.protobuf.Timestamp updated_at = 3;
 	string name = 4;
 	repeated ProductItem items = 5;
-	repeated Price prices = 6;	
-	google.protobuf.Value metadata = 7;
+	repeated ProductCurrency currencies = 6;
+	repeated Price prices = 7;	
+	google.protobuf.Value metadata = 8;
 }
 
 message ProductItem {
 	string id = 1;
 	Item item = 2;
+	int64 amount = 3;
+}
+
+message ProductCurrency {
+	string id = 1;
+	Currency currency = 2;
 	int64 amount = 3;
 }
 

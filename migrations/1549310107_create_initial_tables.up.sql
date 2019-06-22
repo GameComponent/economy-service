@@ -123,6 +123,18 @@ CREATE TABLE IF NOT EXISTS product_item (
 	UNIQUE (item_id, product_id, amount)
 );
 
+CREATE TABLE IF NOT EXISTS product_currency (
+  id UUID DEFAULT gen_random_uuid() NOT NULL,
+  currency_id UUID NOT NULL,
+  product_id UUID NOT NULL,
+	amount INT64 DEFAULT 0 NOT NULL,
+  FOREIGN KEY (currency_id) REFERENCES currency(id),
+  FOREIGN KEY (product_id) REFERENCES product(id),
+  
+  PRIMARY KEY (id),
+	UNIQUE (currency_id, product_id, amount)
+);
+
 CREATE TABLE IF NOT EXISTS price (
   id UUID DEFAULT gen_random_uuid() NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
