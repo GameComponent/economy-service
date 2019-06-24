@@ -301,9 +301,9 @@ func (r *ProductRepository) Get(ctx context.Context, productID string) (*v1.Prod
 		if res.ItemID.Valid {
 			item.Id = res.ItemID.String
 			item.Name = res.ItemName.String
-			item.Stackable = res.PriceItemItemStackable.Bool
-			item.StackMaxAmount = res.PriceItemItemStackMaxAmount.Int64
-			item.StackBalancingMethod = v1.StackBalancingMethod(res.PriceItemItemStackBalancingMethod.Int64)
+			item.Stackable = res.ItemStackable.Bool
+			item.StackMaxAmount = res.ItemStackMaxAmount.Int64
+			item.StackBalancingMethod = v1.StackBalancingMethod(res.ItemStackBalancingMethod.Int64)
 			item.CreatedAt, _ = ptypes.TimestampProto(res.ItemCreatedAt.Time)
 			item.UpdatedAt, _ = ptypes.TimestampProto(res.ItemUpdatedAt.Time)
 		}
@@ -316,7 +316,7 @@ func (r *ProductRepository) Get(ctx context.Context, productID string) (*v1.Prod
 			productItem.Item = item
 		}
 
-		// Extract the Item
+		// Extract the Currency
 		currency := &v1.Currency{}
 		if res.CurrencyID.Valid {
 			currency.Id = res.CurrencyID.String
