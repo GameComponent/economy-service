@@ -19,7 +19,8 @@ func (s *economyServiceServer) GetShop(ctx context.Context, req *v1.GetShopReque
 	shop, err := s.shopRepository.Get(ctx, req.GetShopId())
 
 	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve shop")
+		// return nil, fmt.Errorf("unable to retrieve shop")
+		return nil, err
 	}
 
 	return &v1.GetShopResponse{
