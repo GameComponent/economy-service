@@ -4,7 +4,6 @@ services:
   cockroachdb:
     image: cockroachdb/cockroach:v2.1.3
     command: start --insecure --store=attrs=ssd,path=/var/lib/cockroach/
-    # restart: "no"
     restart: always
     volumes:
       - data:/var/lib/cockroach
@@ -14,5 +13,22 @@ services:
     ports:
       - "26257:26257"
       - "8085:8080"
+
+  # Example local build
+  # economy-service:
+  #   build: .
+  #   command: --db_host=cockroachdb
+  #   environment:
+  #     - GRPC_GO_LOG_VERBOSITY_LEVEL=99
+  #     - GRPC_GO_LOG_SEVERITY_LEVEL=info
+  #   depends_on:
+  #     - cockroachdb
+  #   expose:
+  #     - "3000"
+  #     - "8080"
+  #   ports: 
+  #     - "3000:3000"
+  #     - "8888:8080"
+
 volumes:
   data:
