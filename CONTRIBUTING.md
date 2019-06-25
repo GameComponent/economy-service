@@ -8,3 +8,5 @@
   Agreement](https://cla-assistant.io/GameComponent/economy-service).
   
 
+## Getting started
+To run the project read the [Requirements](README.md#requirements) and [Setup](README.md#setup) sections.
