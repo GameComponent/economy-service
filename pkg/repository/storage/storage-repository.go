@@ -160,7 +160,7 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 		// Extract the Currency
 		currency := &v1.Currency{}
 		if res.CurrencyID.Valid && res.CurrencyName.Valid {
-			currency.Id = res.ItemID.String
+			currency.Id = res.CurrencyID.String
 			currency.Name = res.CurrencyName.String
 			currency.ShortName = res.CurrencyShortName.String
 			currency.Symbol = res.CurrencySymbol.String
