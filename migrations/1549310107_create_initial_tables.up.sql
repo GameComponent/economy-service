@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS item (  
   id UUID DEFAULT gen_random_uuid() NOT NULL,
-	created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-	updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+	created_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
+	updated_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
   name STRING DEFAULT '' NOT NULL,
   metadata JSONB DEFAULT '{}' NOT NULL,
 	stackable BOOLEAN DEFAULT FALSE NOT NULL,
@@ -15,8 +15,8 @@ CREATE INDEX IF NOT EXISTS index_name ON item(name);
 
 CREATE TABLE IF NOT EXISTS currency (  
   id UUID DEFAULT gen_random_uuid() NOT NULL,
-	created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-	updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+	created_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
+	updated_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
   name STRING DEFAULT '' NOT NULL UNIQUE,
   short_name STRING DEFAULT '' NOT NULL UNIQUE,
   symbol STRING DEFAULT '' NOT NULL UNIQUE,
@@ -36,8 +36,8 @@ CREATE INDEX IF NOT EXISTS index_name ON player(name);
 
 CREATE TABLE IF NOT EXISTS storage (
   id UUID DEFAULT gen_random_uuid() NOT NULL,
-	created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-	updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+	created_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
+	updated_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
   player_id STRING NOT NULL,
   name STRING NOT NULL,
   metadata JSONB DEFAULT '{}' NOT null,
@@ -50,8 +50,8 @@ CREATE INDEX IF NOT EXISTS index_player_id ON storage(player_id);
 
 CREATE TABLE IF NOT EXISTS storage_item (
   id UUID DEFAULT gen_random_uuid() NOT NULL,
-	created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-	updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+	created_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
+	updated_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
   item_id UUID NOT NULL,
   storage_id UUID NOT NULL,
   metadata JSONB DEFAULT '{}' NOT null,
@@ -64,8 +64,8 @@ CREATE TABLE IF NOT EXISTS storage_item (
 
 CREATE TABLE IF NOT EXISTS storage_currency (
   id UUID DEFAULT gen_random_uuid() NOT NULL,
-	created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-	updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+	created_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
+	updated_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
   currency_id UUID NOT NULL,
   storage_id UUID NOT NULL,
   amount INT64 DEFAULT 0 NOT NULL,
@@ -85,8 +85,8 @@ CREATE TABLE IF NOT EXISTS config (
 
 CREATE TABLE IF NOT EXISTS account (  
   id UUID DEFAULT gen_random_uuid() NOT NULL,
-	created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-	updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+	created_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
+	updated_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
 	email STRING NOT NULL,
 	password STRING NOT NULL,
   
@@ -95,8 +95,8 @@ CREATE TABLE IF NOT EXISTS account (
 
 CREATE TABLE IF NOT EXISTS shop (  
   id UUID DEFAULT gen_random_uuid() NOT NULL,
-	created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-	updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+	created_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
+	updated_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
 	name STRING NOT NULL,
   
   PRIMARY KEY (id)
@@ -104,8 +104,8 @@ CREATE TABLE IF NOT EXISTS shop (
 
 CREATE TABLE IF NOT EXISTS product (
   id UUID DEFAULT gen_random_uuid() NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-  updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
 	name STRING NOT NULL,
   
   PRIMARY KEY (id)
@@ -137,8 +137,8 @@ CREATE TABLE IF NOT EXISTS product_currency (
 
 CREATE TABLE IF NOT EXISTS price (
   id UUID DEFAULT gen_random_uuid() NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-  updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
   product_id UUID NOT NULL,
   
   PRIMARY KEY (id),
@@ -147,8 +147,8 @@ CREATE TABLE IF NOT EXISTS price (
 
 CREATE TABLE IF NOT EXISTS price_currency (
   id UUID DEFAULT gen_random_uuid() NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-  updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
 	price_id UUID NOT NULL,
   currency_id UUID NOT NULL,
   amount INT64 DEFAULT 0 NOT NULL,
@@ -160,8 +160,8 @@ CREATE TABLE IF NOT EXISTS price_currency (
 
 CREATE TABLE IF NOT EXISTS price_item (
   id UUID DEFAULT gen_random_uuid() NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-  updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
 	price_id UUID NOT NULL,
   item_id UUID NOT NULL,
   amount INT64 DEFAULT 0 NOT NULL,
