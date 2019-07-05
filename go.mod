@@ -47,6 +47,6 @@ require (
 	google.golang.org/api v0.7.0 // indirect
 	google.golang.org/appengine v1.6.1 // indirect
 	google.golang.org/genproto v0.0.0-20190620144150-6af8c5fc6601
-	google.golang.org/grpc v1.21.1
+	google.golang.org/grpc v1.22.0
 	honnef.co/go/tools v0.0.0-20190607181801-497c8f037f5a // indirect
 )
