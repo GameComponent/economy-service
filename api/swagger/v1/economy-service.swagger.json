@@ -915,6 +915,39 @@
         ]
       }
     },
+    "/v1/product/buy": {
+      "post": {
+        "summary": "Buy product from the store",
+        "operationId": "BuyProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1BuyProductResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1BuyProductRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
     "/v1/product/detach/item/{product_item_id}": {
       "delete": {
         "summary": "Detach item from a product",
@@ -1640,6 +1673,38 @@
         },
         "token": {
           "type": "string"
+        }
+      }
+    },
+    "v1BuyProductRequest": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "product_id": {
+          "type": "string"
+        },
+        "price_id": {
+          "type": "string"
+        },
+        "receiving_storage_id": {
+          "type": "string"
+        },
+        "paying_storage_id": {
+          "type": "string"
+        }
+      },
+      "title": "BuyProduct"
+    },
+    "v1BuyProductResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "product": {
+          "$ref": "#/definitions/v1Product"
         }
       }
     },

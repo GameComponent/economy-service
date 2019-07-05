@@ -607,3 +607,4 @@ func (r *ProductRepository) ListPrice(
 
 	return prices, nil
 }
+

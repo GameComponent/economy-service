@@ -244,6 +244,14 @@ service EconomyService {
 		};
 	}
 
+	// Buy product from the store
+	rpc BuyProduct(BuyProductRequest) returns (BuyProductResponse) {
+		option (google.api.http) = {
+			post: "/v1/product/buy"
+			body: "*"
+		};
+	}	
+
 	// Attach item to a product
 	rpc AttachItem(AttachItemRequest) returns (AttachItemResponse) {
 		option (google.api.http) = {
@@ -324,7 +332,7 @@ service EconomyService {
 		option (google.api.http) = {
 			delete: "/v1/shop/detach/product/{shop_product_id}"
 		};
-	}	
+	}
 }
 
 // Main entities
@@ -578,28 +586,6 @@ message SearchPlayerResponse{
 	string next_page_token = 3;
 	int32 total_size = 4;
 }
-
-// BuyItem
-// message BuyItemRequest{
-// 	string api = 1;
-// 	StorageCurrency currency = 2;
-// }
-
-// message BuyItemResponse{
-// 	string api = 1;
-// 	StorageItem item = 2;
-// }
-
-// SellItem
-// message SellItemRequest{
-// 	string api = 1;
-// 	StorageItem item = 2;
-// }
-
-// message SellItemResponse{
-// 	string api = 1;
-// 	StorageCurrency currency = 2;
-// }
 
 // CreateItem
 message CreateItemRequest{
@@ -984,4 +970,18 @@ message DetachProductRequest{
 message DetachProductResponse{
 	string api = 1;
 	Shop shop = 2;
+}
+
+// BuyProduct
+message BuyProductRequest{
+	string api = 1;
+	string product_id = 2;
+	string price_id = 3;
+	string receiving_storage_id = 4;
+	string paying_storage_id = 5;
+}
+
+message BuyProductResponse{
+	string api = 1;
+	Product product = 2;
 }
