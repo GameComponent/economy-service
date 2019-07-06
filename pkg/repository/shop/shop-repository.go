@@ -8,6 +8,7 @@ import (
 	"time"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
+	repository "github.com/GameComponent/economy-service/pkg/repository"
 	"github.com/golang/protobuf/ptypes"
 )
 
@@ -37,7 +38,7 @@ type ShopRepository struct {
 }
 
 // NewShopRepository constructor
-func NewShopRepository(db *sql.DB) *ShopRepository {
+func NewShopRepository(db *sql.DB) repository.ShopRepository {
 	return &ShopRepository{
 		db: db,
 	}
@@ -412,15 +413,7 @@ func (r *ShopRepository) Create(ctx context.Context, name string) (*v1.Shop, err
 }
 
 // List all shops
-func (r *ShopRepository) List(
-	ctx context.Context,
-	limit int32,
-	offset int32,
-) (
-	[]*v1.Shop,
-	int32,
-	error,
-) {
+func (r *ShopRepository) List(ctx context.Context, limit int32, offset int32) ([]*v1.Shop, int32, error) {
 	// Query shops from the database
 	rows, err := r.db.QueryContext(
 		ctx,

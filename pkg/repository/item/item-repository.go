@@ -8,6 +8,7 @@ import (
 	"github.com/golang/protobuf/ptypes"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
+	repository "github.com/GameComponent/economy-service/pkg/repository"
 )
 
 // ItemRepository struct
@@ -16,7 +17,7 @@ type ItemRepository struct {
 }
 
 // NewItemRepository constructor
-func NewItemRepository(db *sql.DB) *ItemRepository {
+func NewItemRepository(db *sql.DB) repository.ItemRepository {
 	return &ItemRepository{
 		db: db,
 	}
@@ -81,15 +82,7 @@ func (r *ItemRepository) Update(ctx context.Context, id string, name string, met
 }
 
 // List all items
-func (r *ItemRepository) List(
-	ctx context.Context,
-	limit int32,
-	offset int32,
-) (
-	[]*v1.Item,
-	int32,
-	error,
-) {
+func (r *ItemRepository) List(ctx context.Context, limit int32, offset int32) ([]*v1.Item, int32, error ) {
 	// Query items from the database
 	rows, err := r.db.QueryContext(
 		ctx,
@@ -186,16 +179,7 @@ func (r *ItemRepository) Get(ctx context.Context, itemID string) (*v1.Item, erro
 }
 
 // Search item
-func (r *ItemRepository) Search(
-	ctx context.Context,
-	query string,
-	limit int32,
-	offset int32,
-) (
-	[]*v1.Item,
-	int32,
-	error,
-) {
+func (r *ItemRepository) Search(ctx context.Context, query string, limit int32, offset int32) ([]*v1.Item, int32, error) {
 	// Query items from the database
 	rows, err := r.db.QueryContext(
 		ctx,

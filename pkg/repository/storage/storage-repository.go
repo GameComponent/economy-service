@@ -6,6 +6,7 @@ import (
 	"time"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
+	repository "github.com/GameComponent/economy-service/pkg/repository"
 	"github.com/golang/protobuf/ptypes"
 )
 
@@ -15,7 +16,7 @@ type StorageRepository struct {
 }
 
 // NewStorageRepository constructor
-func NewStorageRepository(db *sql.DB) *StorageRepository {
+func NewStorageRepository(db *sql.DB) repository.StorageRepository {
 	return &StorageRepository{
 		db: db,
 	}
@@ -276,15 +277,7 @@ func (r *StorageRepository) GiveCurrency(ctx context.Context, storageID string, 
 }
 
 // List all storages
-func (r *StorageRepository) List(
-	ctx context.Context,
-	limit int32,
-	offset int32,
-) (
-	[]*v1.Storage,
-	int32,
-	error,
-) {
+func (r *StorageRepository) List(ctx context.Context, limit int32, offset int32) ([]*v1.Storage, int32, error) {
 	// Query items from the database
 	rows, err := r.db.QueryContext(
 		ctx,

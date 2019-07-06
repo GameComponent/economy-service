@@ -101,19 +101,22 @@ func RunServer() error {
 	productRepository := productrepository.NewProductRepository(db)
 	priceRepository := pricerepository.NewPriceRepository(db)
 
+	// Create the config
+	config := v1.Config{
+		DB:                 db,
+		ItemRepository:     itemRepository,
+		PlayerRepository:   playerRepository,
+		CurrencyRepository: currencyRepository,
+		StorageRepository:  storageRepository,
+		ConfigRepository:   configRepository,
+		AccountRepository:  accountRepository,
+		ShopRepository:     shopRepository,
+		ProductRepository:  productRepository,
+		PriceRepository:    priceRepository,
+	}
+
 	// Start the service
-	v1API := v1.NewEconomyServiceServer(
-		db,
-		itemRepository,
-		playerRepository,
-		currencyRepository,
-		storageRepository,
-		configRepository,
-		accountRepository,
-		shopRepository,
-		productRepository,
-		priceRepository,
-	)
+	v1API := v1.NewEconomyServiceServer(config)
 
 	// Start the REST server
 	go func() {

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
+	repository "github.com/GameComponent/economy-service/pkg/repository"
 	"github.com/golang/protobuf/ptypes"
 )
 
@@ -15,10 +16,30 @@ type PlayerRepository struct {
 }
 
 // NewPlayerRepository constructor
-func NewPlayerRepository(db *sql.DB) *PlayerRepository {
+func NewPlayerRepository(db *sql.DB) repository.PlayerRepository {
 	return &PlayerRepository{
 		db: db,
 	}
+}
+
+// Create a new player
+func (r *PlayerRepository) Create(ctx context.Context, id string, name string) (*v1.Player, error) {
+	databaseID := ""
+	err := r.db.QueryRowContext(
+		ctx,
+		`INSERT INTO player(id, name) VALUES ($1, $2) RETURNING id`,
+		id,
+		name,
+	).Scan(&databaseID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.Player{
+		Id:   databaseID,
+		Name: name,
+	}, nil
 }
 
 // Get a player
@@ -67,36 +88,8 @@ func (r *PlayerRepository) Get(ctx context.Context, id string) (*v1.Player, erro
 	}, nil
 }
 
-// Create a new player
-func (r *PlayerRepository) Create(ctx context.Context, id string, name string) (*v1.Player, error) {
-	databaseID := ""
-	err := r.db.QueryRowContext(
-		ctx,
-		`INSERT INTO player(id, name) VALUES ($1, $2) RETURNING id`,
-		id,
-		name,
-	).Scan(&databaseID)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &v1.Player{
-		Id:   databaseID,
-		Name: name,
-	}, nil
-}
-
 // List all player
-func (r *PlayerRepository) List(
-	ctx context.Context,
-	limit int32,
-	offset int32,
-) (
-	[]*v1.Player,
-	int32,
-	error,
-) {
+func (r *PlayerRepository) List(ctx context.Context, limit int32, offset int32) ([]*v1.Player, int32, error) {
 	// Query items from the database
 	rows, err := r.db.QueryContext(
 		ctx,
@@ -141,16 +134,7 @@ func (r *PlayerRepository) List(
 }
 
 // Search player
-func (r *PlayerRepository) Search(
-	ctx context.Context,
-	query string,
-	limit int32,
-	offset int32,
-) (
-	[]*v1.Player,
-	int32,
-	error,
-) {
+func (r *PlayerRepository) Search(ctx context.Context, query string, limit int32, offset int32) ([]*v1.Player, int32, error) {
 	// Query items from the database
 	rows, err := r.db.QueryContext(
 		ctx,

@@ -10,6 +10,7 @@ import (
 	"github.com/golang/protobuf/ptypes"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
+	repository "github.com/GameComponent/economy-service/pkg/repository"
 )
 
 // ProductRepository struct
@@ -38,7 +39,7 @@ func (nt NullTime) Value() (driver.Value, error) {
 }
 
 // NewProductRepository constructor
-func NewProductRepository(db *sql.DB) *ProductRepository {
+func NewProductRepository(db *sql.DB) repository.ProductRepository {
 	return &ProductRepository{
 		db: db,
 	}
@@ -85,15 +86,7 @@ func (r *ProductRepository) Update(ctx context.Context, id string, name string) 
 }
 
 // List all products
-func (r *ProductRepository) List(
-	ctx context.Context,
-	limit int32,
-	offset int32,
-) (
-	[]*v1.Product,
-	int32,
-	error,
-) {
+func (r *ProductRepository) List(ctx context.Context, limit int32, offset int32) ([]*v1.Product, int32, error) {
 	// Query products from the database
 	rows, err := r.db.QueryContext(
 		ctx,
@@ -453,16 +446,7 @@ func (r *ProductRepository) Get(ctx context.Context, productID string) (*v1.Prod
 }
 
 // Search product
-func (r *ProductRepository) Search(
-	ctx context.Context,
-	query string,
-	limit int32,
-	offset int32,
-) (
-	[]*v1.Product,
-	int32,
-	error,
-) {
+func (r *ProductRepository) Search(ctx context.Context, query string, limit int32, offset int32) ([]*v1.Product, int32, error) {
 	// Query products from the database
 	rows, err := r.db.QueryContext(
 		ctx,
@@ -556,13 +540,7 @@ func (r *ProductRepository) DetachItem(ctx context.Context, productItemID string
 }
 
 // ListPrice for the product
-func (r *ProductRepository) ListPrice(
-	ctx context.Context,
-	productID string,
-) (
-	[]*v1.Price,
-	error,
-) {
+func (r *ProductRepository) ListPrice(ctx context.Context, productID string) ([]*v1.Price, error) {
 	// Query products from the database
 	rows, err := r.db.QueryContext(
 		ctx,

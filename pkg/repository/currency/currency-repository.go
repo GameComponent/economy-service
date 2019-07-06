@@ -6,6 +6,7 @@ import (
 	"time"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
+	repository "github.com/GameComponent/economy-service/pkg/repository"
 	"github.com/golang/protobuf/ptypes"
 )
 
@@ -15,19 +16,14 @@ type CurrencyRepository struct {
 }
 
 // NewCurrencyRepository constructor
-func NewCurrencyRepository(db *sql.DB) *CurrencyRepository {
+func NewCurrencyRepository(db *sql.DB) repository.CurrencyRepository {
 	return &CurrencyRepository{
 		db: db,
 	}
 }
 
 // Create a currency
-func (r *CurrencyRepository) Create(
-	ctx context.Context,
-	name string,
-	shortName string,
-	symbol string,
-) (*v1.Currency, error) {
+func (r *CurrencyRepository) Create(ctx context.Context, name string, shortName string, symbol string) (*v1.Currency, error) {
 	// Add item to the databased return the generated UUID
 	lastInsertUUID := ""
 	err := r.db.QueryRowContext(
@@ -78,15 +74,7 @@ func (r *CurrencyRepository) Get(ctx context.Context, currencyID string) (*v1.Cu
 }
 
 // List all currenciees
-func (r *CurrencyRepository) List(
-	ctx context.Context,
-	limit int32,
-	offset int32,
-) (
-	[]*v1.Currency,
-	int32,
-	error,
-) {
+func (r *CurrencyRepository) List(ctx context.Context, limit int32, offset int32) ([]*v1.Currency, int32, error) {
 	// Query items from the database
 	rows, err := r.db.QueryContext(
 		ctx,

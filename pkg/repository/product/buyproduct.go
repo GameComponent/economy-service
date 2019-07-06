@@ -51,7 +51,7 @@ func (r *ProductRepository) BuyProduct(ctx context.Context, product *v1.Product,
 		return nil, err
 	}
 
-	return nil, fmt.Errorf("wat")
+	return product, nil
 }
 
 func takeCurrenciesFromStorage(ctx context.Context, tx *sql.Tx, priceCurrencies []*v1.PriceCurrency, storage *v1.Storage) error {

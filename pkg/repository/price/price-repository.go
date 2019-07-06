@@ -6,6 +6,7 @@ import (
 	"time"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
+	repository "github.com/GameComponent/economy-service/pkg/repository"
 	"github.com/golang/protobuf/ptypes"
 )
 
@@ -15,7 +16,7 @@ type PriceRepository struct {
 }
 
 // NewPriceRepository constructor
-func NewPriceRepository(db *sql.DB) *PriceRepository {
+func NewPriceRepository(db *sql.DB) repository.PriceRepository {
 	return &PriceRepository{
 		db: db,
 	}

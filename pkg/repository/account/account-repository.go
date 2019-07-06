@@ -3,6 +3,8 @@ package accountrepository
 import (
 	"context"
 	"database/sql"
+
+	repository "github.com/GameComponent/economy-service/pkg/repository"
 )
 
 // AccountRepository struct
@@ -10,23 +12,17 @@ type AccountRepository struct {
 	db *sql.DB
 }
 
-// Account struct
-type Account struct {
-	ID    string
-	Email string
-	Hash  string
-}
 
 // NewAccountRepository constructor
-func NewAccountRepository(db *sql.DB) *AccountRepository {
+func NewAccountRepository(db *sql.DB) repository.AccountRepository {
 	return &AccountRepository{
 		db: db,
 	}
 }
 
 // Get an account
-func (r *AccountRepository) Get(ctx context.Context, email string) *Account {
-	account := Account{}
+func (r *AccountRepository) Get(ctx context.Context, email string) *repository.Account {
+	account := repository.Account{}
 
 	err := r.db.QueryRowContext(
 		ctx,
@@ -46,7 +42,7 @@ func (r *AccountRepository) Get(ctx context.Context, email string) *Account {
 }
 
 // Create an account
-func (r *AccountRepository) Create(ctx context.Context, email string, password string) *Account {
+func (r *AccountRepository) Create(ctx context.Context, email string, password string) *repository.Account {
 	var id string
 
 	err := r.db.QueryRowContext(
@@ -60,7 +56,7 @@ func (r *AccountRepository) Create(ctx context.Context, email string, password s
 		return nil
 	}
 
-	account := Account{
+	account := repository.Account{
 		ID:    id,
 		Email: email,
 		Hash:  password,

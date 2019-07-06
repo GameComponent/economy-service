@@ -8,6 +8,7 @@ import (
 
 	"github.com/golang/protobuf/jsonpb"
 
+	repository "github.com/GameComponent/economy-service/pkg/repository"
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
 	_struct "github.com/golang/protobuf/ptypes/struct"
 )
@@ -18,7 +19,7 @@ type ConfigRepository struct {
 }
 
 // NewConfigRepository constructor
-func NewConfigRepository(db *sql.DB) *ConfigRepository {
+func NewConfigRepository(db *sql.DB) repository.ConfigRepository {
 	return &ConfigRepository{
 		db: db,
 	}
@@ -89,15 +90,7 @@ func (r *ConfigRepository) Set(ctx context.Context, key string, value *_struct.V
 }
 
 // List all configs
-func (r *ConfigRepository) List(
-	ctx context.Context,
-	limit int32,
-	offset int32,
-) (
-	[]*v1.Config,
-	int32,
-	error,
-) {
+func (r *ConfigRepository) List(ctx context.Context, limit int32, offset int32) ([]*v1.Config, int32, error) {
 	// Query configs from the database
 	rows, err := r.db.QueryContext(
 		ctx,
