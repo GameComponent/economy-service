@@ -197,20 +197,20 @@ func (s *economyServiceServer) BuyProduct(ctx context.Context, req *v1.BuyProduc
 
 	// Turn the Price slice into a map
 	productPrices := product.Prices
-	productPricesMap := map[string]v1.Price{}
+	productPricesMap := map[string]*v1.Price{}
 	for _, priceItem := range productPrices {
-		productPricesMap[priceItem.Id] = *priceItem
+		productPricesMap[priceItem.Id] = priceItem
 	}
 
 	// Check if the price is part of the Product
 	price := productPricesMap[req.GetPriceId()]
-	if price.Id == "" {
+	if price == nil || price.Id == "" {
 		return nil, status.Error(codes.NotFound, "price not found in product")
 	}
 
 	// Get the paying Storage
 	payingStorage, err := s.storageRepository.Get(ctx, req.GetPayingStorageId())
-	if payingStorage.Id == "" {
+	if payingStorage == nil || payingStorage.Id == "" {
 		return nil, status.Error(codes.NotFound, "paying_storage_id not found")
 	}
 
@@ -286,7 +286,7 @@ func (s *economyServiceServer) BuyProduct(ctx context.Context, req *v1.BuyProduc
 	_, err = s.productRepository.BuyProduct(
 		ctx,
 		product,
-		&price,
+		price,
 		receivingStorage,
 		payingStorage,
 	)

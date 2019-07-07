@@ -5,3 +5,4 @@
 !/cmd/server/main.go
 !/cmd/client/main.go
 /bin
+/pkg/mocks

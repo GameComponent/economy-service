@@ -26,3 +26,6 @@ api_swagger:
 	economy-service.proto
 
 api: api_go api_gateway api_swagger
+
+mocks:
+	cd pkg && mockery -all
