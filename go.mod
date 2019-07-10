@@ -18,7 +18,7 @@ require (
 	github.com/google/uuid v1.1.1
 	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
-	github.com/grpc-ecosystem/grpc-gateway v1.9.2
+	github.com/grpc-ecosystem/grpc-gateway v1.9.4
 	github.com/kisielk/errcheck v1.2.0 // indirect
 	github.com/kr/pty v1.1.5 // indirect
 	github.com/lib/pq v1.1.1
