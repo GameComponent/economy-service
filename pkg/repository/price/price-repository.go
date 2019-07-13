@@ -202,6 +202,21 @@ func (r *PriceRepository) Create(ctx context.Context, productID string) (*v1.Pri
 	}, nil
 }
 
+// Delete a Price
+func (r *PriceRepository) Delete(ctx context.Context, priceID string) (bool, error) {
+	_, err := r.db.ExecContext(
+		ctx,
+		`DELETE FROM price WHERE id = $1`,
+		priceID,
+	)
+
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
 // AttachPriceCurrency attaches a currency to a price
 func (r *PriceRepository) AttachPriceCurrency(ctx context.Context, priceID string, currencyID string, amount int64) (*v1.Price, error) {
 	_, err := r.db.ExecContext(

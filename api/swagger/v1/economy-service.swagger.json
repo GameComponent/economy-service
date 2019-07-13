@@ -805,6 +805,41 @@
         "tags": [
           "EconomyService"
         ]
+      },
+      "delete": {
+        "summary": "Delete a price",
+        "operationId": "DeletePrice",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeletePriceResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "price_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "api",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
       }
     },
     "/v1/product": {
@@ -1925,6 +1960,29 @@
         },
         "symbol": {
           "type": "string"
+        }
+      }
+    },
+    "v1DeletePriceResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "v1DetachCurrencyResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "product": {
+          "$ref": "#/definitions/v1Product"
         }
       }
     },

@@ -282,6 +282,13 @@ service EconomyService {
 		};
 	}
 
+	// Delete a price
+	rpc DeletePrice(DeletePriceRequest) returns (DeletePriceResponse) {
+		option (google.api.http) = {
+			delete: "/v1/price/{price_id}"
+		};
+	}
+
 	// Create a price
 	rpc ListProductPrice(ListProductPriceRequest) returns (ListProductPriceResponse) {
 		option (google.api.http) = {
@@ -888,6 +895,17 @@ message CreatePriceRequest{
 message CreatePriceResponse{
 	string api = 1;
 	Price price = 2;
+}
+
+// DeletePriceRequest
+message DeletePriceRequest{
+	string api = 1;
+	string price_id = 2;
+}
+
+message DeletePriceResponse{
+	string api = 1;
+	bool success = 2;
 }
 
 // ListProductPriceRequest

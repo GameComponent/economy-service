@@ -53,9 +53,10 @@ type PlayerRepository interface{
 }
 
 // PriceRepository interface
-type PriceRepository interface{
+type PriceRepository interface {
 	Get(ctx context.Context, priceID string) (*v1.Price, error)
 	Create(ctx context.Context, productID string) (*v1.Price, error)
+	Delete(ctx context.Context, priceID string) (bool, error)
 	AttachPriceCurrency(ctx context.Context, priceID string, currencyID string, amount int64) (*v1.Price, error)
 	DetachPriceCurrency(ctx context.Context, priceCurrencyID string) (*v1.Price, error)
 	AttachPriceItem(ctx context.Context, priceID string, itemID string, amount int64) (*v1.Price, error)

@@ -146,3 +146,26 @@ func (s *economyServiceServer) DetachPriceItem(ctx context.Context, req *v1.Deta
 		Price: price,
 	}, nil
 }
+
+func (s *economyServiceServer) DeletePrice(ctx context.Context, req *v1.DeletePriceRequest) (*v1.DeletePriceResponse, error) {
+	fmt.Println("DeletePrice")
+
+	// check if the API version requested by client is supported by server
+	if err := s.checkAPI(req.Api); err != nil {
+		return nil, err
+	}
+
+	success, err := s.priceRepository.Delete(
+		ctx,
+		req.GetPriceId(),
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf("unable to delete price")
+	}
+
+	return &v1.DeletePriceResponse{
+		Api:     apiVersion,
+		Success: success,
+	}, nil
+}
