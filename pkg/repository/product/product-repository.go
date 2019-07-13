@@ -539,6 +539,43 @@ func (r *ProductRepository) DetachItem(ctx context.Context, productItemID string
 	return r.Get(ctx, productID)
 }
 
+// AttachCurrency to a product
+func (r *ProductRepository) AttachCurrency(ctx context.Context, productID string, currencyID string, amount int64) (*v1.Product, error) {
+	_, err := r.db.ExecContext(
+		ctx,
+		`INSERT INTO product_currency(product_id, currency_id, amount) VALUES ($1, $2, $3)`,
+		productID,
+		currencyID,
+		amount,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return r.Get(ctx, productID)
+}
+
+// DetachCurrency from a product
+func (r *ProductRepository) DetachCurrency(ctx context.Context, productCurrencyID string) (*v1.Product, error) {
+	productID := ""
+	err := r.db.QueryRowContext(
+		ctx,
+		`DELETE FROM product_currency WHERE id = $1 RETURNING product_id`,
+		productCurrencyID,
+	).Scan(&productID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if productID == "" {
+		return nil, fmt.Errorf("unable to retrieve the old product_id")
+	}
+
+	return r.Get(ctx, productID)
+}
+
 // ListPrice for the product
 func (r *ProductRepository) ListPrice(ctx context.Context, productID string) ([]*v1.Price, error) {
 	// Query products from the database
@@ -585,4 +622,3 @@ func (r *ProductRepository) ListPrice(ctx context.Context, productID string) ([]
 
 	return prices, nil
 }
-

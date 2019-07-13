@@ -142,6 +142,56 @@ func (s *economyServiceServer) DetachItem(ctx context.Context, req *v1.DetachIte
 	}, nil
 }
 
+func (s *economyServiceServer) AttachCurrency(ctx context.Context, req *v1.AttachCurrencyRequest) (*v1.AttachCurrencyResponse, error) {
+	fmt.Println("AttachCurrency")
+
+	// check if the API version requested by client is supported by server
+	if err := s.checkAPI(req.Api); err != nil {
+		return nil, err
+	}
+
+	// Add product to the databased return the generated UUID
+	product, err := s.productRepository.AttachCurrency(
+		ctx,
+		req.GetProductId(),
+		req.GetCurrencyId(),
+		req.GetAmount(),
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.AttachCurrencyResponse{
+		Api:     apiVersion,
+		Product: product,
+	}, nil
+}
+
+func (s *economyServiceServer) DetachCurrency(ctx context.Context, req *v1.DetachCurrencyRequest) (*v1.DetachCurrencyResponse, error) {
+	fmt.Println("DetachCurrency")
+
+	// check if the API version requested by client is supported by server
+	if err := s.checkAPI(req.Api); err != nil {
+		return nil, err
+	}
+
+	// Add product to the databased return the generated UUID
+	product, err := s.productRepository.DetachCurrency(
+		ctx,
+		req.GetProductCurrencyId(),
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.DetachCurrencyResponse{
+		Api:     apiVersion,
+		Product: product,
+	}, nil
+}
+
 func (s *economyServiceServer) ListProductPrice(ctx context.Context, req *v1.ListProductPriceRequest) (*v1.ListProductPriceResponse, error) {
 	fmt.Println("ListProductPrice")
 

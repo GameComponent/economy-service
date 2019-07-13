@@ -917,6 +917,39 @@
         ]
       }
     },
+    "/v1/product/attach/currency": {
+      "post": {
+        "summary": "Attach currency to a product",
+        "operationId": "AttachCurrency",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AttachCurrencyResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1AttachCurrencyRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
     "/v1/product/attach/item": {
       "post": {
         "summary": "Attach item to a product",
@@ -976,6 +1009,43 @@
             "schema": {
               "$ref": "#/definitions/v1BuyProductRequest"
             }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
+    "/v1/product/detach/currency/{product_currency_id}": {
+      "delete": {
+        "summary": "Detach currency from a product",
+        "operationId": "DetachCurrency",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DetachCurrencyResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "product_currency_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "api",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -1568,6 +1638,36 @@
         }
       },
       "title": "If the max_amount is smaller than the min_amount the amount will be the min_amount\nIf the min_amount and max_amount are the same that amount will be given\nIf max_amount is higher than min_amount a random number between min_amount and max_amount will be chosen"
+    },
+    "v1AttachCurrencyRequest": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "product_id": {
+          "type": "string"
+        },
+        "currency_id": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        }
+      },
+      "title": "AttachCurrency"
+    },
+    "v1AttachCurrencyResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "product": {
+          "$ref": "#/definitions/v1Product"
+        }
+      }
     },
     "v1AttachItemRequest": {
       "type": "object",

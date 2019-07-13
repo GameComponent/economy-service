@@ -267,6 +267,21 @@ service EconomyService {
 		};
 	}	
 
+	// Attach currency to a product
+	rpc AttachCurrency(AttachCurrencyRequest) returns (AttachCurrencyResponse) {
+		option (google.api.http) = {
+			post: "/v1/product/attach/currency"
+			body: "*"
+		};
+	}	
+
+	// Detach currency from a product
+	rpc DetachCurrency(DetachCurrencyRequest) returns (DetachCurrencyResponse) {
+		option (google.api.http) = {
+			delete: "/v1/product/detach/currency/{product_currency_id}"
+		};
+	}	
+
 	// Get a Price
 	rpc GetPrice(GetPriceRequest) returns (GetPriceResponse) {
 		option (google.api.http) = {
@@ -505,16 +520,6 @@ message GiveItemResponse{
 	int64 amount = 3;
 	// StorageItem item = 3;
 }
-
-// DestroyItem
-// message DestroyItemRequest{
-// 	string api = 1;
-// 	string storageItemId = 3;
-// }
-
-// message DestroyItemResponse{
-// 	string api = 1;
-// }
 
 // GetStorage
 message GetStorageRequest{
@@ -871,6 +876,31 @@ message DetachItemRequest{
 }
 
 message DetachItemResponse{
+	string api = 1;
+	Product product = 2;
+}
+
+// AttachCurrency
+message AttachCurrencyRequest{
+	string api = 1;
+	string product_id = 2;
+	string currency_id = 3;
+	int64 amount = 4;
+	// google.protobuf.Struct metadata = 3;
+}
+
+message AttachCurrencyResponse{
+	string api = 1;
+	Product product = 2;
+}
+
+// DetachCurrency
+message DetachCurrencyRequest{
+	string api = 1;
+	string product_currency_id = 2;
+}
+
+message DetachCurrencyResponse{
 	string api = 1;
 	Product product = 2;
 }
