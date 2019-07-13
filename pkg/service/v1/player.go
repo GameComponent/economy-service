@@ -11,11 +11,6 @@ import (
 func (s *economyServiceServer) GetPlayer(ctx context.Context, req *v1.GetPlayerRequest) (*v1.GetPlayerResponse, error) {
 	fmt.Println("GetPlayer")
 
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
-
 	player, err := s.playerRepository.Get(ctx, req.GetPlayerId())
 
 	if err != nil {
@@ -23,7 +18,6 @@ func (s *economyServiceServer) GetPlayer(ctx context.Context, req *v1.GetPlayerR
 	}
 
 	return &v1.GetPlayerResponse{
-		Api:    apiVersion,
 		Player: player,
 	}, nil
 }
@@ -42,18 +36,12 @@ func (s *economyServiceServer) CreatePlayer(ctx context.Context, req *v1.CreateP
 	}
 
 	return &v1.CreatePlayerResponse{
-		Api:    apiVersion,
 		Player: player,
 	}, nil
 }
 
 func (s *economyServiceServer) ListPlayer(ctx context.Context, req *v1.ListPlayerRequest) (*v1.ListPlayerResponse, error) {
 	fmt.Println("ListPlayer")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	// Parse the page token
 	var parsedToken int64
@@ -85,7 +73,6 @@ func (s *economyServiceServer) ListPlayer(ctx context.Context, req *v1.ListPlaye
 	}
 
 	return &v1.ListPlayerResponse{
-		Api:           apiVersion,
 		Players:       players,
 		TotalSize:     totalSize,
 		NextPageToken: nextPageToken,
@@ -94,11 +81,6 @@ func (s *economyServiceServer) ListPlayer(ctx context.Context, req *v1.ListPlaye
 
 func (s *economyServiceServer) SearchPlayer(ctx context.Context, req *v1.SearchPlayerRequest) (*v1.SearchPlayerResponse, error) {
 	fmt.Println("SearchPlayer")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	// Check if query is empty
 	if len(req.GetQuery()) == 0 {
@@ -135,7 +117,6 @@ func (s *economyServiceServer) SearchPlayer(ctx context.Context, req *v1.SearchP
 	}
 
 	return &v1.SearchPlayerResponse{
-		Api:           apiVersion,
 		Players:       players,
 		TotalSize:     totalSize,
 		NextPageToken: nextPageToken,

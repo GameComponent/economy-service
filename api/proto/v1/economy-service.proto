@@ -494,542 +494,455 @@ message PriceItem {
 }
 
 // CreatePlayer
-message CreatePlayerRequest{
-	string api = 1;
-	string id = 2;
+message CreatePlayerRequest{	
+	string id = 1;
 	string name = 3;
 }
 
-message CreatePlayerResponse{
-	string api = 1;
-	Player player = 2;
+message CreatePlayerResponse{	
+	Player player = 1;
 }
 
 // GiveItem
-message GiveItemRequest{
-	string api = 1;
-	string storage_id = 2;
+message GiveItemRequest{	
+	string storage_id = 1;
 	string item_id = 3;
 	Amount amount = 4;
 	// google.protobuf.Struct metadata = 4;
 }
 
-message GiveItemResponse{
-	string api = 1;
-	string storage_id = 2;
+message GiveItemResponse{	
+	string storage_id = 1;
 	int64 amount = 3;
 	// StorageItem item = 3;
 }
 
 // GetStorage
-message GetStorageRequest{
-	string api = 1;
-	string storage_id = 2;
+message GetStorageRequest{	
+	string storage_id = 1;
 }
 
-message GetStorageResponse{
-	string api = 1;
-	Storage storage = 2;
+message GetStorageResponse{	
+	Storage storage = 1;
 }
 
 // ListStorage
-message ListStorageRequest{
-	string api = 1;
-	int32 page_size = 2;
+message ListStorageRequest{	
+	int32 page_size = 1;
 	string page_token = 3;
 }
 
-message ListStorageResponse{
-	string api = 1;
-	repeated Storage storages = 2;
+message ListStorageResponse{	
+	repeated Storage storages = 1;
 	string next_page_token = 3;
 	int32 total_size = 4;
 }
 
 // CreateStorage
-message CreateStorageRequest{
-	string api = 1;
-	string player_id = 2;
+message CreateStorageRequest{	
+	string player_id = 1;
 	string name = 3;
 	// google.protobuf.Struct metadata = 4;
 }
 
-message CreateStorageResponse{
-	string api = 1;
-	Storage storage = 2;
+message CreateStorageResponse{	
+	Storage storage = 1;
 }
 
 // GetPlayer
-message GetPlayerRequest{
-	string api = 1;
-	string player_id = 2;
+message GetPlayerRequest{	
+	string player_id = 1;
 }
 
-message GetPlayerResponse{
-	string api = 1;
-	Player player = 2;
+message GetPlayerResponse{	
+	Player player = 1;
 }
 
 // ListPlayer
-message ListPlayerRequest{
-	string api = 1;
-	int32 page_size = 2;
+message ListPlayerRequest{	
+	int32 page_size = 1;
 	string page_token = 3;
 }
 
-message ListPlayerResponse{
-	string api = 1;
-	repeated Player players = 2;
+message ListPlayerResponse{	
+	repeated Player players = 1;
 	string next_page_token = 3;
 	int32 total_size = 4;
 }
 
 // SearchPlayer
-message SearchPlayerRequest{
-	string api = 1;
-	string query = 2;
+message SearchPlayerRequest{	
+	string query = 1;
 	int32 page_size = 3;
 	string page_token = 4;
 }
 
-message SearchPlayerResponse{
-	string api = 1;
-	repeated Player players = 2;
+message SearchPlayerResponse{	
+	repeated Player players = 1;
 	string next_page_token = 3;
 	int32 total_size = 4;
 }
 
 // CreateItem
-message CreateItemRequest{
-	string api = 1;
-	string name = 2;
+message CreateItemRequest{	
+	string name = 1;
 	bool stackable = 3;
 	int64 stack_max_amount = 4;
 	StackBalancingMethod stack_balancing_method = 5;
 	// google.protobuf.Struct metadata = 3;
 }
 
-message CreateItemResponse{
-	string api = 1;
-	Item item = 2;
+message CreateItemResponse{	
+	Item item = 1;
 }
 
 // UpdateItem
-message UpdateItemRequest{
-	string api = 1;
-	string item_id = 2;
-	string name = 3;
-	// google.protobuf.Struct metadata = 4;
+message UpdateItemRequest{	
+	string item_id = 1;
+	string name = 2;
+	// google.protobuf.Struct metadata = 3;
 }
 
-message UpdateItemResponse{
-	string api = 1;
-	Item item = 2;
+message UpdateItemResponse{	
+	Item item = 1;
 }
 
 // GetItem
-message GetItemRequest{
-	string api = 1;
-	string item_id = 2;
+message GetItemRequest{	
+	string item_id = 1;
 }
 
-message GetItemResponse{
-	string api = 1;
-	Item item = 2;
+message GetItemResponse{	
+	Item item = 1;
 }
 
 // ListItem
-message ListItemRequest{
-	string api = 1;
-	int32 page_size = 2;
-	string page_token = 3;
+message ListItemRequest{	
+	int32 page_size = 1;
+	string page_token = 2;
 }
 
-message ListItemResponse{
-	string api = 1;
-	repeated Item items = 2;
-	string next_page_token = 3;
-	int32 total_size = 4;
+message ListItemResponse{	
+	repeated Item items = 1;
+	string next_page_token = 2;
+	int32 total_size = 3;
 }
 
 // SearchItem
-message SearchItemRequest{
-	string api = 1;
-	string query = 2;
-	int32 page_size = 3;
-	string page_token = 4;
+message SearchItemRequest{	
+	string query = 1;
+	int32 page_size = 2;
+	string page_token = 3;
 }
 
-message SearchItemResponse{
-	string api = 1;
-	repeated Item items = 2;
-	string next_page_token = 3;
-	int32 total_size = 4;
+message SearchItemResponse{	
+	repeated Item items = 1;
+	string next_page_token = 2;
+	int32 total_size = 3; 
 }
 
 // CreateCurrency
-message CreateCurrencyRequest{
-	string api = 1;
-	string name = 2;
-	string short_name = 3;
-	string symbol = 4;
+message CreateCurrencyRequest{	
+	string name = 1;
+	string short_name = 2;
+	string symbol = 3;
 	// google.protobuf.Struct metadata = 3;
 }
 
-message CreateCurrencyResponse{
-	string api = 1;
-	Currency currency = 2;
+message CreateCurrencyResponse{	
+	Currency currency = 1;
 }
 
 // GiveCurrency
-message GiveCurrencyRequest{
-	string api = 1;
-	string storage_id = 2;
-	string currency_id = 3;
-	Amount amount = 4;
+message GiveCurrencyRequest{	
+	string storage_id = 1;
+	string currency_id = 2;
+	Amount amount = 3;
 }
 
-message GiveCurrencyResponse{
-	string api = 1;
-	StorageCurrency currency = 2;
+message GiveCurrencyResponse{	
+	StorageCurrency currency = 1;
 }
 
 // ListCurrency
-message ListCurrencyRequest{
-	string api = 1;
-	int32 page_size = 2;
-	string page_token = 3;
+message ListCurrencyRequest{	
+	int32 page_size = 1;
+	string page_token = 2;
 }
 
-message ListCurrencyResponse{
-	string api = 1;
-	repeated Currency currencies = 2;
-	string next_page_token = 3;
-	int32 total_size = 4;
+message ListCurrencyResponse{	
+	repeated Currency currencies = 1;
+	string next_page_token = 2;
+	int32 total_size = 3;
 }
 
 // GetCurrency
-message GetCurrencyRequest{
-	string api = 1;
-	string currency_id = 2;
+message GetCurrencyRequest{	
+	string currency_id = 1;
 }
 
-message GetCurrencyResponse{
-	string api = 1;
-	Currency currency = 2;
+message GetCurrencyResponse{	
+	Currency currency = 1;
 }
 
 // GetConfig
-message GetConfigRequest{
-	string api = 1;
-	string key = 2;
+message GetConfigRequest{	
+	string key = 1;
 }
 
-message GetConfigResponse{
-	string api = 1;
-	Config config = 2;
+message GetConfigResponse{	
+	Config config = 1;
 }
 
 // SetConfig
-message SetConfigRequest{
-	string api = 1;
-	string key = 2;
-	google.protobuf.Value value = 3;
+message SetConfigRequest{	
+	string key = 1;
+	google.protobuf.Value value = 2;
 }
 
 // ListConfig
-message ListConfigRequest{
-	string api = 1;
-	int32 page_size = 2;
-	string page_token = 3;
+message ListConfigRequest{	
+	int32 page_size = 1;
+	string page_token = 2;
 }
 
-message ListConfigResponse{
-	string api = 1;
-	repeated Config configs = 2;
-	string next_page_token = 3;
-	int32 total_size = 4;
+message ListConfigResponse{	
+	repeated Config configs = 1;
+	string next_page_token = 2;
+	int32 total_size = 3;
 }
 
-message SetConfigResponse{
-	string api = 1;
-	Config config = 2;
+message SetConfigResponse{	
+	Config config = 1;
 }
 
 // Authenticate
-message AuthenticateRequest{
-	string api = 1;
-	string email = 2;
-	string password = 3;
+message AuthenticateRequest{	
+	string email = 1;
+	string password = 2;
 }
 
-message AuthenticateResponse{
-	string api = 1;
-	string token = 2;
+message AuthenticateResponse{	
+	string token = 1;
 }
 
 // Register
-message RegisterRequest{
-	string api = 1;
-	string email = 2;
-	string password = 3;
+message RegisterRequest{	
+	string email = 1;
+	string password = 2;
 }
 
-message RegisterResponse{
-	string api = 1;
-	string token = 2;
+message RegisterResponse{	
+	string token = 1;
 }
 
 // GetShop
-message GetShopRequest{
-	string api = 1;
-	string shop_id = 2;
+message GetShopRequest{	
+	string shop_id = 1;
 }
 
-message GetShopResponse{
-	string api = 1;
-	Shop shop = 2;
+message GetShopResponse{	
+	Shop shop = 1;
 }
 
 // CreateShop
-message CreateShopRequest{
-	string api = 1;
-	string name = 2;
-	// google.protobuf.Struct metadata = 3;
+message CreateShopRequest{	
+	string name = 1;
+	// google.protobuf.Struct metadata = 2;
 }
 
-message CreateShopResponse{
-	string api = 1;
-	Shop shop = 2;
+message CreateShopResponse{	
+	Shop shop = 1;
 }
 
 // ListShop
-message ListShopRequest{
-	string api = 1;
-	int32 page_size = 2;
-	string page_token = 3;
+message ListShopRequest{	
+	int32 page_size = 1;
+	string page_token = 2;
 }
 
-message ListShopResponse{
-	string api = 1;
-	repeated Shop shops = 2;
-	string next_page_token = 3;
-	int32 total_size = 4;
+message ListShopResponse{	
+	repeated Shop shops = 1;
+	string next_page_token = 2;
+	int32 total_size = 3;
 }
 
 // CreateProduct
-message CreateProductRequest{
-	string api = 1;
-	string name = 2;
-	// google.protobuf.Struct metadata = 3;
+message CreateProductRequest{	
+	string name = 1;
+	// google.protobuf.Struct metadata = 2;
 }
 
-message CreateProductResponse{
-	string api = 1;
-	Product product = 2;
+message CreateProductResponse{	
+	Product product = 1;
 }
 
 // GetProcuct
-message GetProductRequest{
-	string api = 1;
-	string product_id = 2;
+message GetProductRequest{	
+	string product_id = 1;
 }
 
-message GetProductResponse{
-	string api = 1;
-	Product product = 2;
+message GetProductResponse{	
+	Product product = 1;
 }
-
 
 // ListProduct
-message ListProductRequest{
-	string api = 1;
-	int32 page_size = 2;
-	string page_token = 3;
+message ListProductRequest{	
+	int32 page_size = 1;
+	string page_token = 2;
 }
 
-message ListProductResponse{
-	string api = 1;
-	repeated Product products = 2;
-	string next_page_token = 3;
-	int32 total_size = 4;
+message ListProductResponse{	
+	repeated Product products = 1;
+	string next_page_token = 2;
+	int32 total_size = 3;
 }
 
 // AttachItem 
-message AttachItemRequest{
-	string api = 1;
-	string product_id = 2;
-	string item_id = 3;
-	int64 amount = 4;
-	// google.protobuf.Struct metadata = 3;
+message AttachItemRequest{	
+	string product_id = 1;
+	string item_id = 2;
+	int64 amount = 3;
+	// google.protobuf.Struct metadata = 4;
 }
 
-message AttachItemResponse{
-	string api = 1;
-	Product product = 2;
+message AttachItemResponse{	
+	Product product = 1;
 }
 
 // DetachItem 
-message DetachItemRequest{
-	string api = 1;
-	string product_item_id = 2;
+message DetachItemRequest{	
+	string product_item_id = 1;
 }
 
-message DetachItemResponse{
-	string api = 1;
-	Product product = 2;
+message DetachItemResponse{	
+	Product product = 1;
 }
 
 // AttachCurrency
-message AttachCurrencyRequest{
-	string api = 1;
-	string product_id = 2;
-	string currency_id = 3;
-	int64 amount = 4;
-	// google.protobuf.Struct metadata = 3;
+message AttachCurrencyRequest{	
+	string product_id = 1;
+	string currency_id = 2;
+	int64 amount = 3;
+	// google.protobuf.Struct metadata = 4;
 }
 
-message AttachCurrencyResponse{
-	string api = 1;
-	Product product = 2;
+message AttachCurrencyResponse{	
+	Product product = 1;
 }
 
 // DetachCurrency
-message DetachCurrencyRequest{
-	string api = 1;
-	string product_currency_id = 2;
+message DetachCurrencyRequest{	
+	string product_currency_id = 1;
 }
 
-message DetachCurrencyResponse{
-	string api = 1;
-	Product product = 2;
+message DetachCurrencyResponse{	
+	Product product = 1;
 }
 
 // GetPrice
-message GetPriceRequest{
-	string api = 1;
-	string price_id = 2;
+message GetPriceRequest{	
+	string price_id = 1;
 }
 
-message GetPriceResponse{
-	string api = 1;
-	Price price = 2;
+message GetPriceResponse{	
+	Price price = 1;
 }
 
 // CreatePrice
-message CreatePriceRequest{
-	string api = 1;
-	string product_id = 2;
+message CreatePriceRequest{	
+	string product_id = 1;
 }
 
-message CreatePriceResponse{
-	string api = 1;
-	Price price = 2;
+message CreatePriceResponse{	
+	Price price = 1;
 }
 
 // DeletePriceRequest
-message DeletePriceRequest{
-	string api = 1;
-	string price_id = 2;
+message DeletePriceRequest{	
+	string price_id = 1;
 }
 
-message DeletePriceResponse{
-	string api = 1;
-	bool success = 2;
+message DeletePriceResponse{	
+	bool success = 1;
 }
 
 // ListProductPriceRequest
-message ListProductPriceRequest{
-	string api = 1;
-	string product_id = 2;
+message ListProductPriceRequest{	
+	string product_id = 1;
 }
 
-message ListProductPriceResponse{
-	string api = 1;
-	repeated Price prices = 2;
+message ListProductPriceResponse{	
+	repeated Price prices = 1;
 }
 
 // AttachPriceCurrencyRequest
-message AttachPriceCurrencyRequest{
-	string api = 1;
-	string price_id = 2;
-	string currency_id = 3;
-	int64 amount = 4;
+message AttachPriceCurrencyRequest{	
+	string price_id = 1;
+	string currency_id = 2;
+	int64 amount = 3;
 }
 
-message AttachPriceCurrencyResponse{
-	string api = 1;
-	Price price = 2;
+message AttachPriceCurrencyResponse{	
+	Price price = 1;
 }
 
 // DetachPriceCurrencyRequest
-message DetachPriceCurrencyRequest{
-	string api = 1;
-	string price_currency_id = 2;
+message DetachPriceCurrencyRequest{	
+	string price_currency_id = 1;
 }
 
-message DetachPriceCurrencyResponse{
-	string api = 1;
-	Price price = 2;
+message DetachPriceCurrencyResponse{	
+	Price price = 1;
 }
 
 // AttachPriceItemRequest
-message AttachPriceItemRequest{
-	string api = 1;
-	string price_id = 2;
-	string item_id = 3;
-	int64 amount = 4;
+message AttachPriceItemRequest{	
+	string price_id = 1;
+	string item_id = 2;
+	int64 amount = 3;
 }
 
-message AttachPriceItemResponse{
-	string api = 1;
-	Price price = 2;
+message AttachPriceItemResponse{	
+	Price price = 1;
 }
 
 // DetachPriceItemRequest
-message DetachPriceItemRequest{
-	string api = 1;
-	string price_item_id = 2;
+message DetachPriceItemRequest{	
+	string price_item_id = 1;
 }
 
-message DetachPriceItemResponse{
-	string api = 1;
-	Price price = 2;
+message DetachPriceItemResponse{	
+	Price price = 1;
 }
 
 // AttachProduct
-message AttachProductRequest{
-	string api = 1;
-	string shop_id = 2;
-	string product_id = 3;
+message AttachProductRequest{	
+	string shop_id = 1;
+	string product_id = 2;
 }
 
-message AttachProductResponse{
-	string api = 1;
-	Shop shop = 2;
+message AttachProductResponse{	
+	Shop shop = 1;
 }
 
 // DetachProduct
-message DetachProductRequest{
-	string api = 1;
-	string shop_product_id = 2;
+message DetachProductRequest{	
+	string shop_product_id = 1;
 }
 
-message DetachProductResponse{
-	string api = 1;
-	Shop shop = 2;
+message DetachProductResponse{	
+	Shop shop = 1;
 }
 
 // BuyProduct
-message BuyProductRequest{
-	string api = 1;
-	string product_id = 2;
-	string price_id = 3;
-	string receiving_storage_id = 4;
-	string paying_storage_id = 5;
+message BuyProductRequest{	
+	string product_id = 1;
+	string price_id = 2;
+	string receiving_storage_id = 3;
+	string paying_storage_id = 4;
 }
 
-message BuyProductResponse{
-	string api = 1;
-	Product product = 2;
+message BuyProductResponse{	
+	Product product = 1;
 }

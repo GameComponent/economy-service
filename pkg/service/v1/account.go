@@ -32,11 +32,6 @@ func checkPasswordHash(password, hash string) bool {
 func (s *economyServiceServer) Authenticate(ctx context.Context, req *v1.AuthenticateRequest) (*v1.AuthenticateResponse, error) {
 	fmt.Println("Authenticate")
 
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
-
 	// Check if the user entered to correct credentials
 	account := s.accountRepository.Get(ctx, req.GetEmail())
 
@@ -69,18 +64,12 @@ func (s *economyServiceServer) Authenticate(ctx context.Context, req *v1.Authent
 	}
 
 	return &v1.AuthenticateResponse{
-		Api:   apiVersion,
 		Token: tokenString,
 	}, nil
 }
 
 func (s *economyServiceServer) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.RegisterResponse, error) {
 	fmt.Println("Register")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	// TODO: Sanity check on email
 
@@ -119,7 +108,6 @@ func (s *economyServiceServer) Register(ctx context.Context, req *v1.RegisterReq
 	}
 
 	return &v1.RegisterResponse{
-		Api:   apiVersion,
 		Token: tokenString,
 	}, nil
 }

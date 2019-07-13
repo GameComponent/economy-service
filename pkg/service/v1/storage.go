@@ -14,11 +14,6 @@ import (
 func (s *economyServiceServer) CreateStorage(ctx context.Context, req *v1.CreateStorageRequest) (*v1.CreateStorageResponse, error) {
 	fmt.Println("CreateStorage")
 
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
-
 	if req.GetName() == "" {
 		return nil, fmt.Errorf("name should not be empty")
 	}
@@ -31,18 +26,12 @@ func (s *economyServiceServer) CreateStorage(ctx context.Context, req *v1.Create
 	}
 
 	return &v1.CreateStorageResponse{
-		Api:     apiVersion,
 		Storage: storage,
 	}, nil
 }
 
 func (s *economyServiceServer) GetStorage(ctx context.Context, req *v1.GetStorageRequest) (*v1.GetStorageResponse, error) {
 	fmt.Println("GetStorage")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	// Check if the request
 	if req.GetStorageId() == "" {
@@ -61,7 +50,6 @@ func (s *economyServiceServer) GetStorage(ctx context.Context, req *v1.GetStorag
 	}
 
 	return &v1.GetStorageResponse{
-		Api:     apiVersion,
 		Storage: storage,
 	}, nil
 }
@@ -99,7 +87,6 @@ func (s *economyServiceServer) ListStorage(ctx context.Context, req *v1.ListStor
 	}
 
 	return &v1.ListStorageResponse{
-		Api:           apiVersion,
 		Storages:      storages,
 		NextPageToken: nextPageToken,
 	}, nil
@@ -113,11 +100,6 @@ func (s *economyServiceServer) GiveCurrency(ctx context.Context, req *v1.GiveCur
 		req.GetAmount().MaxAmount,
 	)
 
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
-
 	storageCurrency, err := s.storageRepository.GiveCurrency(
 		ctx,
 		req.GetStorageId(),
@@ -129,18 +111,12 @@ func (s *economyServiceServer) GiveCurrency(ctx context.Context, req *v1.GiveCur
 	}
 
 	return &v1.GiveCurrencyResponse{
-		Api:      apiVersion,
 		Currency: storageCurrency,
 	}, nil
 }
 
 func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemRequest) (*v1.GiveItemResponse, error) {
 	fmt.Println("GiveItem")
-
-	// Check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	// Generate a random amount
 	amount := random.GenerateRandomInt(
@@ -230,7 +206,6 @@ func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemReq
 	}
 
 	return &v1.GiveItemResponse{
-		Api:       apiVersion,
 		StorageId: req.GetStorageId(),
 		Amount:    amount,
 	}, nil

@@ -13,11 +13,6 @@ import (
 func (s *economyServiceServer) CreateProduct(ctx context.Context, req *v1.CreateProductRequest) (*v1.CreateProductResponse, error) {
 	fmt.Println("CreateProduct")
 
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
-
 	// Add product to the databased return the generated UUID
 	product, err := s.productRepository.Create(ctx, req.GetName())
 	if err != nil {
@@ -25,18 +20,12 @@ func (s *economyServiceServer) CreateProduct(ctx context.Context, req *v1.Create
 	}
 
 	return &v1.CreateProductResponse{
-		Api:     apiVersion,
 		Product: product,
 	}, nil
 }
 
 func (s *economyServiceServer) ListProduct(ctx context.Context, req *v1.ListProductRequest) (*v1.ListProductResponse, error) {
 	fmt.Println("ListProduct")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	// Parse the page token
 	var parsedToken int64
@@ -68,7 +57,6 @@ func (s *economyServiceServer) ListProduct(ctx context.Context, req *v1.ListProd
 	}
 
 	return &v1.ListProductResponse{
-		Api:           apiVersion,
 		Products:      products,
 		TotalSize:     totalSize,
 		NextPageToken: nextPageToken,
@@ -76,29 +64,18 @@ func (s *economyServiceServer) ListProduct(ctx context.Context, req *v1.ListProd
 }
 
 func (s *economyServiceServer) GetProduct(ctx context.Context, req *v1.GetProductRequest) (*v1.GetProductResponse, error) {
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
-
 	product, err := s.productRepository.Get(ctx, req.GetProductId())
 	if err != nil {
 		return nil, err
 	}
 
 	return &v1.GetProductResponse{
-		Api:     apiVersion,
 		Product: product,
 	}, nil
 }
 
 func (s *economyServiceServer) AttachItem(ctx context.Context, req *v1.AttachItemRequest) (*v1.AttachItemResponse, error) {
 	fmt.Println("AttachItem")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	// Add product to the databased return the generated UUID
 	product, err := s.productRepository.AttachItem(
@@ -113,18 +90,12 @@ func (s *economyServiceServer) AttachItem(ctx context.Context, req *v1.AttachIte
 	}
 
 	return &v1.AttachItemResponse{
-		Api:     apiVersion,
 		Product: product,
 	}, nil
 }
 
 func (s *economyServiceServer) DetachItem(ctx context.Context, req *v1.DetachItemRequest) (*v1.DetachItemResponse, error) {
 	fmt.Println("DetachItem")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	// Add product to the databased return the generated UUID
 	product, err := s.productRepository.DetachItem(
@@ -137,18 +108,12 @@ func (s *economyServiceServer) DetachItem(ctx context.Context, req *v1.DetachIte
 	}
 
 	return &v1.DetachItemResponse{
-		Api:     apiVersion,
 		Product: product,
 	}, nil
 }
 
 func (s *economyServiceServer) AttachCurrency(ctx context.Context, req *v1.AttachCurrencyRequest) (*v1.AttachCurrencyResponse, error) {
 	fmt.Println("AttachCurrency")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	// Add product to the databased return the generated UUID
 	product, err := s.productRepository.AttachCurrency(
@@ -163,18 +128,12 @@ func (s *economyServiceServer) AttachCurrency(ctx context.Context, req *v1.Attac
 	}
 
 	return &v1.AttachCurrencyResponse{
-		Api:     apiVersion,
 		Product: product,
 	}, nil
 }
 
 func (s *economyServiceServer) DetachCurrency(ctx context.Context, req *v1.DetachCurrencyRequest) (*v1.DetachCurrencyResponse, error) {
 	fmt.Println("DetachCurrency")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	// Add product to the databased return the generated UUID
 	product, err := s.productRepository.DetachCurrency(
@@ -187,18 +146,12 @@ func (s *economyServiceServer) DetachCurrency(ctx context.Context, req *v1.Detac
 	}
 
 	return &v1.DetachCurrencyResponse{
-		Api:     apiVersion,
 		Product: product,
 	}, nil
 }
 
 func (s *economyServiceServer) ListProductPrice(ctx context.Context, req *v1.ListProductPriceRequest) (*v1.ListProductPriceResponse, error) {
 	fmt.Println("ListProductPrice")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	if req.GetProductId() == "" {
 		return nil, fmt.Errorf("please enter a product_id")
@@ -210,18 +163,12 @@ func (s *economyServiceServer) ListProductPrice(ctx context.Context, req *v1.Lis
 	}
 
 	return &v1.ListProductPriceResponse{
-		Api:    apiVersion,
 		Prices: prices,
 	}, nil
 }
 
 func (s *economyServiceServer) BuyProduct(ctx context.Context, req *v1.BuyProductRequest) (*v1.BuyProductResponse, error) {
 	fmt.Println("BuyProduct")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	if req.GetProductId() == "" {
 		return nil, status.Error(codes.InvalidArgument, "no product_id given")
@@ -345,7 +292,6 @@ func (s *economyServiceServer) BuyProduct(ctx context.Context, req *v1.BuyProduc
 	}
 
 	return &v1.BuyProductResponse{
-		Api:     apiVersion,
 		Product: product,
 	}, nil
 }

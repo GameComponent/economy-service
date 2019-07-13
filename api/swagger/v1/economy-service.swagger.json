@@ -72,12 +72,6 @@
         },
         "parameters": [
           {
-            "name": "api",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
             "name": "page_size",
             "in": "query",
             "required": false,
@@ -151,12 +145,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "api",
-            "in": "query",
-            "required": false,
-            "type": "string"
           }
         ],
         "tags": [
@@ -183,12 +171,6 @@
           }
         },
         "parameters": [
-          {
-            "name": "api",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
           {
             "name": "page_size",
             "in": "query",
@@ -263,12 +245,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "api",
-            "in": "query",
-            "required": false,
-            "type": "string"
           }
         ],
         "tags": [
@@ -295,12 +271,6 @@
           }
         },
         "parameters": [
-          {
-            "name": "api",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
           {
             "name": "page_size",
             "in": "query",
@@ -439,12 +409,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "api",
-            "in": "query",
-            "required": false,
-            "type": "string"
           }
         ],
         "tags": [
@@ -471,12 +435,6 @@
           }
         },
         "parameters": [
-          {
-            "name": "api",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
           {
             "name": "page_size",
             "in": "query",
@@ -583,12 +541,6 @@
             "name": "player_id",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "api",
-            "in": "query",
-            "required": false,
             "type": "string"
           }
         ],
@@ -720,12 +672,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "api",
-            "in": "query",
-            "required": false,
-            "type": "string"
           }
         ],
         "tags": [
@@ -756,12 +702,6 @@
             "name": "price_item_id",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "api",
-            "in": "query",
-            "required": false,
             "type": "string"
           }
         ],
@@ -794,12 +734,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "api",
-            "in": "query",
-            "required": false,
-            "type": "string"
           }
         ],
         "tags": [
@@ -829,12 +763,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "api",
-            "in": "query",
-            "required": false,
-            "type": "string"
           }
         ],
         "tags": [
@@ -861,12 +789,6 @@
           }
         },
         "parameters": [
-          {
-            "name": "api",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
           {
             "name": "page_size",
             "in": "query",
@@ -1040,12 +962,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "api",
-            "in": "query",
-            "required": false,
-            "type": "string"
           }
         ],
         "tags": [
@@ -1076,12 +992,6 @@
             "name": "product_item_id",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "api",
-            "in": "query",
-            "required": false,
             "type": "string"
           }
         ],
@@ -1114,12 +1024,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "api",
-            "in": "query",
-            "required": false,
-            "type": "string"
           }
         ],
         "tags": [
@@ -1150,12 +1054,6 @@
             "name": "product_id",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "api",
-            "in": "query",
-            "required": false,
             "type": "string"
           }
         ],
@@ -1216,12 +1114,6 @@
           }
         },
         "parameters": [
-          {
-            "name": "api",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
           {
             "name": "page_size",
             "in": "query",
@@ -1329,12 +1221,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "api",
-            "in": "query",
-            "required": false,
-            "type": "string"
           }
         ],
         "tags": [
@@ -1366,12 +1252,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "api",
-            "in": "query",
-            "required": false,
-            "type": "string"
           }
         ],
         "tags": [
@@ -1398,12 +1278,6 @@
           }
         },
         "parameters": [
-          {
-            "name": "api",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
           {
             "name": "page_size",
             "in": "query",
@@ -1544,12 +1418,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "api",
-            "in": "query",
-            "required": false,
-            "type": "string"
           }
         ],
         "tags": [
@@ -1642,9 +1510,6 @@
     "v1AttachCurrencyRequest": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "product_id": {
           "type": "string"
         },
@@ -1661,9 +1526,6 @@
     "v1AttachCurrencyResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "product": {
           "$ref": "#/definitions/v1Product"
         }
@@ -1672,9 +1534,6 @@
     "v1AttachItemRequest": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "product_id": {
           "type": "string"
         },
@@ -1691,9 +1550,6 @@
     "v1AttachItemResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "product": {
           "$ref": "#/definitions/v1Product"
         }
@@ -1702,9 +1558,6 @@
     "v1AttachPriceCurrencyRequest": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "price_id": {
           "type": "string"
         },
@@ -1721,9 +1574,6 @@
     "v1AttachPriceCurrencyResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "price": {
           "$ref": "#/definitions/v1Price"
         }
@@ -1732,9 +1582,6 @@
     "v1AttachPriceItemRequest": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "price_id": {
           "type": "string"
         },
@@ -1751,9 +1598,6 @@
     "v1AttachPriceItemResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "price": {
           "$ref": "#/definitions/v1Price"
         }
@@ -1762,9 +1606,6 @@
     "v1AttachProductRequest": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "shop_id": {
           "type": "string"
         },
@@ -1777,9 +1618,6 @@
     "v1AttachProductResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "shop": {
           "$ref": "#/definitions/v1Shop"
         }
@@ -1788,9 +1626,6 @@
     "v1AuthenticateRequest": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "email": {
           "type": "string"
         },
@@ -1803,9 +1638,6 @@
     "v1AuthenticateResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "token": {
           "type": "string"
         }
@@ -1814,9 +1646,6 @@
     "v1BuyProductRequest": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "product_id": {
           "type": "string"
         },
@@ -1835,9 +1664,6 @@
     "v1BuyProductResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "product": {
           "$ref": "#/definitions/v1Product"
         }
@@ -1857,9 +1683,6 @@
     "v1CreateCurrencyRequest": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "name": {
           "type": "string"
         },
@@ -1875,9 +1698,6 @@
     "v1CreateCurrencyResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "currency": {
           "$ref": "#/definitions/v1Currency"
         }
@@ -1886,9 +1706,6 @@
     "v1CreateItemRequest": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "name": {
           "type": "string"
         },
@@ -1909,9 +1726,6 @@
     "v1CreateItemResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "item": {
           "$ref": "#/definitions/v1Item"
         }
@@ -1920,9 +1734,6 @@
     "v1CreatePlayerRequest": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "id": {
           "type": "string"
         },
@@ -1935,9 +1746,6 @@
     "v1CreatePlayerResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "player": {
           "$ref": "#/definitions/v1Player"
         }
@@ -1946,9 +1754,6 @@
     "v1CreatePriceRequest": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "product_id": {
           "type": "string"
         }
@@ -1958,9 +1763,6 @@
     "v1CreatePriceResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "price": {
           "$ref": "#/definitions/v1Price"
         }
@@ -1969,9 +1771,6 @@
     "v1CreateProductRequest": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "name": {
           "type": "string"
         }
@@ -1981,9 +1780,6 @@
     "v1CreateProductResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "product": {
           "$ref": "#/definitions/v1Product"
         }
@@ -1992,9 +1788,6 @@
     "v1CreateShopRequest": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "name": {
           "type": "string"
         }
@@ -2004,9 +1797,6 @@
     "v1CreateShopResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "shop": {
           "$ref": "#/definitions/v1Shop"
         }
@@ -2015,9 +1805,6 @@
     "v1CreateStorageRequest": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "player_id": {
           "type": "string"
         },
@@ -2030,9 +1817,6 @@
     "v1CreateStorageResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "storage": {
           "$ref": "#/definitions/v1Storage"
         }
@@ -2066,9 +1850,6 @@
     "v1DeletePriceResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "success": {
           "type": "boolean",
           "format": "boolean"
@@ -2078,9 +1859,6 @@
     "v1DetachCurrencyResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "product": {
           "$ref": "#/definitions/v1Product"
         }
@@ -2089,9 +1867,6 @@
     "v1DetachItemResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "product": {
           "$ref": "#/definitions/v1Product"
         }
@@ -2100,9 +1875,6 @@
     "v1DetachPriceCurrencyResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "price": {
           "$ref": "#/definitions/v1Price"
         }
@@ -2111,9 +1883,6 @@
     "v1DetachPriceItemResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "price": {
           "$ref": "#/definitions/v1Price"
         }
@@ -2122,9 +1891,6 @@
     "v1DetachProductResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "shop": {
           "$ref": "#/definitions/v1Shop"
         }
@@ -2133,9 +1899,6 @@
     "v1GetConfigResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "config": {
           "$ref": "#/definitions/v1Config"
         }
@@ -2144,9 +1907,6 @@
     "v1GetCurrencyResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "currency": {
           "$ref": "#/definitions/v1Currency"
         }
@@ -2155,9 +1915,6 @@
     "v1GetItemResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "item": {
           "$ref": "#/definitions/v1Item"
         }
@@ -2166,9 +1923,6 @@
     "v1GetPlayerResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "player": {
           "$ref": "#/definitions/v1Player"
         }
@@ -2177,9 +1931,6 @@
     "v1GetPriceResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "price": {
           "$ref": "#/definitions/v1Price"
         }
@@ -2188,9 +1939,6 @@
     "v1GetProductResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "product": {
           "$ref": "#/definitions/v1Product"
         }
@@ -2199,9 +1947,6 @@
     "v1GetShopResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "shop": {
           "$ref": "#/definitions/v1Shop"
         }
@@ -2210,9 +1955,6 @@
     "v1GetStorageResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "storage": {
           "$ref": "#/definitions/v1Storage"
         }
@@ -2221,9 +1963,6 @@
     "v1GiveCurrencyRequest": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "storage_id": {
           "type": "string"
         },
@@ -2239,9 +1978,6 @@
     "v1GiveCurrencyResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "currency": {
           "$ref": "#/definitions/v1StorageCurrency"
         }
@@ -2250,9 +1986,6 @@
     "v1GiveItemRequest": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "storage_id": {
           "type": "string"
         },
@@ -2268,9 +2001,6 @@
     "v1GiveItemResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "storage_id": {
           "type": "string"
         },
@@ -2313,9 +2043,6 @@
     "v1ListConfigResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "configs": {
           "type": "array",
           "items": {
@@ -2334,9 +2061,6 @@
     "v1ListCurrencyResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "currencies": {
           "type": "array",
           "items": {
@@ -2355,9 +2079,6 @@
     "v1ListItemResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "items": {
           "type": "array",
           "items": {
@@ -2376,9 +2097,6 @@
     "v1ListPlayerResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "players": {
           "type": "array",
           "items": {
@@ -2397,9 +2115,6 @@
     "v1ListProductPriceResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "prices": {
           "type": "array",
           "items": {
@@ -2411,9 +2126,6 @@
     "v1ListProductResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "products": {
           "type": "array",
           "items": {
@@ -2432,9 +2144,6 @@
     "v1ListShopResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "shops": {
           "type": "array",
           "items": {
@@ -2453,9 +2162,6 @@
     "v1ListStorageResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "storages": {
           "type": "array",
           "items": {
@@ -2619,9 +2325,6 @@
     "v1RegisterRequest": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "email": {
           "type": "string"
         },
@@ -2634,9 +2337,6 @@
     "v1RegisterResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "token": {
           "type": "string"
         }
@@ -2645,9 +2345,6 @@
     "v1SearchItemRequest": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "query": {
           "type": "string"
         },
@@ -2664,9 +2361,6 @@
     "v1SearchItemResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "items": {
           "type": "array",
           "items": {
@@ -2685,9 +2379,6 @@
     "v1SearchPlayerRequest": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "query": {
           "type": "string"
         },
@@ -2704,9 +2395,6 @@
     "v1SearchPlayerResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "players": {
           "type": "array",
           "items": {
@@ -2725,9 +2413,6 @@
     "v1SetConfigRequest": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "key": {
           "type": "string"
         },
@@ -2740,9 +2425,6 @@
     "v1SetConfigResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "config": {
           "$ref": "#/definitions/v1Config"
         }
@@ -2863,9 +2545,6 @@
     "v1UpdateItemRequest": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "item_id": {
           "type": "string"
         },
@@ -2878,9 +2557,6 @@
     "v1UpdateItemResponse": {
       "type": "object",
       "properties": {
-        "api": {
-          "type": "string"
-        },
         "item": {
           "$ref": "#/definitions/v1Item"
         }

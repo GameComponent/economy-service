@@ -11,11 +11,6 @@ import (
 func (s *economyServiceServer) ListCurrency(ctx context.Context, req *v1.ListCurrencyRequest) (*v1.ListCurrencyResponse, error) {
 	fmt.Println("ListCurrency")
 
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
-
 	// Parse the page token
 	var parsedToken int64
 	parsedToken, _ = strconv.ParseInt(req.GetPageToken(), 10, 32)
@@ -46,7 +41,6 @@ func (s *economyServiceServer) ListCurrency(ctx context.Context, req *v1.ListCur
 	}
 
 	return &v1.ListCurrencyResponse{
-		Api:           apiVersion,
 		Currencies:    currencies,
 		TotalSize:     totalSize,
 		NextPageToken: nextPageToken,
@@ -55,11 +49,6 @@ func (s *economyServiceServer) ListCurrency(ctx context.Context, req *v1.ListCur
 
 func (s *economyServiceServer) CreateCurrency(ctx context.Context, req *v1.CreateCurrencyRequest) (*v1.CreateCurrencyResponse, error) {
 	fmt.Println("CreateCurrency")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	// Check the name
 	if len(req.GetName()) == 0 {
@@ -87,7 +76,6 @@ func (s *economyServiceServer) CreateCurrency(ctx context.Context, req *v1.Creat
 	}
 
 	return &v1.CreateCurrencyResponse{
-		Api:      apiVersion,
 		Currency: currency,
 	}, nil
 }
@@ -95,18 +83,12 @@ func (s *economyServiceServer) CreateCurrency(ctx context.Context, req *v1.Creat
 func (s *economyServiceServer) GetCurrency(ctx context.Context, req *v1.GetCurrencyRequest) (*v1.GetCurrencyResponse, error) {
 	fmt.Println("GetCurrency")
 
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
-
 	currency, err := s.currencyRepository.Get(ctx, req.GetCurrencyId())
 	if err != nil {
 		return nil, err
 	}
 
 	return &v1.GetCurrencyResponse{
-		Api:      apiVersion,
 		Currency: currency,
 	}, nil
 }

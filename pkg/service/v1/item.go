@@ -11,11 +11,6 @@ import (
 func (s *economyServiceServer) CreateItem(ctx context.Context, req *v1.CreateItemRequest) (*v1.CreateItemResponse, error) {
 	fmt.Println("CreateItem")
 
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
-
 	// Add item to the databased return the generated UUID
 	item, err := s.itemRepository.Create(
 		ctx,
@@ -29,18 +24,12 @@ func (s *economyServiceServer) CreateItem(ctx context.Context, req *v1.CreateIte
 	}
 
 	return &v1.CreateItemResponse{
-		Api:  apiVersion,
 		Item: item,
 	}, nil
 }
 
 func (s *economyServiceServer) UpdateItem(ctx context.Context, req *v1.UpdateItemRequest) (*v1.UpdateItemResponse, error) {
 	fmt.Println("UpdateItem")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	item, err := s.itemRepository.Update(ctx, req.GetItemId(), req.GetName(), `{"kaas":"baas"}`)
 
@@ -49,35 +38,23 @@ func (s *economyServiceServer) UpdateItem(ctx context.Context, req *v1.UpdateIte
 	}
 
 	return &v1.UpdateItemResponse{
-		Api:  apiVersion,
 		Item: item,
 	}, nil
 }
 
 func (s *economyServiceServer) GetItem(ctx context.Context, req *v1.GetItemRequest) (*v1.GetItemResponse, error) {
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
-
 	item, err := s.itemRepository.Get(ctx, req.GetItemId())
 	if err != nil {
 		return nil, err
 	}
 
 	return &v1.GetItemResponse{
-		Api:  apiVersion,
 		Item: item,
 	}, nil
 }
 
 func (s *economyServiceServer) ListItem(ctx context.Context, req *v1.ListItemRequest) (*v1.ListItemResponse, error) {
 	fmt.Println("ListItem")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	// Parse the page token
 	var parsedToken int64
@@ -109,7 +86,6 @@ func (s *economyServiceServer) ListItem(ctx context.Context, req *v1.ListItemReq
 	}
 
 	return &v1.ListItemResponse{
-		Api:           apiVersion,
 		Items:         items,
 		TotalSize:     totalSize,
 		NextPageToken: nextPageToken,
@@ -118,11 +94,6 @@ func (s *economyServiceServer) ListItem(ctx context.Context, req *v1.ListItemReq
 
 func (s *economyServiceServer) SearchItem(ctx context.Context, req *v1.SearchItemRequest) (*v1.SearchItemResponse, error) {
 	fmt.Println("SearchItem")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	// Check if query is empty
 	if len(req.GetQuery()) == 0 {
@@ -159,7 +130,6 @@ func (s *economyServiceServer) SearchItem(ctx context.Context, req *v1.SearchIte
 	}
 
 	return &v1.SearchItemResponse{
-		Api:           apiVersion,
 		Items:         items,
 		TotalSize:     totalSize,
 		NextPageToken: nextPageToken,

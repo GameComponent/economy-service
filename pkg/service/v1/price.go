@@ -10,11 +10,6 @@ import (
 func (s *economyServiceServer) GetPrice(ctx context.Context, req *v1.GetPriceRequest) (*v1.GetPriceResponse, error) {
 	fmt.Println("GetPrice")
 
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
-
 	price, err := s.priceRepository.Get(ctx, req.GetPriceId())
 	if err != nil {
 		return nil, err
@@ -22,18 +17,12 @@ func (s *economyServiceServer) GetPrice(ctx context.Context, req *v1.GetPriceReq
 	}
 
 	return &v1.GetPriceResponse{
-		Api:   apiVersion,
 		Price: price,
 	}, nil
 }
 
 func (s *economyServiceServer) CreatePrice(ctx context.Context, req *v1.CreatePriceRequest) (*v1.CreatePriceResponse, error) {
 	fmt.Println("CreatePrice")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	if req.GetProductId() == "" {
 		return nil, fmt.Errorf("please speficy a product id")
@@ -46,18 +35,12 @@ func (s *economyServiceServer) CreatePrice(ctx context.Context, req *v1.CreatePr
 	}
 
 	return &v1.CreatePriceResponse{
-		Api:   apiVersion,
 		Price: price,
 	}, nil
 }
 
 func (s *economyServiceServer) AttachPriceCurrency(ctx context.Context, req *v1.AttachPriceCurrencyRequest) (*v1.AttachPriceCurrencyResponse, error) {
 	fmt.Println("AttachPriceCurrency")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	price, err := s.priceRepository.AttachPriceCurrency(
 		ctx,
@@ -71,18 +54,12 @@ func (s *economyServiceServer) AttachPriceCurrency(ctx context.Context, req *v1.
 	}
 
 	return &v1.AttachPriceCurrencyResponse{
-		Api:   apiVersion,
 		Price: price,
 	}, nil
 }
 
 func (s *economyServiceServer) DetachPriceCurrency(ctx context.Context, req *v1.DetachPriceCurrencyRequest) (*v1.DetachPriceCurrencyResponse, error) {
 	fmt.Println("DetachPriceCurrency")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	price, err := s.priceRepository.DetachPriceCurrency(
 		ctx,
@@ -94,18 +71,12 @@ func (s *economyServiceServer) DetachPriceCurrency(ctx context.Context, req *v1.
 	}
 
 	return &v1.DetachPriceCurrencyResponse{
-		Api:   apiVersion,
 		Price: price,
 	}, nil
 }
 
 func (s *economyServiceServer) AttachPriceItem(ctx context.Context, req *v1.AttachPriceItemRequest) (*v1.AttachPriceItemResponse, error) {
 	fmt.Println("AttachPriceItem")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	price, err := s.priceRepository.AttachPriceItem(
 		ctx,
@@ -119,18 +90,12 @@ func (s *economyServiceServer) AttachPriceItem(ctx context.Context, req *v1.Atta
 	}
 
 	return &v1.AttachPriceItemResponse{
-		Api:   apiVersion,
 		Price: price,
 	}, nil
 }
 
 func (s *economyServiceServer) DetachPriceItem(ctx context.Context, req *v1.DetachPriceItemRequest) (*v1.DetachPriceItemResponse, error) {
 	fmt.Println("DetachPriceItem")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	price, err := s.priceRepository.DetachPriceCurrency(
 		ctx,
@@ -142,18 +107,12 @@ func (s *economyServiceServer) DetachPriceItem(ctx context.Context, req *v1.Deta
 	}
 
 	return &v1.DetachPriceItemResponse{
-		Api:   apiVersion,
 		Price: price,
 	}, nil
 }
 
 func (s *economyServiceServer) DeletePrice(ctx context.Context, req *v1.DeletePriceRequest) (*v1.DeletePriceResponse, error) {
 	fmt.Println("DeletePrice")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	success, err := s.priceRepository.Delete(
 		ctx,
@@ -165,7 +124,6 @@ func (s *economyServiceServer) DeletePrice(ctx context.Context, req *v1.DeletePr
 	}
 
 	return &v1.DeletePriceResponse{
-		Api:     apiVersion,
 		Success: success,
 	}, nil
 }

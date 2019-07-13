@@ -11,11 +11,6 @@ import (
 func (s *economyServiceServer) GetShop(ctx context.Context, req *v1.GetShopRequest) (*v1.GetShopResponse, error) {
 	fmt.Println("GetShop")
 
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
-
 	shop, err := s.shopRepository.Get(ctx, req.GetShopId())
 
 	if err != nil {
@@ -24,7 +19,6 @@ func (s *economyServiceServer) GetShop(ctx context.Context, req *v1.GetShopReque
 	}
 
 	return &v1.GetShopResponse{
-		Api:  apiVersion,
 		Shop: shop,
 	}, nil
 }
@@ -42,18 +36,12 @@ func (s *economyServiceServer) CreateShop(ctx context.Context, req *v1.CreateSho
 	}
 
 	return &v1.CreateShopResponse{
-		Api:  apiVersion,
 		Shop: shop,
 	}, nil
 }
 
 func (s *economyServiceServer) ListShop(ctx context.Context, req *v1.ListShopRequest) (*v1.ListShopResponse, error) {
 	fmt.Println("ListShop")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	// Parse the page token
 	var parsedToken int64
@@ -85,7 +73,6 @@ func (s *economyServiceServer) ListShop(ctx context.Context, req *v1.ListShopReq
 	}
 
 	return &v1.ListShopResponse{
-		Api:           apiVersion,
 		Shops:         shops,
 		TotalSize:     totalSize,
 		NextPageToken: nextPageToken,
@@ -94,11 +81,6 @@ func (s *economyServiceServer) ListShop(ctx context.Context, req *v1.ListShopReq
 
 func (s *economyServiceServer) AttachProduct(ctx context.Context, req *v1.AttachProductRequest) (*v1.AttachProductResponse, error) {
 	fmt.Println("AttachProduct")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	// Add product to the database return the generated UUID
 	shop, err := s.shopRepository.AttachProduct(
@@ -112,18 +94,12 @@ func (s *economyServiceServer) AttachProduct(ctx context.Context, req *v1.Attach
 	}
 
 	return &v1.AttachProductResponse{
-		Api:  apiVersion,
 		Shop: shop,
 	}, nil
 }
 
 func (s *economyServiceServer) DetachProduct(ctx context.Context, req *v1.DetachProductRequest) (*v1.DetachProductResponse, error) {
 	fmt.Println("DetachProduct")
-
-	// check if the API version requested by client is supported by server
-	if err := s.checkAPI(req.Api); err != nil {
-		return nil, err
-	}
 
 	// Add product to the databased return the generated UUID
 	shop, err := s.shopRepository.DetachProduct(
@@ -136,7 +112,6 @@ func (s *economyServiceServer) DetachProduct(ctx context.Context, req *v1.Detach
 	}
 
 	return &v1.DetachProductResponse{
-		Api:  apiVersion,
 		Shop: shop,
 	}, nil
 }
