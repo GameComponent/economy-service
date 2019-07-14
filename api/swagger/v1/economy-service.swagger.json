@@ -1423,6 +1423,43 @@
         "tags": [
           "EconomyService"
         ]
+      },
+      "put": {
+        "summary": "Update Storage",
+        "operationId": "UpdateStorage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateStorageResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "storage_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UpdateStorageRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
       }
     }
   },
@@ -2559,6 +2596,26 @@
       "properties": {
         "item": {
           "$ref": "#/definitions/v1Item"
+        }
+      }
+    },
+    "v1UpdateStorageRequest": {
+      "type": "object",
+      "properties": {
+        "storage_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "title": "UpdateStorage"
+    },
+    "v1UpdateStorageResponse": {
+      "type": "object",
+      "properties": {
+        "storage": {
+          "$ref": "#/definitions/v1Storage"
         }
       }
     }

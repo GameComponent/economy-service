@@ -90,6 +90,7 @@ type ShopRepository interface {
 // StorageRepository interface
 type StorageRepository interface {
 	Create(ctx context.Context, playerID string, name string) (*v1.Storage, error)
+	Update(ctx context.Context, storageID string, name string) (*v1.Storage, error)
 	Get(ctx context.Context, storageID string) (*v1.Storage, error)
 	GiveItem(ctx context.Context, storageID string, itemID string, amount int64) (*string, error)
 	IncreaseItemAmount(ctx context.Context, storageItemID string, amount int64) error

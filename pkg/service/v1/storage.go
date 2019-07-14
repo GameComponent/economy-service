@@ -9,6 +9,8 @@ import (
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
 	"github.com/GameComponent/economy-service/pkg/helper/random"
 	"github.com/google/uuid"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (s *economyServiceServer) CreateStorage(ctx context.Context, req *v1.CreateStorageRequest) (*v1.CreateStorageResponse, error) {
@@ -26,6 +28,23 @@ func (s *economyServiceServer) CreateStorage(ctx context.Context, req *v1.Create
 	}
 
 	return &v1.CreateStorageResponse{
+		Storage: storage,
+	}, nil
+}
+
+func (s *economyServiceServer) UpdateStorage(ctx context.Context, req *v1.UpdateStorageRequest) (*v1.UpdateStorageResponse, error) {
+	fmt.Println("UpdateStorage")
+
+	if req.GetName() == "" {
+		return nil, status.Error(codes.InvalidArgument, "no name given")
+	}
+
+	storage, err := s.storageRepository.Update(ctx, req.GetStorageId(), req.GetName())
+	if err != nil {
+		return nil, status.Error(codes.Aborted, "unable to update storage")
+	}
+
+	return &v1.UpdateStorageResponse{
 		Storage: storage,
 	}, nil
 }

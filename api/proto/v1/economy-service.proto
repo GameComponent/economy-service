@@ -86,6 +86,14 @@ service EconomyService {
 		};
 	}
 
+	// Update Storage
+	rpc UpdateStorage(UpdateStorageRequest) returns (UpdateStorageResponse) {
+		option (google.api.http) = {
+			put: "/v1/storage/{storage_id}"
+			body: "*"
+		};
+	}
+
 	// Create an Item
 	rpc CreateItem(CreateItemRequest) returns (CreateItemResponse) {
 		option (google.api.http) = {
@@ -543,6 +551,16 @@ message CreateStorageRequest{
 }
 
 message CreateStorageResponse{	
+	Storage storage = 1;
+}
+
+// UpdateStorage
+message UpdateStorageRequest{	
+	string storage_id = 1;
+	string name = 2;
+}
+
+message UpdateStorageResponse{	
 	Storage storage = 1;
 }
 

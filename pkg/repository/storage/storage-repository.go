@@ -46,6 +46,22 @@ func (r *StorageRepository) Create(ctx context.Context, playerID string, name st
 	return storage, nil
 }
 
+// Update a storage
+func (r *StorageRepository) Update(ctx context.Context, storageID string, name string) (*v1.Storage, error) {
+	_, err := r.db.ExecContext(
+		ctx,
+		`UPDATE storage SET name = $1 WHERE id = $2 returning id`,
+		name,
+		storageID,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return r.Get(ctx, storageID)
+}
+
 // Get a storage
 func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Storage, error) {
 	rows, err := r.db.QueryContext(
