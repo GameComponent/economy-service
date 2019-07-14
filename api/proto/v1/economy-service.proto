@@ -496,7 +496,7 @@ message PriceItem {
 // CreatePlayer
 message CreatePlayerRequest{	
 	string id = 1;
-	string name = 3;
+	string name = 2;
 }
 
 message CreatePlayerResponse{	
@@ -506,15 +506,13 @@ message CreatePlayerResponse{
 // GiveItem
 message GiveItemRequest{	
 	string storage_id = 1;
-	string item_id = 3;
-	Amount amount = 4;
-	// google.protobuf.Struct metadata = 4;
+	string item_id = 2;
+	Amount amount = 3;
 }
 
 message GiveItemResponse{	
 	string storage_id = 1;
-	int64 amount = 3;
-	// StorageItem item = 3;
+	int64 amount = 2;
 }
 
 // GetStorage
@@ -529,20 +527,19 @@ message GetStorageResponse{
 // ListStorage
 message ListStorageRequest{	
 	int32 page_size = 1;
-	string page_token = 3;
+	string page_token = 2;
 }
 
 message ListStorageResponse{	
 	repeated Storage storages = 1;
-	string next_page_token = 3;
-	int32 total_size = 4;
+	string next_page_token = 2;
+	int32 total_size = 3;
 }
 
 // CreateStorage
 message CreateStorageRequest{	
 	string player_id = 1;
-	string name = 3;
-	// google.protobuf.Struct metadata = 4;
+	string name = 2;
 }
 
 message CreateStorageResponse{	
@@ -561,35 +558,34 @@ message GetPlayerResponse{
 // ListPlayer
 message ListPlayerRequest{	
 	int32 page_size = 1;
-	string page_token = 3;
+	string page_token = 2;
 }
 
 message ListPlayerResponse{	
 	repeated Player players = 1;
-	string next_page_token = 3;
-	int32 total_size = 4;
+	string next_page_token = 2;
+	int32 total_size = 3;
 }
 
 // SearchPlayer
 message SearchPlayerRequest{	
 	string query = 1;
-	int32 page_size = 3;
-	string page_token = 4;
+	int32 page_size = 2;
+	string page_token = 3;
 }
 
 message SearchPlayerResponse{	
 	repeated Player players = 1;
-	string next_page_token = 3;
-	int32 total_size = 4;
+	string next_page_token = 2;
+	int32 total_size = 3;
 }
 
 // CreateItem
 message CreateItemRequest{	
 	string name = 1;
-	bool stackable = 3;
-	int64 stack_max_amount = 4;
-	StackBalancingMethod stack_balancing_method = 5;
-	// google.protobuf.Struct metadata = 3;
+	bool stackable = 2;
+	int64 stack_max_amount = 3;
+	StackBalancingMethod stack_balancing_method = 4;
 }
 
 message CreateItemResponse{	
@@ -600,7 +596,6 @@ message CreateItemResponse{
 message UpdateItemRequest{	
 	string item_id = 1;
 	string name = 2;
-	// google.protobuf.Struct metadata = 3;
 }
 
 message UpdateItemResponse{	
@@ -646,7 +641,6 @@ message CreateCurrencyRequest{
 	string name = 1;
 	string short_name = 2;
 	string symbol = 3;
-	// google.protobuf.Struct metadata = 3;
 }
 
 message CreateCurrencyResponse{	
@@ -748,7 +742,6 @@ message GetShopResponse{
 // CreateShop
 message CreateShopRequest{	
 	string name = 1;
-	// google.protobuf.Struct metadata = 2;
 }
 
 message CreateShopResponse{	
@@ -770,7 +763,6 @@ message ListShopResponse{
 // CreateProduct
 message CreateProductRequest{	
 	string name = 1;
-	// google.protobuf.Struct metadata = 2;
 }
 
 message CreateProductResponse{	
@@ -803,7 +795,6 @@ message AttachItemRequest{
 	string product_id = 1;
 	string item_id = 2;
 	int64 amount = 3;
-	// google.protobuf.Struct metadata = 4;
 }
 
 message AttachItemResponse{	
@@ -824,7 +815,6 @@ message AttachCurrencyRequest{
 	string product_id = 1;
 	string currency_id = 2;
 	int64 amount = 3;
-	// google.protobuf.Struct metadata = 4;
 }
 
 message AttachCurrencyResponse{	
