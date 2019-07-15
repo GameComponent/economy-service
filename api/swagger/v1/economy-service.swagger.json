@@ -1162,37 +1162,6 @@
         "tags": [
           "EconomyService"
         ]
-      },
-      "put": {
-        "summary": "Update a shop",
-        "operationId": "UpdateShop",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1UpdateShopResponse"
-            }
-          },
-          "404": {
-            "description": "Returned when the resource does not exist.",
-            "schema": {
-              "format": "string"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1UpdateShopRequest"
-            }
-          }
-        ],
-        "tags": [
-          "EconomyService"
-        ]
       }
     },
     "/v1/shop/attach/product": {
@@ -1283,6 +1252,43 @@
             "in": "path",
             "required": true,
             "type": "string"
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      },
+      "put": {
+        "summary": "Update a shop",
+        "operationId": "UpdateShop",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateShopResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "shop_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UpdateShopRequest"
+            }
           }
         ],
         "tags": [
