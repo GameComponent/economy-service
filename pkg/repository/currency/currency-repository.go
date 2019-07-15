@@ -51,6 +51,27 @@ func (r *CurrencyRepository) Create(ctx context.Context, name string, shortName 
 	return currency, nil
 }
 
+// Update a currency
+func (r *CurrencyRepository) Update(ctx context.Context, currencyID string, name string, shortName string, symbol string) (*v1.Currency, error) {
+	_, err := r.db.ExecContext(
+		ctx,
+		`
+			UPDATE currency
+			SET name = $1, short_name = $2, symbol = $3
+			WHERE id = $4
+		`,
+		name,
+		shortName,
+		symbol,
+		currencyID,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return r.Get(ctx, currencyID)
+}
+
 // Get a currency
 func (r *CurrencyRepository) Get(ctx context.Context, currencyID string) (*v1.Currency, error) {
 	currency := &v1.Currency{}

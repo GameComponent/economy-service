@@ -156,6 +156,14 @@ service EconomyService {
 		};
 	}
 
+	// Update a currency
+	rpc UpdateCurrency(UpdateCurrencyRequest) returns (UpdateCurrencyResponse) {
+		option (google.api.http) = {
+			put: "/v1/currency/{currency_id}"
+			body: "*"
+		};
+	}
+
 	// Get a currency
 	rpc GetCurrency(GetCurrencyRequest) returns (GetCurrencyResponse) {
 		option (google.api.http) = {
@@ -696,6 +704,18 @@ message CreateCurrencyRequest{
 }
 
 message CreateCurrencyResponse{	
+	Currency currency = 1;
+}
+
+// UpdateCurrency
+message UpdateCurrencyRequest{	
+	string currency_id = 1;
+	string name = 2;
+	string short_name = 3;
+	string symbol = 4;
+}
+
+message UpdateCurrencyResponse{	
 	Currency currency = 1;
 }
 

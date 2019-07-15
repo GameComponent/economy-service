@@ -6,6 +6,8 @@ import (
 	"strconv"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (s *economyServiceServer) ListCurrency(ctx context.Context, req *v1.ListCurrencyRequest) (*v1.ListCurrencyResponse, error) {
@@ -76,6 +78,40 @@ func (s *economyServiceServer) CreateCurrency(ctx context.Context, req *v1.Creat
 	}
 
 	return &v1.CreateCurrencyResponse{
+		Currency: currency,
+	}, nil
+}
+
+func (s *economyServiceServer) UpdateCurrency(ctx context.Context, req *v1.UpdateCurrencyRequest) (*v1.UpdateCurrencyResponse, error) {
+	fmt.Println("UpdateCurrency")
+
+	// Check the name
+	if len(req.GetName()) == 0 {
+		return nil, status.Error(codes.InvalidArgument, "no name given")
+	}
+
+	// Check the short_name
+	if len(req.GetShortName()) == 0 {
+		return nil, status.Error(codes.InvalidArgument, "no short_name given")
+	}
+
+	// Check the symbol
+	if len(req.GetSymbol()) == 0 {
+		return nil, status.Error(codes.InvalidArgument, "no symbol given")
+	}
+
+	currency, err := s.currencyRepository.Update(
+		ctx,
+		req.GetCurrencyId(),
+		req.GetName(),
+		req.GetShortName(),
+		req.GetSymbol(),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.UpdateCurrencyResponse{
 		Currency: currency,
 	}, nil
 }

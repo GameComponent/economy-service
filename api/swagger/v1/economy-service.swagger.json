@@ -250,6 +250,43 @@
         "tags": [
           "EconomyService"
         ]
+      },
+      "put": {
+        "summary": "Update a currency",
+        "operationId": "UpdateCurrency",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateCurrencyResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "currency_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UpdateCurrencyRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
       }
     },
     "/v1/item": {
@@ -2687,6 +2724,32 @@
         "amount": {
           "type": "string",
           "format": "int64"
+        }
+      }
+    },
+    "v1UpdateCurrencyRequest": {
+      "type": "object",
+      "properties": {
+        "currency_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "short_name": {
+          "type": "string"
+        },
+        "symbol": {
+          "type": "string"
+        }
+      },
+      "title": "UpdateCurrency"
+    },
+    "v1UpdateCurrencyResponse": {
+      "type": "object",
+      "properties": {
+        "currency": {
+          "$ref": "#/definitions/v1Currency"
         }
       }
     },

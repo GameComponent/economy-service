@@ -31,6 +31,7 @@ type ConfigRepository interface {
 // CurrencyRepository interface
 type CurrencyRepository interface {
 	Create(ctx context.Context, name string, shortName string, symbol string) (*v1.Currency, error)
+	Update(ctx context.Context, currencyID string, name string, shortName string, symbol string) (*v1.Currency, error)
 	Get(ctx context.Context, currencyID string) (*v1.Currency, error)
 	List(ctx context.Context, limit int32, offset int32) ([]*v1.Currency, int32, error)
 }
