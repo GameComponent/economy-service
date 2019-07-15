@@ -24,6 +24,24 @@ func (s *economyServiceServer) CreateProduct(ctx context.Context, req *v1.Create
 	}, nil
 }
 
+func (s *economyServiceServer) UpdateProduct(ctx context.Context, req *v1.UpdateProductRequest) (*v1.UpdateProductResponse, error) {
+	fmt.Println("UpdateProduct")
+
+	if req.GetName() == "" {
+		return nil, status.Error(codes.InvalidArgument, "no name given")
+	}
+
+	// Add product to the databased return the generated UUID
+	product, err := s.productRepository.Update(ctx, req.GetProductId(), req.GetName())
+	if err != nil {
+		return nil, status.Error(codes.Aborted, "unable to update product")
+	}
+
+	return &v1.UpdateProductResponse{
+		Product: product,
+	}, nil
+}
+
 func (s *economyServiceServer) ListProduct(ctx context.Context, req *v1.ListProductRequest) (*v1.ListProductResponse, error) {
 	fmt.Println("ListProduct")
 

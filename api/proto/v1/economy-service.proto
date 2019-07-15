@@ -246,6 +246,14 @@ service EconomyService {
 		};
 	}	
 
+	// Update a product
+	rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse) {
+		option (google.api.http) = {
+			put: "/v1/product/{product_id}"
+			body: "*"
+		};
+	}	
+
 	// List all product
 	rpc ListProduct(ListProductRequest) returns (ListProductResponse) {
 		option (google.api.http) = {
@@ -802,6 +810,16 @@ message CreateProductRequest{
 }
 
 message CreateProductResponse{	
+	Product product = 1;
+}
+
+// UpdateProduct
+message UpdateProductRequest{	
+	string product_id = 1;
+	string name = 2;
+}
+
+message UpdateProductResponse{	
 	Product product = 1;
 }
 

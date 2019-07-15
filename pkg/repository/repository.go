@@ -67,7 +67,7 @@ type PriceRepository interface {
 type ProductRepository interface {
 	Create(ctx context.Context, name string) (*v1.Product, error)
 	Get(ctx context.Context, productID string) (*v1.Product, error)
-	Update(ctx context.Context, id string, name string) (*v1.Product, error)
+	Update(ctx context.Context, productID string, name string) (*v1.Product, error)
 	List(ctx context.Context, limit int32, offset int32) ([]*v1.Product, int32, error)
 	Search(ctx context.Context, query string, limit int32, offset int32) ([]*v1.Product, int32, error)
 	AttachItem(ctx context.Context, productID string, itemID string, amount int64) (*v1.Product, error)

@@ -64,11 +64,11 @@ func (r *ProductRepository) Create(ctx context.Context, name string) (*v1.Produc
 	}, nil
 }
 
-// Update an product
+// Update a product
 func (r *ProductRepository) Update(ctx context.Context, id string, name string) (*v1.Product, error) {
 	_, err := r.db.ExecContext(
 		ctx,
-		`UPDATE product SET name = $1 WHERE id = $3`,
+		`UPDATE product SET name = $1 WHERE id = $2`,
 		name,
 		id,
 	)

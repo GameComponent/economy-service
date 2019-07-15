@@ -1029,6 +1029,43 @@
         "tags": [
           "EconomyService"
         ]
+      },
+      "put": {
+        "summary": "Update a product",
+        "operationId": "UpdateProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateProductResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UpdateProductRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
       }
     },
     "/v1/product/{product_id}/price": {
@@ -2633,6 +2670,26 @@
       "properties": {
         "item": {
           "$ref": "#/definitions/v1Item"
+        }
+      }
+    },
+    "v1UpdateProductRequest": {
+      "type": "object",
+      "properties": {
+        "product_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "title": "UpdateProduct"
+    },
+    "v1UpdateProductResponse": {
+      "type": "object",
+      "properties": {
+        "product": {
+          "$ref": "#/definitions/v1Product"
         }
       }
     },
