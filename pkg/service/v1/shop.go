@@ -56,7 +56,7 @@ func (s *economyServiceServer) UpdateShop(ctx context.Context, req *v1.UpdateSho
 	)
 
 	if err != nil {
-		return nil, status.Error(codes.Aborted, "unable to update storage")
+		return nil, status.Error(codes.Aborted, "unable to update shop")
 	}
 
 	return &v1.UpdateShopResponse{
