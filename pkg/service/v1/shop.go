@@ -6,6 +6,8 @@ import (
 	"strconv"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (s *economyServiceServer) GetShop(ctx context.Context, req *v1.GetShopRequest) (*v1.GetShopResponse, error) {
@@ -36,6 +38,28 @@ func (s *economyServiceServer) CreateShop(ctx context.Context, req *v1.CreateSho
 	}
 
 	return &v1.CreateShopResponse{
+		Shop: shop,
+	}, nil
+}
+
+func (s *economyServiceServer) UpdateShop(ctx context.Context, req *v1.UpdateShopRequest) (*v1.UpdateShopResponse, error) {
+	fmt.Println("UpdateShop")
+
+	if req.GetName() == "" {
+		return nil, status.Error(codes.InvalidArgument, "no name given")
+	}
+
+	shop, err := s.shopRepository.Update(
+		ctx,
+		req.GetShopId(),
+		req.GetName(),
+	)
+
+	if err != nil {
+		return nil, status.Error(codes.Aborted, "unable to update storage")
+	}
+
+	return &v1.UpdateShopResponse{
 		Shop: shop,
 	}, nil
 }

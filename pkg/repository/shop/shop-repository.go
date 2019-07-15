@@ -412,6 +412,21 @@ func (r *ShopRepository) Create(ctx context.Context, name string) (*v1.Shop, err
 	}, nil
 }
 
+// Update a shop
+func (r *ShopRepository) Update(ctx context.Context, shopID string, name string) (*v1.Shop, error) {
+	_, err := r.db.ExecContext(
+		ctx,
+		`UPDATE shop SET name = $1 WHERE id = $2`,
+		name,
+		shopID,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return r.Get(ctx, shopID)
+}
+
 // List all shops
 func (r *ShopRepository) List(ctx context.Context, limit int32, offset int32) ([]*v1.Shop, int32, error) {
 	// Query shops from the database

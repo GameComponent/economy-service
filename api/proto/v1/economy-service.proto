@@ -223,6 +223,14 @@ service EconomyService {
 		};
 	}	
 
+	// Update a shop
+	rpc UpdateShop(UpdateShopRequest) returns (UpdateShopResponse) {
+		option (google.api.http) = {
+			put: "/v1/shop"
+			body: "*"
+		};
+	}	
+
 	// List all shops
 	rpc ListShop(ListShopRequest) returns (ListShopResponse) {
 		option (google.api.http) = {
@@ -763,6 +771,16 @@ message CreateShopRequest{
 }
 
 message CreateShopResponse{	
+	Shop shop = 1;
+}
+
+// UpdateShop
+message UpdateShopRequest{	
+	string shop_id = 1;
+	string name = 2;
+}
+
+message UpdateShopResponse{	
 	Shop shop = 1;
 }
 
