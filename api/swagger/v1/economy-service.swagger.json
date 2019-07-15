@@ -547,6 +547,43 @@
         "tags": [
           "EconomyService"
         ]
+      },
+      "put": {
+        "summary": "Update a player",
+        "operationId": "UpdatePlayer",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdatePlayerResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "player_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UpdatePlayerRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
       }
     },
     "/v1/price": {
@@ -2670,6 +2707,26 @@
       "properties": {
         "item": {
           "$ref": "#/definitions/v1Item"
+        }
+      }
+    },
+    "v1UpdatePlayerRequest": {
+      "type": "object",
+      "properties": {
+        "player_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "title": "UpdatePlayer"
+    },
+    "v1UpdatePlayerResponse": {
+      "type": "object",
+      "properties": {
+        "player": {
+          "$ref": "#/definitions/v1Player"
         }
       }
     },

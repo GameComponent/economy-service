@@ -49,6 +49,14 @@ service EconomyService {
 		};
 	}
 
+	// Update a player
+	rpc UpdatePlayer(UpdatePlayerRequest) returns (UpdatePlayerResponse) {
+		option (google.api.http) = {
+			put: "/v1/player/{player_id}"
+			body: "*"
+		};
+	}
+
 	// List all players
 	rpc ListPlayer(ListPlayerRequest) returns (ListPlayerResponse) {
 		option (google.api.http) = {
@@ -577,6 +585,16 @@ message CreatePlayerRequest{
 }
 
 message CreatePlayerResponse{	
+	Player player = 1;
+}
+
+// UpdatePlayer
+message UpdatePlayerRequest{	
+	string player_id = 1;
+	string name = 2;
+}
+
+message UpdatePlayerResponse{	
 	Player player = 1;
 }
 

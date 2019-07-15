@@ -50,6 +50,32 @@ func (s *economyServiceServer) CreatePlayer(ctx context.Context, req *v1.CreateP
 	}, nil
 }
 
+func (s *economyServiceServer) UpdatePlayer(ctx context.Context, req *v1.UpdatePlayerRequest) (*v1.UpdatePlayerResponse, error) {
+	fmt.Println("UpdatePlayer")
+
+	if req.GetPlayerId() == "" {
+		return nil, status.Error(codes.InvalidArgument, "no player_id given")
+	}
+
+	if req.GetName() == "" {
+		return nil, status.Error(codes.InvalidArgument, "no name given")
+	}
+
+	player, err := s.playerRepository.Update(
+		ctx,
+		req.GetPlayerId(),
+		req.GetName(),
+	)
+
+	if err != nil {
+		return nil, status.Error(codes.Aborted, "unable to retrieve player")
+	}
+
+	return &v1.UpdatePlayerResponse{
+		Player: player,
+	}, nil
+}
+
 func (s *economyServiceServer) ListPlayer(ctx context.Context, req *v1.ListPlayerRequest) (*v1.ListPlayerResponse, error) {
 	fmt.Println("ListPlayer")
 

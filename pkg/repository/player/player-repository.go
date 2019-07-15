@@ -42,6 +42,22 @@ func (r *PlayerRepository) Create(ctx context.Context, id string, name string) (
 	}, nil
 }
 
+// Update a player
+func (r *PlayerRepository) Update(ctx context.Context, playerID string, name string) (*v1.Player, error) {
+	_, err := r.db.ExecContext(
+		ctx,
+		`UPDATE player SET name = $1 WHERE id = $2`,
+		name,
+		playerID,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return r.Get(ctx, playerID)
+}
+
 // Get a player
 func (r *PlayerRepository) Get(ctx context.Context, id string) (*v1.Player, error) {
 	rows, err := r.db.QueryContext(
