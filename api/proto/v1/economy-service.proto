@@ -517,16 +517,6 @@ message PriceItem {
 	int64 amount = 3;
 }
 
-// CreatePlayer
-message CreatePlayerRequest{	
-	string id = 1;
-	string name = 2;
-}
-
-message CreatePlayerResponse{	
-	Player player = 1;
-}
-
 // GiveItem
 message GiveItemRequest{	
 	string storage_id = 1;
@@ -578,6 +568,16 @@ message UpdateStorageRequest{
 
 message UpdateStorageResponse{	
 	Storage storage = 1;
+}
+
+// CreatePlayer
+message CreatePlayerRequest{	
+	string player_id = 1;
+	string name = 2;
+}
+
+message CreatePlayerResponse{	
+	Player player = 1;
 }
 
 // GetPlayer

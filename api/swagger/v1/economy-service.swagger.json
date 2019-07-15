@@ -1845,7 +1845,7 @@
     "v1CreatePlayerRequest": {
       "type": "object",
       "properties": {
-        "id": {
+        "player_id": {
           "type": "string"
         },
         "name": {

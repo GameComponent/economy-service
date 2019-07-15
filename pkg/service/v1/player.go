@@ -6,6 +6,8 @@ import (
 	"strconv"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (s *economyServiceServer) GetPlayer(ctx context.Context, req *v1.GetPlayerRequest) (*v1.GetPlayerResponse, error) {
@@ -25,9 +27,17 @@ func (s *economyServiceServer) GetPlayer(ctx context.Context, req *v1.GetPlayerR
 func (s *economyServiceServer) CreatePlayer(ctx context.Context, req *v1.CreatePlayerRequest) (*v1.CreatePlayerResponse, error) {
 	fmt.Println("CreatePlayer")
 
+	if req.GetPlayerId() == "" {
+		return nil, status.Error(codes.InvalidArgument, "no player_id given")
+	}
+
+	if req.GetName() == "" {
+		return nil, status.Error(codes.InvalidArgument, "no name given")
+	}
+
 	player, err := s.playerRepository.Create(
 		ctx,
-		req.GetId(),
+		req.GetPlayerId(),
 		req.GetName(),
 	)
 
