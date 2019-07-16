@@ -6,6 +6,8 @@ import (
 	"strconv"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 func (s *economyServiceServer) GetConfig(ctx context.Context, req *v1.GetConfigRequest) (*v1.GetConfigResponse, error) {
@@ -13,7 +15,7 @@ func (s *economyServiceServer) GetConfig(ctx context.Context, req *v1.GetConfigR
 
 	config, err := s.configRepository.Get(ctx, req.GetKey())
 	if err != nil {
-		return nil, fmt.Errorf("key not found")
+		return nil, status.Error(codes.NotFound, "config not found")
 	}
 
 	return &v1.GetConfigResponse{
@@ -26,7 +28,7 @@ func (s *economyServiceServer) SetConfig(ctx context.Context, req *v1.SetConfigR
 
 	config, err := s.configRepository.Set(ctx, req.GetKey(), req.GetValue())
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to set config")
 	}
 
 	return &v1.SetConfigResponse{
@@ -56,7 +58,7 @@ func (s *economyServiceServer) ListConfig(ctx context.Context, req *v1.ListConfi
 	// Get the items from the repository
 	configs, totalSize, err := s.configRepository.List(ctx, limit, offset)
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to retrieve config list")
 	}
 
 	// Determine if there is a next page

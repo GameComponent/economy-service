@@ -6,8 +6,8 @@ import (
 	"strconv"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 func (s *economyServiceServer) ListCurrency(ctx context.Context, req *v1.ListCurrencyRequest) (*v1.ListCurrencyResponse, error) {
@@ -32,7 +32,7 @@ func (s *economyServiceServer) ListCurrency(ctx context.Context, req *v1.ListCur
 	// Get the currencies from the repository
 	currencies, totalSize, err := s.currencyRepository.List(ctx, limit, offset)
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to retrieve currency list")
 	}
 
 	// Determine if there is a next page
@@ -53,18 +53,18 @@ func (s *economyServiceServer) CreateCurrency(ctx context.Context, req *v1.Creat
 	fmt.Println("CreateCurrency")
 
 	// Check the name
-	if len(req.GetName()) == 0 {
-		return nil, fmt.Errorf("currency should have a name")
+	if req.GetName() == "" {
+		return nil, status.Error(codes.InvalidArgument, "no name given")
 	}
 
 	// Check the short_name
-	if len(req.GetShortName()) == 0 {
-		return nil, fmt.Errorf("currency should have a short_name")
+	if req.GetShortName() == "" {
+		return nil, status.Error(codes.InvalidArgument, "no short_name given")
 	}
 
 	// Check the symbol
-	if len(req.GetSymbol()) == 0 {
-		return nil, fmt.Errorf("currency should have a symbol")
+	if req.GetSymbol() == "" {
+		return nil, status.Error(codes.InvalidArgument, "no symbol given")
 	}
 
 	currency, err := s.currencyRepository.Create(
@@ -74,7 +74,7 @@ func (s *economyServiceServer) CreateCurrency(ctx context.Context, req *v1.Creat
 		req.GetSymbol(),
 	)
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to create currency")
 	}
 
 	return &v1.CreateCurrencyResponse{
@@ -85,18 +85,23 @@ func (s *economyServiceServer) CreateCurrency(ctx context.Context, req *v1.Creat
 func (s *economyServiceServer) UpdateCurrency(ctx context.Context, req *v1.UpdateCurrencyRequest) (*v1.UpdateCurrencyResponse, error) {
 	fmt.Println("UpdateCurrency")
 
+	// Check the id
+	if req.GetCurrencyId() == "" {
+		return nil, status.Error(codes.InvalidArgument, "no currency_id given")
+	}
+
 	// Check the name
-	if len(req.GetName()) == 0 {
+	if req.GetName() == "" {
 		return nil, status.Error(codes.InvalidArgument, "no name given")
 	}
 
 	// Check the short_name
-	if len(req.GetShortName()) == 0 {
+	if req.GetShortName() == "" {
 		return nil, status.Error(codes.InvalidArgument, "no short_name given")
 	}
 
 	// Check the symbol
-	if len(req.GetSymbol()) == 0 {
+	if req.GetSymbol() == "" {
 		return nil, status.Error(codes.InvalidArgument, "no symbol given")
 	}
 
@@ -108,7 +113,7 @@ func (s *economyServiceServer) UpdateCurrency(ctx context.Context, req *v1.Updat
 		req.GetSymbol(),
 	)
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to update currency")
 	}
 
 	return &v1.UpdateCurrencyResponse{
@@ -121,7 +126,7 @@ func (s *economyServiceServer) GetCurrency(ctx context.Context, req *v1.GetCurre
 
 	currency, err := s.currencyRepository.Get(ctx, req.GetCurrencyId())
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.NotFound, "currency not found")
 	}
 
 	return &v1.GetCurrencyResponse{

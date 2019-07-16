@@ -6,8 +6,8 @@ import (
 	"strconv"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 func (s *economyServiceServer) CreateProduct(ctx context.Context, req *v1.CreateProductRequest) (*v1.CreateProductResponse, error) {
@@ -16,7 +16,7 @@ func (s *economyServiceServer) CreateProduct(ctx context.Context, req *v1.Create
 	// Add product to the databased return the generated UUID
 	product, err := s.productRepository.Create(ctx, req.GetName())
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to create product")
 	}
 
 	return &v1.CreateProductResponse{
@@ -27,6 +27,10 @@ func (s *economyServiceServer) CreateProduct(ctx context.Context, req *v1.Create
 func (s *economyServiceServer) UpdateProduct(ctx context.Context, req *v1.UpdateProductRequest) (*v1.UpdateProductResponse, error) {
 	fmt.Println("UpdateProduct")
 
+	if req.GetProductId() == "" {
+		return nil, status.Error(codes.InvalidArgument, "no product_id given")
+	}
+
 	if req.GetName() == "" {
 		return nil, status.Error(codes.InvalidArgument, "no name given")
 	}
@@ -34,7 +38,7 @@ func (s *economyServiceServer) UpdateProduct(ctx context.Context, req *v1.Update
 	// Add product to the databased return the generated UUID
 	product, err := s.productRepository.Update(ctx, req.GetProductId(), req.GetName())
 	if err != nil {
-		return nil, status.Error(codes.Aborted, "unable to update product")
+		return nil, status.Error(codes.Internal, "unable to update product")
 	}
 
 	return &v1.UpdateProductResponse{
@@ -64,7 +68,7 @@ func (s *economyServiceServer) ListProduct(ctx context.Context, req *v1.ListProd
 	// Get the products
 	products, totalSize, err := s.productRepository.List(ctx, limit, offset)
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to retrieve product list")
 	}
 
 	// Determine if there is a next page
@@ -84,7 +88,7 @@ func (s *economyServiceServer) ListProduct(ctx context.Context, req *v1.ListProd
 func (s *economyServiceServer) GetProduct(ctx context.Context, req *v1.GetProductRequest) (*v1.GetProductResponse, error) {
 	product, err := s.productRepository.Get(ctx, req.GetProductId())
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.NotFound, "product not found")
 	}
 
 	return &v1.GetProductResponse{
@@ -104,7 +108,7 @@ func (s *economyServiceServer) AttachItem(ctx context.Context, req *v1.AttachIte
 	)
 
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to attach item to product")
 	}
 
 	return &v1.AttachItemResponse{
@@ -122,7 +126,7 @@ func (s *economyServiceServer) DetachItem(ctx context.Context, req *v1.DetachIte
 	)
 
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to detach item from product")
 	}
 
 	return &v1.DetachItemResponse{
@@ -142,7 +146,7 @@ func (s *economyServiceServer) AttachCurrency(ctx context.Context, req *v1.Attac
 	)
 
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to attach currency to product")
 	}
 
 	return &v1.AttachCurrencyResponse{
@@ -160,7 +164,7 @@ func (s *economyServiceServer) DetachCurrency(ctx context.Context, req *v1.Detac
 	)
 
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to detach item from product")
 	}
 
 	return &v1.DetachCurrencyResponse{
@@ -172,7 +176,7 @@ func (s *economyServiceServer) ListProductPrice(ctx context.Context, req *v1.Lis
 	fmt.Println("ListProductPrice")
 
 	if req.GetProductId() == "" {
-		return nil, fmt.Errorf("please enter a product_id")
+		return nil, status.Error(codes.InvalidArgument, "no product_id given")
 	}
 
 	prices, err := s.productRepository.ListPrice(ctx, req.GetProductId())

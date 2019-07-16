@@ -7,7 +7,9 @@ import (
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
 	jwt "github.com/dgrijalva/jwt-go"
-	"golang.org/x/crypto/bcrypt"
+	bcrypt "golang.org/x/crypto/bcrypt"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 var secret = []byte("my_secret_key")
@@ -36,11 +38,11 @@ func (s *economyServiceServer) Authenticate(ctx context.Context, req *v1.Authent
 	account := s.accountRepository.Get(ctx, req.GetEmail())
 
 	if account == nil {
-		return nil, fmt.Errorf("Invalid account credentials")
+		return nil, status.Error(codes.Unauthenticated, "invalid credentials")
 	}
 
 	if !checkPasswordHash(req.GetPassword(), account.Hash) {
-		return nil, fmt.Errorf("Invalid account credentials2")
+		return nil, status.Error(codes.Unauthenticated, "invalid credentials")
 	}
 
 	// TODO: Configurable expiration
@@ -60,7 +62,7 @@ func (s *economyServiceServer) Authenticate(ctx context.Context, req *v1.Authent
 	// Sign and get the complete encoded token as a string using the secret
 	tokenString, err := token.SignedString(secret)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to create token")
+		return nil, status.Error(codes.Internal, "unable to generate token")
 	}
 
 	return &v1.AuthenticateResponse{
@@ -84,7 +86,7 @@ func (s *economyServiceServer) Register(ctx context.Context, req *v1.RegisterReq
 	// Create the user
 	account := s.accountRepository.Create(ctx, req.GetEmail(), hash)
 	if account == nil {
-		return nil, fmt.Errorf("Unable to create account")
+		return nil, status.Error(codes.Internal, "unable to create account")
 	}
 
 	// TODO: Configurable expiration
@@ -104,7 +106,7 @@ func (s *economyServiceServer) Register(ctx context.Context, req *v1.RegisterReq
 	// Sign and get the complete encoded token as a string using the secret
 	tokenString, err := token.SignedString(secret)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to create token")
+		return nil, status.Error(codes.Internal, "unable to generate token")
 	}
 
 	return &v1.RegisterResponse{

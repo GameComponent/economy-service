@@ -6,6 +6,8 @@ import (
 	"strconv"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 func (s *economyServiceServer) CreateItem(ctx context.Context, req *v1.CreateItemRequest) (*v1.CreateItemResponse, error) {
@@ -20,7 +22,7 @@ func (s *economyServiceServer) CreateItem(ctx context.Context, req *v1.CreateIte
 		int64(req.GetStackBalancingMethod()),
 	)
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to create item")
 	}
 
 	return &v1.CreateItemResponse{
@@ -34,7 +36,7 @@ func (s *economyServiceServer) UpdateItem(ctx context.Context, req *v1.UpdateIte
 	item, err := s.itemRepository.Update(ctx, req.GetItemId(), req.GetName(), `{"kaas":"baas"}`)
 
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to update item")
 	}
 
 	return &v1.UpdateItemResponse{
@@ -75,7 +77,7 @@ func (s *economyServiceServer) ListItem(ctx context.Context, req *v1.ListItemReq
 	// Get the items from the repository
 	items, totalSize, err := s.itemRepository.List(ctx, limit, offset)
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to retrieve item list")
 	}
 
 	// Determine if there is a next page
@@ -96,8 +98,8 @@ func (s *economyServiceServer) SearchItem(ctx context.Context, req *v1.SearchIte
 	fmt.Println("SearchItem")
 
 	// Check if query is empty
-	if len(req.GetQuery()) == 0 {
-		return nil, fmt.Errorf("query is empty")
+	if req.GetQuery() == "" {
+		return nil, status.Error(codes.InvalidArgument, "no query given")
 	}
 
 	// Parse the page token
@@ -119,7 +121,7 @@ func (s *economyServiceServer) SearchItem(ctx context.Context, req *v1.SearchIte
 	// Search the items
 	items, totalSize, err := s.itemRepository.Search(ctx, req.GetQuery(), limit, offset)
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to retrieve item search results")
 	}
 
 	// Determine if there is a next page

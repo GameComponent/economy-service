@@ -16,8 +16,7 @@ func (s *economyServiceServer) GetShop(ctx context.Context, req *v1.GetShopReque
 	shop, err := s.shopRepository.Get(ctx, req.GetShopId())
 
 	if err != nil {
-		// return nil, fmt.Errorf("unable to retrieve shop")
-		return nil, err
+		return nil, status.Error(codes.NotFound, "shop not found")
 	}
 
 	return &v1.GetShopResponse{
@@ -34,7 +33,7 @@ func (s *economyServiceServer) CreateShop(ctx context.Context, req *v1.CreateSho
 	)
 
 	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve shop")
+		return nil, status.Error(codes.Internal, "unable to create shop")
 	}
 
 	return &v1.CreateShopResponse{
@@ -56,7 +55,7 @@ func (s *economyServiceServer) UpdateShop(ctx context.Context, req *v1.UpdateSho
 	)
 
 	if err != nil {
-		return nil, status.Error(codes.Aborted, "unable to update shop")
+		return nil, status.Error(codes.Internal, "unable to update shop")
 	}
 
 	return &v1.UpdateShopResponse{
@@ -86,7 +85,7 @@ func (s *economyServiceServer) ListShop(ctx context.Context, req *v1.ListShopReq
 	// Get the shops
 	shops, totalSize, err := s.shopRepository.List(ctx, limit, offset)
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to retrieve shop list")
 	}
 
 	// Determine if there is a next page
@@ -114,7 +113,7 @@ func (s *economyServiceServer) AttachProduct(ctx context.Context, req *v1.Attach
 	)
 
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to attach product to shop")
 	}
 
 	return &v1.AttachProductResponse{
@@ -132,7 +131,7 @@ func (s *economyServiceServer) DetachProduct(ctx context.Context, req *v1.Detach
 	)
 
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to detach product from shop")
 	}
 
 	return &v1.DetachProductResponse{

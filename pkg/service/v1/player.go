@@ -16,7 +16,7 @@ func (s *economyServiceServer) GetPlayer(ctx context.Context, req *v1.GetPlayerR
 	player, err := s.playerRepository.Get(ctx, req.GetPlayerId())
 
 	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve player")
+		return nil, status.Error(codes.NotFound, "player not found")
 	}
 
 	return &v1.GetPlayerResponse{
@@ -42,7 +42,7 @@ func (s *economyServiceServer) CreatePlayer(ctx context.Context, req *v1.CreateP
 	)
 
 	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve player")
+		return nil, status.Error(codes.Aborted, "unable to create player, make sure the player_id is unique")
 	}
 
 	return &v1.CreatePlayerResponse{
@@ -66,9 +66,8 @@ func (s *economyServiceServer) UpdatePlayer(ctx context.Context, req *v1.UpdateP
 		req.GetPlayerId(),
 		req.GetName(),
 	)
-
 	if err != nil {
-		return nil, status.Error(codes.Aborted, "unable to retrieve player")
+		return nil, status.Error(codes.NotFound, "player not found")
 	}
 
 	return &v1.UpdatePlayerResponse{
@@ -119,8 +118,8 @@ func (s *economyServiceServer) SearchPlayer(ctx context.Context, req *v1.SearchP
 	fmt.Println("SearchPlayer")
 
 	// Check if query is empty
-	if len(req.GetQuery()) == 0 {
-		return nil, fmt.Errorf("query is empty")
+	if req.GetQuery() == "" {
+		return nil, status.Error(codes.InvalidArgument, "no query given")
 	}
 
 	// Parse the page token

@@ -8,7 +8,6 @@ import (
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
 	"github.com/GameComponent/economy-service/pkg/helper/random"
-	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -17,14 +16,12 @@ func (s *economyServiceServer) CreateStorage(ctx context.Context, req *v1.Create
 	fmt.Println("CreateStorage")
 
 	if req.GetName() == "" {
-		return nil, fmt.Errorf("name should not be empty")
+		return nil, status.Error(codes.InvalidArgument, "no name given")
 	}
 
 	storage, err := s.storageRepository.Create(ctx, req.GetPlayerId(), req.GetName())
 	if err != nil {
-		fmt.Println("err")
-		fmt.Println(err)
-		return nil, fmt.Errorf("unable to create storage, make sure the player exists")
+		return nil, status.Error(codes.Internal, "unable to create storage")
 	}
 
 	return &v1.CreateStorageResponse{
@@ -41,7 +38,7 @@ func (s *economyServiceServer) UpdateStorage(ctx context.Context, req *v1.Update
 
 	storage, err := s.storageRepository.Update(ctx, req.GetStorageId(), req.GetName())
 	if err != nil {
-		return nil, status.Error(codes.Aborted, "unable to update storage")
+		return nil, status.Error(codes.Internal, "unable to update storage")
 	}
 
 	return &v1.UpdateStorageResponse{
@@ -54,18 +51,12 @@ func (s *economyServiceServer) GetStorage(ctx context.Context, req *v1.GetStorag
 
 	// Check if the request
 	if req.GetStorageId() == "" {
-		return nil, fmt.Errorf("the request should contain the storage_id")
-	}
-
-	// Check if the requested storage id is a valid UUID
-	_, err := uuid.Parse(req.GetStorageId())
-	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.InvalidArgument, "no storage_id given")
 	}
 
 	storage, err := s.storageRepository.Get(ctx, req.GetStorageId())
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to retrieve storage")
 	}
 
 	return &v1.GetStorageResponse{
@@ -95,7 +86,7 @@ func (s *economyServiceServer) ListStorage(ctx context.Context, req *v1.ListStor
 	// Get the players
 	storages, totalSize, err := s.storageRepository.List(ctx, limit, offset)
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to retrieve storage list")
 	}
 
 	// Determine if there is a next page
@@ -126,7 +117,7 @@ func (s *economyServiceServer) GiveCurrency(ctx context.Context, req *v1.GiveCur
 		amount,
 	)
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to give currency to storage")
 	}
 
 	return &v1.GiveCurrencyResponse{
@@ -149,7 +140,7 @@ func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemReq
 	// Get the item
 	item, err := s.itemRepository.Get(ctx, req.GetItemId())
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to give item to storage")
 	}
 
 	// Increase existing storage_items
@@ -161,7 +152,7 @@ func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemReq
 		item,
 	)
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "unable to give item to storage")
 	}
 
 	// Create multiple unstackable items
@@ -175,7 +166,7 @@ func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemReq
 				1,
 			)
 			if err != nil {
-				return nil, err
+				return nil, status.Error(codes.Internal, "unable to give item to storage")
 			}
 
 			remainder--
@@ -213,7 +204,7 @@ func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemReq
 				resultAmount,
 			)
 			if err != nil {
-				return nil, err
+				return nil, status.Error(codes.Internal, "unable to give item to storage")
 			}
 
 			remainder -= resultAmount
@@ -221,7 +212,7 @@ func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemReq
 	}
 
 	if remainder > 0 {
-		return nil, fmt.Errorf("something went wrong")
+		return nil, status.Error(codes.Internal, "unable to give item to storage")
 	}
 
 	return &v1.GiveItemResponse{
