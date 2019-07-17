@@ -356,37 +356,6 @@
         "tags": [
           "EconomyService"
         ]
-      },
-      "patch": {
-        "summary": "Update an Item",
-        "operationId": "UpdateItem",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1UpdateItemResponse"
-            }
-          },
-          "404": {
-            "description": "Returned when the resource does not exist.",
-            "schema": {
-              "format": "string"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1UpdateItemRequest"
-            }
-          }
-        ],
-        "tags": [
-          "EconomyService"
-        ]
       }
     },
     "/v1/item/search": {
@@ -446,6 +415,43 @@
             "in": "path",
             "required": true,
             "type": "string"
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      },
+      "put": {
+        "summary": "Update an Item",
+        "operationId": "UpdateItem",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateItemResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UpdateItemRequest"
+            }
           }
         ],
         "tags": [
@@ -1904,6 +1910,9 @@
         },
         "stack_balancing_method": {
           "$ref": "#/definitions/v1StackBalancingMethod"
+        },
+        "metadata": {
+          "$ref": "#/definitions/protobufStruct"
         }
       },
       "title": "CreateItem"
@@ -2222,6 +2231,9 @@
         },
         "stack_balancing_method": {
           "$ref": "#/definitions/v1StackBalancingMethod"
+        },
+        "metadata": {
+          "$ref": "#/definitions/protobufStruct"
         }
       }
     },
@@ -2761,6 +2773,9 @@
         },
         "name": {
           "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/definitions/protobufStruct"
         }
       },
       "title": "UpdateItem"

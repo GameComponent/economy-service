@@ -3,12 +3,14 @@ package itemrepository
 import (
 	"context"
 	"database/sql"
+	"strings"
 	"time"
-
-	"github.com/golang/protobuf/ptypes"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
 	repository "github.com/GameComponent/economy-service/pkg/repository"
+	jsonpb "github.com/golang/protobuf/jsonpb"
+	ptypes "github.com/golang/protobuf/ptypes"
+	_struct "github.com/golang/protobuf/ptypes/struct"
 )
 
 // ItemRepository struct
@@ -24,22 +26,30 @@ func NewItemRepository(db *sql.DB) repository.ItemRepository {
 }
 
 // Create a new item
-func (r *ItemRepository) Create(ctx context.Context, name string, stackable bool, stackMaxAmount int64, stackBalancingMethod int64) (*v1.Item, error) {
+func (r *ItemRepository) Create(ctx context.Context, name string, stackable bool, stackMaxAmount int64, stackBalancingMethod int64, metadata *_struct.Struct) (*v1.Item, error) {
+	marshaler := jsonpb.Marshaler{}
+	jsonMetadata, err := marshaler.MarshalToString(metadata)
+	if err != nil {
+		return nil, err
+	}
+
 	lastInsertUUID := ""
-	err := r.db.QueryRowContext(
+	err = r.db.QueryRowContext(
 		ctx,
 		`
 			INSERT INTO item(
 				name,
 				stackable,
 				stack_max_amount,
-				stack_balancing_method
+				stack_balancing_method,
+				metadata
 			)
 			VALUES (
 				$1,
 				$2,
 				$3,
-				$4
+				$4,
+				$5
 			)
 			RETURNING id
 		`,
@@ -47,25 +57,29 @@ func (r *ItemRepository) Create(ctx context.Context, name string, stackable bool
 		stackable,
 		stackMaxAmount,
 		stackBalancingMethod,
+		jsonMetadata,
 	).Scan(&lastInsertUUID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &v1.Item{
-		Id:   lastInsertUUID,
-		Name: name,
-	}, nil
+	return r.Get(ctx, lastInsertUUID)
 }
 
 // Update an item
-func (r *ItemRepository) Update(ctx context.Context, id string, name string, metadata string) (*v1.Item, error) {
-	_, err := r.db.ExecContext(
+func (r *ItemRepository) Update(ctx context.Context, id string, name string, metadata *_struct.Struct) (*v1.Item, error) {
+	marshaler := jsonpb.Marshaler{}
+	jsonMetadata, err := marshaler.MarshalToString(metadata)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = r.db.ExecContext(
 		ctx,
 		`UPDATE item SET name = $1, metadata = $2 WHERE id = $3`,
 		name,
-		metadata,
+		jsonMetadata,
 		id,
 	)
 
@@ -73,16 +87,11 @@ func (r *ItemRepository) Update(ctx context.Context, id string, name string, met
 		return nil, err
 	}
 
-	item := &v1.Item{
-		Id:   id,
-		Name: name,
-	}
-
-	return item, nil
+	return r.Get(ctx, id)
 }
 
 // List all items
-func (r *ItemRepository) List(ctx context.Context, limit int32, offset int32) ([]*v1.Item, int32, error ) {
+func (r *ItemRepository) List(ctx context.Context, limit int32, offset int32) ([]*v1.Item, int32, error) {
 	// Query items from the database
 	rows, err := r.db.QueryContext(
 		ctx,
@@ -142,6 +151,7 @@ func (r *ItemRepository) Get(ctx context.Context, itemID string) (*v1.Item, erro
 	item := &v1.Item{}
 	createdAt := time.Time{}
 	updatedAt := time.Time{}
+	jsonMetadata := ""
 
 	err := r.db.QueryRowContext(
 		ctx,
@@ -153,7 +163,8 @@ func (r *ItemRepository) Get(ctx context.Context, itemID string) (*v1.Item, erro
 				stack_max_amount,
 				stack_balancing_method,
 				created_at,
-				updated_at
+				updated_at,
+				metadata
 			FROM item
 			WHERE id = $1
 		`,
@@ -166,10 +177,21 @@ func (r *ItemRepository) Get(ctx context.Context, itemID string) (*v1.Item, erro
 		&item.StackBalancingMethod,
 		&createdAt,
 		&updatedAt,
+		&jsonMetadata,
 	)
 	if err != nil {
 		return nil, err
 	}
+
+	// Convert metadata json to a proto Struct
+	stringReader := strings.NewReader(jsonMetadata)
+	metadataStruct := _struct.Struct{}
+	unmarshaler := jsonpb.Unmarshaler{}
+	err = unmarshaler.Unmarshal(stringReader, &metadataStruct)
+	if err != nil {
+		return nil, err
+	}
+	item.Metadata = &metadataStruct
 
 	// Convert created_at to timestamp
 	item.CreatedAt, _ = ptypes.TimestampProto(createdAt)

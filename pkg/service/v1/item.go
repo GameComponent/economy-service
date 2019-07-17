@@ -20,6 +20,7 @@ func (s *economyServiceServer) CreateItem(ctx context.Context, req *v1.CreateIte
 		req.GetStackable(),
 		req.GetStackMaxAmount(),
 		int64(req.GetStackBalancingMethod()),
+		req.GetMetadata(),
 	)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to create item")
@@ -33,7 +34,12 @@ func (s *economyServiceServer) CreateItem(ctx context.Context, req *v1.CreateIte
 func (s *economyServiceServer) UpdateItem(ctx context.Context, req *v1.UpdateItemRequest) (*v1.UpdateItemResponse, error) {
 	fmt.Println("UpdateItem")
 
-	item, err := s.itemRepository.Update(ctx, req.GetItemId(), req.GetName(), `{"kaas":"baas"}`)
+	item, err := s.itemRepository.Update(
+		ctx,
+		req.GetItemId(),
+		req.GetName(),
+		req.GetMetadata(),
+	)
 
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to update item")
