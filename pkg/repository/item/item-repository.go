@@ -27,14 +27,19 @@ func NewItemRepository(db *sql.DB) repository.ItemRepository {
 
 // Create a new item
 func (r *ItemRepository) Create(ctx context.Context, name string, stackable bool, stackMaxAmount int64, stackBalancingMethod int64, metadata *_struct.Struct) (*v1.Item, error) {
-	marshaler := jsonpb.Marshaler{}
-	jsonMetadata, err := marshaler.MarshalToString(metadata)
-	if err != nil {
-		return nil, err
+	// Parse struct to JSON string
+	jsonMetadata := "{}"
+	if metadata != nil {
+		var err error
+		marshaler := jsonpb.Marshaler{}
+		jsonMetadata, err = marshaler.MarshalToString(metadata)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	lastInsertUUID := ""
-	err = r.db.QueryRowContext(
+	err := r.db.QueryRowContext(
 		ctx,
 		`
 			INSERT INTO item(
@@ -69,13 +74,18 @@ func (r *ItemRepository) Create(ctx context.Context, name string, stackable bool
 
 // Update an item
 func (r *ItemRepository) Update(ctx context.Context, id string, name string, metadata *_struct.Struct) (*v1.Item, error) {
-	marshaler := jsonpb.Marshaler{}
-	jsonMetadata, err := marshaler.MarshalToString(metadata)
-	if err != nil {
-		return nil, err
+	// Parse struct to JSON string
+	jsonMetadata := "{}"
+	if metadata != nil {
+		var err error
+		marshaler := jsonpb.Marshaler{}
+		jsonMetadata, err = marshaler.MarshalToString(metadata)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	_, err = r.db.ExecContext(
+	_, err := r.db.ExecContext(
 		ctx,
 		`UPDATE item SET name = $1, metadata = $2 WHERE id = $3`,
 		name,
