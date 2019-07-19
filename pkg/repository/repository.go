@@ -83,8 +83,8 @@ type ProductRepository interface {
 // ShopRepository interface
 type ShopRepository interface {
 	Get(ctx context.Context, shopID string) (*v1.Shop, error)
-	Create(ctx context.Context, name string) (*v1.Shop, error)
-	Update(ctx context.Context, shopID string, name string) (*v1.Shop, error)
+	Create(ctx context.Context, name string, metadata *_struct.Struct) (*v1.Shop, error)
+	Update(ctx context.Context, shopID string, name string, metadata *_struct.Struct) (*v1.Shop, error)
 	List(ctx context.Context, limit int32, offset int32) ([]*v1.Shop, int32, error)
 	AttachProduct(ctx context.Context, shopID string, productID string) (*v1.Shop, error)
 	DetachProduct(ctx context.Context, shopProductID string) (*v1.Shop, error)

@@ -817,6 +817,7 @@ message GetShopResponse{
 // CreateShop
 message CreateShopRequest{	
 	string name = 1;
+	google.protobuf.Struct metadata = 2;
 }
 
 message CreateShopResponse{	
@@ -827,6 +828,7 @@ message CreateShopResponse{
 message UpdateShopRequest{	
 	string shop_id = 1;
 	string name = 2;
+	google.protobuf.Struct metadata = 3;
 }
 
 message UpdateShopResponse{	

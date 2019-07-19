@@ -98,6 +98,7 @@ CREATE TABLE IF NOT EXISTS shop (
 	created_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
 	updated_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
 	name STRING NOT NULL,
+	metadata JSONB DEFAULT '{}' NOT null,
   
   PRIMARY KEY (id)
 );

@@ -30,6 +30,7 @@ func (s *economyServiceServer) CreateShop(ctx context.Context, req *v1.CreateSho
 	shop, err := s.shopRepository.Create(
 		ctx,
 		req.GetName(),
+		req.GetMetadata(),
 	)
 
 	if err != nil {
@@ -52,6 +53,7 @@ func (s *economyServiceServer) UpdateShop(ctx context.Context, req *v1.UpdateSho
 		ctx,
 		req.GetShopId(),
 		req.GetName(),
+		req.GetMetadata(),
 	)
 
 	if err != nil {

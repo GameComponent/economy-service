@@ -1984,6 +1984,9 @@
       "properties": {
         "name": {
           "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/definitions/protobufStruct"
         }
       },
       "title": "CreateShop"
@@ -2836,6 +2839,9 @@
         },
         "name": {
           "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/definitions/protobufStruct"
         }
       },
       "title": "UpdateShop"

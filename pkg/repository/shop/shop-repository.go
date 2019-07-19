@@ -9,7 +9,9 @@ import (
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
 	repository "github.com/GameComponent/economy-service/pkg/repository"
-	"github.com/golang/protobuf/ptypes"
+	jsonpb "github.com/golang/protobuf/jsonpb"
+	ptypes "github.com/golang/protobuf/ptypes"
+	_struct "github.com/golang/protobuf/ptypes/struct"
 )
 
 // NullTime is a nullable time.Time
@@ -394,30 +396,51 @@ func (r *ShopRepository) Get(ctx context.Context, shopID string) (*v1.Shop, erro
 }
 
 // Create a new shop
-func (r *ShopRepository) Create(ctx context.Context, name string) (*v1.Shop, error) {
-	databaseID := ""
+func (r *ShopRepository) Create(ctx context.Context, name string, metadata *_struct.Struct) (*v1.Shop, error) {
+	// Parse struct to JSON string
+	jsonMetadata := "{}"
+	if metadata != nil {
+		var err error
+		marshaler := jsonpb.Marshaler{}
+		jsonMetadata, err = marshaler.MarshalToString(metadata)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	shopID := ""
 	err := r.db.QueryRowContext(
 		ctx,
-		`INSERT INTO shop(name) VALUES ($1) RETURNING id`,
+		`INSERT INTO shop(name, metadata) VALUES ($1, $2) RETURNING id`,
 		name,
-	).Scan(&databaseID)
+		jsonMetadata,
+	).Scan(&shopID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &v1.Shop{
-		Id:   databaseID,
-		Name: name,
-	}, nil
+	return r.Get(ctx, shopID)
 }
 
 // Update a shop
-func (r *ShopRepository) Update(ctx context.Context, shopID string, name string) (*v1.Shop, error) {
+func (r *ShopRepository) Update(ctx context.Context, shopID string, name string, metadata *_struct.Struct) (*v1.Shop, error) {
+	// Parse struct to JSON string
+	jsonMetadata := "{}"
+	if metadata != nil {
+		var err error
+		marshaler := jsonpb.Marshaler{}
+		jsonMetadata, err = marshaler.MarshalToString(metadata)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	_, err := r.db.ExecContext(
 		ctx,
-		`UPDATE shop SET name = $1 WHERE id = $2`,
+		`UPDATE shop SET name = $1, metadata = $2 WHERE id = $3`,
 		name,
+		jsonMetadata,
 		shopID,
 	)
 	if err != nil {
