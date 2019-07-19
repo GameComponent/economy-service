@@ -97,7 +97,7 @@ service EconomyService {
 	// Update Storage
 	rpc UpdateStorage(UpdateStorageRequest) returns (UpdateStorageResponse) {
 		option (google.api.http) = {
-			put: "/v1/storage/{storage_id}"
+			patch: "/v1/storage/{storage_id}"
 			body: "*"
 		};
 	}
