@@ -3,6 +3,8 @@ package currencyrepository
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 	"time"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
@@ -53,17 +55,42 @@ func (r *CurrencyRepository) Create(ctx context.Context, name string, shortName 
 
 // Update a currency
 func (r *CurrencyRepository) Update(ctx context.Context, currencyID string, name string, shortName string, symbol string) (*v1.Currency, error) {
+	index := 1
+	queries := []string{}
+	arguments := []interface{}{}
+
+	// Add name to the query
+	if name != "" {
+		queries = append(queries, fmt.Sprintf("name = $%v", index))
+		arguments = append(arguments, name)
+		index++
+	}
+
+	// Add short_name to the query
+	if shortName != "" {
+		queries = append(queries, fmt.Sprintf("short_name = $%v", index))
+		arguments = append(arguments, shortName)
+		index++
+	}
+
+	// Add symbol to the query
+	if symbol != "" {
+		queries = append(queries, fmt.Sprintf("symbol = $%v", index))
+		arguments = append(arguments, name)
+		index++
+	}
+
+	if index == 0 {
+		return nil, fmt.Errorf("no arguments given")
+	}
+
+	// Update the currency
+	arguments = append(arguments, currencyID)
+	query := fmt.Sprintf("UPDATE currency SET %v WHERE id =$%v", strings.Join(queries, ", "), index)
 	_, err := r.db.ExecContext(
 		ctx,
-		`
-			UPDATE currency
-			SET name = $1, short_name = $2, symbol = $3
-			WHERE id = $4
-		`,
-		name,
-		shortName,
-		symbol,
-		currencyID,
+		query,
+		arguments...,
 	)
 	if err != nil {
 		return nil, err

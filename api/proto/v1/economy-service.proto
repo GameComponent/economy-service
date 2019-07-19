@@ -159,7 +159,7 @@ service EconomyService {
 	// Update a currency
 	rpc UpdateCurrency(UpdateCurrencyRequest) returns (UpdateCurrencyResponse) {
 		option (google.api.http) = {
-			put: "/v1/currency/{currency_id}"
+			patch: "/v1/currency/{currency_id}"
 			body: "*"
 		};
 	}

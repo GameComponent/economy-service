@@ -90,21 +90,6 @@ func (s *economyServiceServer) UpdateCurrency(ctx context.Context, req *v1.Updat
 		return nil, status.Error(codes.InvalidArgument, "no currency_id given")
 	}
 
-	// Check the name
-	if req.GetName() == "" {
-		return nil, status.Error(codes.InvalidArgument, "no name given")
-	}
-
-	// Check the short_name
-	if req.GetShortName() == "" {
-		return nil, status.Error(codes.InvalidArgument, "no short_name given")
-	}
-
-	// Check the symbol
-	if req.GetSymbol() == "" {
-		return nil, status.Error(codes.InvalidArgument, "no symbol given")
-	}
-
 	currency, err := s.currencyRepository.Update(
 		ctx,
 		req.GetCurrencyId(),

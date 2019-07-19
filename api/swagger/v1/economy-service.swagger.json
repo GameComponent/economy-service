@@ -251,7 +251,7 @@
           "EconomyService"
         ]
       },
-      "put": {
+      "patch": {
         "summary": "Update a currency",
         "operationId": "UpdateCurrency",
         "responses": {
