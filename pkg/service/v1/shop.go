@@ -45,10 +45,6 @@ func (s *economyServiceServer) CreateShop(ctx context.Context, req *v1.CreateSho
 func (s *economyServiceServer) UpdateShop(ctx context.Context, req *v1.UpdateShopRequest) (*v1.UpdateShopResponse, error) {
 	fmt.Println("UpdateShop")
 
-	if req.GetName() == "" {
-		return nil, status.Error(codes.InvalidArgument, "no name given")
-	}
-
 	shop, err := s.shopRepository.Update(
 		ctx,
 		req.GetShopId(),

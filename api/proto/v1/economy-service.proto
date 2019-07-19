@@ -242,7 +242,7 @@ service EconomyService {
 	// Update a shop
 	rpc UpdateShop(UpdateShopRequest) returns (UpdateShopResponse) {
 		option (google.api.http) = {
-			put: "/v1/shop/{shop_id}"
+			patch: "/v1/shop/{shop_id}"
 			body: "*"
 		};
 	}	

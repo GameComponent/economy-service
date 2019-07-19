@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"fmt"
+	"strings"
 	"time"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
@@ -425,23 +426,44 @@ func (r *ShopRepository) Create(ctx context.Context, name string, metadata *_str
 
 // Update a shop
 func (r *ShopRepository) Update(ctx context.Context, shopID string, name string, metadata *_struct.Struct) (*v1.Shop, error) {
-	// Parse struct to JSON string
-	jsonMetadata := "{}"
+	index := 1
+	queries := []string{}
+	arguments := []interface{}{}
+
+	// Add name to the query
+	if name != "" {
+		queries = append(queries, fmt.Sprintf("name = $%v", index))
+		arguments = append(arguments, name)
+		index++
+	}
+
+	// Add metadata to the query
 	if metadata != nil {
+		// Parse the metadata to a JSON string
+		jsonMetadata := "{}"
 		var err error
 		marshaler := jsonpb.Marshaler{}
 		jsonMetadata, err = marshaler.MarshalToString(metadata)
 		if err != nil {
 			return nil, err
 		}
+
+		queries = append(queries, fmt.Sprintf("metadata = $%v", index))
+		arguments = append(arguments, jsonMetadata)
+		index++
 	}
 
+	if index == 0 {
+		return nil, fmt.Errorf("no arguments given")
+	}
+
+	// Update the item
+	arguments = append(arguments, shopID)
+	query := fmt.Sprintf("UPDATE shop SET %v WHERE id =$%v", strings.Join(queries, ", "), index)
 	_, err := r.db.ExecContext(
 		ctx,
-		`UPDATE shop SET name = $1, metadata = $2 WHERE id = $3`,
-		name,
-		jsonMetadata,
-		shopID,
+		query,
+		arguments...,
 	)
 	if err != nil {
 		return nil, err

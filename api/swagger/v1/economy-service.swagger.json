@@ -1375,7 +1375,7 @@
           "EconomyService"
         ]
       },
-      "put": {
+      "patch": {
         "summary": "Update a shop",
         "operationId": "UpdateShop",
         "responses": {
