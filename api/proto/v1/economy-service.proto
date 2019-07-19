@@ -52,7 +52,7 @@ service EconomyService {
 	// Update a player
 	rpc UpdatePlayer(UpdatePlayerRequest) returns (UpdatePlayerResponse) {
 		option (google.api.http) = {
-			put: "/v1/player/{player_id}"
+			patch: "/v1/player/{player_id}"
 			body: "*"
 		};
 	}
