@@ -1578,7 +1578,7 @@
           "EconomyService"
         ]
       },
-      "put": {
+      "patch": {
         "summary": "Update Storage",
         "operationId": "UpdateStorage",
         "responses": {
@@ -2007,6 +2007,9 @@
         },
         "name": {
           "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/definitions/protobufStruct"
         }
       },
       "title": "CreateStorage"
@@ -2701,6 +2704,9 @@
           "items": {
             "$ref": "#/definitions/v1StorageCurrency"
           }
+        },
+        "metadata": {
+          "$ref": "#/definitions/protobufStruct"
         }
       }
     },
@@ -2862,6 +2868,9 @@
         },
         "name": {
           "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/definitions/protobufStruct"
         }
       },
       "title": "UpdateStorage"

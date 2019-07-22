@@ -3,11 +3,15 @@ package storagerepository
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 	"time"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
 	repository "github.com/GameComponent/economy-service/pkg/repository"
-	"github.com/golang/protobuf/ptypes"
+	jsonpb "github.com/golang/protobuf/jsonpb"
+	ptypes "github.com/golang/protobuf/ptypes"
+	_struct "github.com/golang/protobuf/ptypes/struct"
 )
 
 // StorageRepository struct
@@ -23,38 +27,76 @@ func NewStorageRepository(db *sql.DB) repository.StorageRepository {
 }
 
 // Create a storage
-func (r *StorageRepository) Create(ctx context.Context, playerID string, name string) (*v1.Storage, error) {
+func (r *StorageRepository) Create(ctx context.Context, playerID string, name string, metadata *_struct.Struct) (*v1.Storage, error) {
+	// Parse struct to JSON string
+	jsonMetadata := "{}"
+	if metadata != nil {
+		var err error
+		marshaler := jsonpb.Marshaler{}
+		jsonMetadata, err = marshaler.MarshalToString(metadata)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	// Add item to the databased return the generated UUID
 	lastInsertUUID := ""
 	err := r.db.QueryRowContext(
 		ctx,
-		`INSERT INTO storage(player_id, name) VALUES ($1, $2) RETURNING id`,
+		`INSERT INTO storage(player_id, name, metadata) VALUES ($1, $2, $3) RETURNING id`,
 		playerID,
 		name,
+		jsonMetadata,
 	).Scan(&lastInsertUUID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	storage := &v1.Storage{
-		Id:       lastInsertUUID,
-		PlayerId: playerID,
-		Name:     name,
-	}
-
-	return storage, nil
+	return r.Get(ctx, lastInsertUUID)
 }
 
 // Update a storage
-func (r *StorageRepository) Update(ctx context.Context, storageID string, name string) (*v1.Storage, error) {
+func (r *StorageRepository) Update(ctx context.Context, storageID string, name string, metadata *_struct.Struct) (*v1.Storage, error) {
+	index := 1
+	queries := []string{}
+	arguments := []interface{}{}
+
+	// Add name to the query
+	if name != "" {
+		queries = append(queries, fmt.Sprintf("name = $%v", index))
+		arguments = append(arguments, name)
+		index++
+	}
+
+	// Add metadata to the query
+	if metadata != nil {
+		// Parse the metadata to a JSON string
+		jsonMetadata := "{}"
+		var err error
+		marshaler := jsonpb.Marshaler{}
+		jsonMetadata, err = marshaler.MarshalToString(metadata)
+		if err != nil {
+			return nil, err
+		}
+
+		queries = append(queries, fmt.Sprintf("metadata = $%v", index))
+		arguments = append(arguments, jsonMetadata)
+		index++
+	}
+
+	if index <= 1 {
+		return nil, fmt.Errorf("no arguments given")
+	}
+
+	// Update the storage
+	arguments = append(arguments, storageID)
+	query := fmt.Sprintf("UPDATE storage SET %v WHERE id =$%v", strings.Join(queries, ", "), index)
 	_, err := r.db.ExecContext(
 		ctx,
-		`UPDATE storage SET name = $1 WHERE id = $2 returning id`,
-		name,
-		storageID,
+		query,
+		arguments...,
 	)
-
 	if err != nil {
 		return nil, err
 	}
@@ -214,12 +256,22 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 		currencies = append(currencies, value)
 	}
 
+	// Convert metadata json to a proto Struct
+	stringReader := strings.NewReader(res.StorageData)
+	metadataStruct := _struct.Struct{}
+	unmarshaler := jsonpb.Unmarshaler{}
+	err = unmarshaler.Unmarshal(stringReader, &metadataStruct)
+	if err != nil {
+		return nil, err
+	}
+
 	storage := &v1.Storage{
 		Id:         res.StorageID,
 		PlayerId:   res.PlayerID,
 		Name:       res.StorageName,
 		Items:      items,
 		Currencies: currencies,
+		Metadata:   &metadataStruct,
 	}
 
 	return storage, nil

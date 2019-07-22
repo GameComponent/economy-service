@@ -468,7 +468,7 @@ message Storage {
 	string name = 5;
 	repeated StorageItem items = 6;
 	repeated StorageCurrency currencies = 7;
-	//google.protobuf.Struct metadata = 4;
+	google.protobuf.Struct metadata = 8;
 }
 
 message Player {
@@ -571,6 +571,7 @@ message ListStorageResponse{
 message CreateStorageRequest{	
 	string player_id = 1;
 	string name = 2;
+	google.protobuf.Struct metadata = 3;
 }
 
 message CreateStorageResponse{	
@@ -581,6 +582,7 @@ message CreateStorageResponse{
 message UpdateStorageRequest{	
 	string storage_id = 1;
 	string name = 2;
+	google.protobuf.Struct metadata = 3;
 }
 
 message UpdateStorageResponse{	

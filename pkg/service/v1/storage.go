@@ -19,7 +19,12 @@ func (s *economyServiceServer) CreateStorage(ctx context.Context, req *v1.Create
 		return nil, status.Error(codes.InvalidArgument, "no name given")
 	}
 
-	storage, err := s.storageRepository.Create(ctx, req.GetPlayerId(), req.GetName())
+	storage, err := s.storageRepository.Create(
+		ctx,
+		req.GetPlayerId(),
+		req.GetName(),
+		req.GetMetadata(),
+	)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to create storage")
 	}
@@ -32,11 +37,12 @@ func (s *economyServiceServer) CreateStorage(ctx context.Context, req *v1.Create
 func (s *economyServiceServer) UpdateStorage(ctx context.Context, req *v1.UpdateStorageRequest) (*v1.UpdateStorageResponse, error) {
 	fmt.Println("UpdateStorage")
 
-	if req.GetName() == "" {
-		return nil, status.Error(codes.InvalidArgument, "no name given")
-	}
-
-	storage, err := s.storageRepository.Update(ctx, req.GetStorageId(), req.GetName())
+	storage, err := s.storageRepository.Update(
+		ctx,
+		req.GetStorageId(),
+		req.GetName(),
+		req.GetMetadata(),
+	)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to update storage")
 	}
