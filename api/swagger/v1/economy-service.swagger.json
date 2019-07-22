@@ -1110,7 +1110,7 @@
           "EconomyService"
         ]
       },
-      "put": {
+      "patch": {
         "summary": "Update a product",
         "operationId": "UpdateProduct",
         "responses": {
