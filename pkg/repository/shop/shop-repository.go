@@ -453,11 +453,11 @@ func (r *ShopRepository) Update(ctx context.Context, shopID string, name string,
 		index++
 	}
 
-	if index == 0 {
+	if index <= 1 {
 		return nil, fmt.Errorf("no arguments given")
 	}
 
-	// Update the item
+	// Update the shop
 	arguments = append(arguments, shopID)
 	query := fmt.Sprintf("UPDATE shop SET %v WHERE id =$%v", strings.Join(queries, ", "), index)
 	_, err := r.db.ExecContext(
