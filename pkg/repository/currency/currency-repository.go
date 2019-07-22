@@ -80,7 +80,7 @@ func (r *CurrencyRepository) Update(ctx context.Context, currencyID string, name
 		index++
 	}
 
-	if index == 0 {
+	if index <= 1 {
 		return nil, fmt.Errorf("no arguments given")
 	}
 
