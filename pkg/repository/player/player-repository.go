@@ -3,11 +3,13 @@ package playerrepository
 import (
 	"context"
 	"database/sql"
-	"time"
+	"fmt"
+	"strings"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
 	repository "github.com/GameComponent/economy-service/pkg/repository"
-	"github.com/golang/protobuf/ptypes"
+	jsonpb "github.com/golang/protobuf/jsonpb"
+	_struct "github.com/golang/protobuf/ptypes/struct"
 )
 
 // PlayerRepository struct
@@ -23,32 +25,73 @@ func NewPlayerRepository(db *sql.DB) repository.PlayerRepository {
 }
 
 // Create a new player
-func (r *PlayerRepository) Create(ctx context.Context, id string, name string) (*v1.Player, error) {
-	databaseID := ""
-	err := r.db.QueryRowContext(
+func (r *PlayerRepository) Create(ctx context.Context, playerID string, name string, metadata *_struct.Struct) (*v1.Player, error) {
+	// Parse struct to JSON string
+	jsonMetadata := "{}"
+	if metadata != nil {
+		var err error
+		marshaler := jsonpb.Marshaler{}
+		jsonMetadata, err = marshaler.MarshalToString(metadata)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	_, err := r.db.ExecContext(
 		ctx,
-		`INSERT INTO player(id, name) VALUES ($1, $2) RETURNING id`,
-		id,
+		`INSERT INTO player(id, name, metadata) VALUES ($1, $2, $3)`,
+		playerID,
 		name,
-	).Scan(&databaseID)
+		jsonMetadata,
+	)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &v1.Player{
-		Id:   databaseID,
-		Name: name,
-	}, nil
+	return r.Get(ctx, playerID)
 }
 
 // Update a player
-func (r *PlayerRepository) Update(ctx context.Context, playerID string, name string) (*v1.Player, error) {
+func (r *PlayerRepository) Update(ctx context.Context, playerID string, name string, metadata *_struct.Struct) (*v1.Player, error) {
+	index := 1
+	queries := []string{}
+	arguments := []interface{}{}
+
+	// Add name to the query
+	if name != "" {
+		queries = append(queries, fmt.Sprintf("name = $%v", index))
+		arguments = append(arguments, name)
+		index++
+	}
+
+	// Add metadata to the query
+	if metadata != nil {
+		// Parse the metadata to a JSON string
+		jsonMetadata := "{}"
+		var err error
+		marshaler := jsonpb.Marshaler{}
+		jsonMetadata, err = marshaler.MarshalToString(metadata)
+		if err != nil {
+			return nil, err
+		}
+
+		queries = append(queries, fmt.Sprintf("metadata = $%v", index))
+		arguments = append(arguments, jsonMetadata)
+		index++
+	}
+
+	if index <= 1 {
+		return nil, fmt.Errorf("no arguments given")
+	}
+
+	// Update the player
+	arguments = append(arguments, playerID)
+	query := fmt.Sprintf("UPDATE player SET %v WHERE id =$%v", strings.Join(queries, ", "), index)
 	_, err := r.db.ExecContext(
 		ctx,
-		`UPDATE player SET name = $1 WHERE id = $2`,
-		name,
-		playerID,
+		query,
+		arguments...,
 	)
 
 	if err != nil {
@@ -59,49 +102,84 @@ func (r *PlayerRepository) Update(ctx context.Context, playerID string, name str
 }
 
 // Get a player
-func (r *PlayerRepository) Get(ctx context.Context, id string) (*v1.Player, error) {
+func (r *PlayerRepository) Get(ctx context.Context, playerID string) (*v1.Player, error) {
 	rows, err := r.db.QueryContext(
 		ctx,
 		`
-			SELECT id, name, created_at, updated_at
-			FROM storage 
-			WHERE player_id = $1
+			SELECT 
+				player.id AS playerId,
+				player.name AS playerName,
+				player.metadata AS playerMetadata,
+				storage.id as storageId,
+				storage.name as storageName
+			FROM player
+			LEFT JOIN storage ON (player.id = storage.player_id)
+			WHERE player.id = $1
 		`,
-		id,
+		playerID,
 	)
-
 	if err != nil {
 		return nil, err
 	}
 
+	type row struct {
+		PlayerID       string
+		PlayerName     string
+		PlayerMetadata string
+		StorageID      sql.NullString
+		StorageName    sql.NullString
+	}
+
 	storages := []*v1.Storage{}
 
+	var res row
 	for rows.Next() {
-		storage := &v1.Storage{}
-		createdAt := time.Time{}
-		updatedAt := time.Time{}
-
 		err = rows.Scan(
-			&storage.Id,
-			&storage.Name,
-			&createdAt,
-			&updatedAt,
+			&res.PlayerID,
+			&res.PlayerName,
+			&res.PlayerMetadata,
+			&res.StorageID,
+			&res.StorageName,
 		)
 		if err != nil {
 			return nil, err
 		}
 
-		// Convert created_at to timestamp
-		storage.CreatedAt, _ = ptypes.TimestampProto(createdAt)
-		storage.UpdatedAt, _ = ptypes.TimestampProto(updatedAt)
-
-		storages = append(storages, storage)
+		if res.StorageID.Valid {
+			storage := v1.Storage{
+				Id:   res.StorageID.String,
+				Name: res.StorageName.String,
+			}
+			storages = append(storages, &storage)
+		}
 	}
 
-	return &v1.Player{
-		Id:       id,
+	// Check if there is atleast 1 row found
+	if res.PlayerID == "" {
+		return nil, fmt.Errorf("Player not found")
+	}
+
+	// Create the player struct
+	player := &v1.Player{
+		Id:       res.PlayerID,
+		Name:     res.PlayerName,
 		Storages: storages,
-	}, nil
+	}
+
+	// Convert metadata json to a proto Struct
+	if res.PlayerMetadata != "" {
+		metadataStruct := _struct.Struct{}
+		stringReader := strings.NewReader(res.PlayerMetadata)
+		unmarshaler := jsonpb.Unmarshaler{}
+		err = unmarshaler.Unmarshal(stringReader, &metadataStruct)
+		if err != nil {
+			return nil, err
+		}
+
+		player.Metadata = &metadataStruct
+	}
+
+	return player, nil
 }
 
 // List all player

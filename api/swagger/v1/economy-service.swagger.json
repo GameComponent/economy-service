@@ -1933,6 +1933,9 @@
         },
         "name": {
           "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/definitions/protobufStruct"
         }
       },
       "title": "CreatePlayer"
@@ -2394,6 +2397,9 @@
           "items": {
             "$ref": "#/definitions/v1Storage"
           }
+        },
+        "metadata": {
+          "$ref": "#/definitions/protobufStruct"
         }
       }
     },
@@ -2805,6 +2811,9 @@
         },
         "name": {
           "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/definitions/protobufStruct"
         }
       },
       "title": "UpdatePlayer"

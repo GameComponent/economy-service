@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS currency (
 CREATE TABLE IF NOT EXISTS player (
 	id STRING NOT NULL,
 	name STRING NOT NULL,
+	metadata JSONB DEFAULT '{}' NOT null,
 
 	PRIMARY KEY (id)
 );

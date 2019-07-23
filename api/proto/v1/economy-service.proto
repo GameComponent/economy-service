@@ -475,6 +475,7 @@ message Player {
 	string id = 1;
 	string name = 2;
 	repeated Storage storages = 3;
+	google.protobuf.Struct metadata = 4;
 }
 
 message Config {
@@ -593,6 +594,7 @@ message UpdateStorageResponse{
 message CreatePlayerRequest{	
 	string player_id = 1;
 	string name = 2;
+	google.protobuf.Struct metadata = 3;
 }
 
 message CreatePlayerResponse{	
@@ -603,6 +605,7 @@ message CreatePlayerResponse{
 message UpdatePlayerRequest{	
 	string player_id = 1;
 	string name = 2;
+	google.protobuf.Struct metadata = 3;
 }
 
 message UpdatePlayerResponse{	

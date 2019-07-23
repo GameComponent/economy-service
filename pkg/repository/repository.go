@@ -47,9 +47,9 @@ type ItemRepository interface {
 
 // PlayerRepository interface
 type PlayerRepository interface {
-	Create(ctx context.Context, id string, name string) (*v1.Player, error)
-	Update(ctx context.Context, playerID string, name string) (*v1.Player, error)
-	Get(ctx context.Context, id string) (*v1.Player, error)
+	Create(ctx context.Context, playerID string, name string, metadata *_struct.Struct) (*v1.Player, error)
+	Update(ctx context.Context, playerID string, name string, metadata *_struct.Struct) (*v1.Player, error)
+	Get(ctx context.Context, playerID string) (*v1.Player, error)
 	List(ctx context.Context, limit int32, offset int32) ([]*v1.Player, int32, error)
 	Search(ctx context.Context, query string, limit int32, offset int32) ([]*v1.Player, int32, error)
 }

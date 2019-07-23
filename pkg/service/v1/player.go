@@ -39,6 +39,7 @@ func (s *economyServiceServer) CreatePlayer(ctx context.Context, req *v1.CreateP
 		ctx,
 		req.GetPlayerId(),
 		req.GetName(),
+		req.GetMetadata(),
 	)
 
 	if err != nil {
@@ -57,14 +58,11 @@ func (s *economyServiceServer) UpdatePlayer(ctx context.Context, req *v1.UpdateP
 		return nil, status.Error(codes.InvalidArgument, "no player_id given")
 	}
 
-	if req.GetName() == "" {
-		return nil, status.Error(codes.InvalidArgument, "no name given")
-	}
-
 	player, err := s.playerRepository.Update(
 		ctx,
 		req.GetPlayerId(),
 		req.GetName(),
+		req.GetMetadata(),
 	)
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "player not found")
