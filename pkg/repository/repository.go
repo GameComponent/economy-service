@@ -40,7 +40,7 @@ type CurrencyRepository interface {
 type ItemRepository interface {
 	Create(ctx context.Context, name string, stackable bool, stackMaxAmount int64, stackBalancingMethod int64, metadata *_struct.Struct) (*v1.Item, error)
 	Get(ctx context.Context, itemID string) (*v1.Item, error)
-	Update(ctx context.Context, id string, name string, metadata *_struct.Struct) (*v1.Item, error)
+	Update(ctx context.Context, itemID string, name string, metadata *_struct.Struct) (*v1.Item, error)
 	List(ctx context.Context, limit int32, offset int32) ([]*v1.Item, int32, error)
 	Search(ctx context.Context, query string, limit int32, offset int32) ([]*v1.Item, int32, error)
 }

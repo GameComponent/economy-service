@@ -3,6 +3,7 @@ package itemrepository
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"strings"
 	"time"
 
@@ -73,31 +74,52 @@ func (r *ItemRepository) Create(ctx context.Context, name string, stackable bool
 }
 
 // Update an item
-func (r *ItemRepository) Update(ctx context.Context, id string, name string, metadata *_struct.Struct) (*v1.Item, error) {
-	// Parse struct to JSON string
-	jsonMetadata := "{}"
+func (r *ItemRepository) Update(ctx context.Context, itemID string, name string, metadata *_struct.Struct) (*v1.Item, error) {
+	index := 1
+	queries := []string{}
+	arguments := []interface{}{}
+
+	// Add name to the query
+	if name != "" {
+		queries = append(queries, fmt.Sprintf("name = $%v", index))
+		arguments = append(arguments, name)
+		index++
+	}
+
+	// Add metadata to the query
 	if metadata != nil {
+		// Parse the metadata to a JSON string
+		jsonMetadata := "{}"
 		var err error
 		marshaler := jsonpb.Marshaler{}
 		jsonMetadata, err = marshaler.MarshalToString(metadata)
 		if err != nil {
 			return nil, err
 		}
+
+		queries = append(queries, fmt.Sprintf("metadata = $%v", index))
+		arguments = append(arguments, jsonMetadata)
+		index++
 	}
 
+	if index <= 1 {
+		return nil, fmt.Errorf("no arguments given")
+	}
+
+	// Update the item
+	arguments = append(arguments, itemID)
+	query := fmt.Sprintf("UPDATE item SET %v WHERE id =$%v", strings.Join(queries, ", "), index)
 	_, err := r.db.ExecContext(
 		ctx,
-		`UPDATE item SET name = $1, metadata = $2 WHERE id = $3`,
-		name,
-		jsonMetadata,
-		id,
+		query,
+		arguments...,
 	)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return r.Get(ctx, id)
+	return r.Get(ctx, itemID)
 }
 
 // List all items

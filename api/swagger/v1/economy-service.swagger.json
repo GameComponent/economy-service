@@ -421,7 +421,7 @@
           "EconomyService"
         ]
       },
-      "put": {
+      "patch": {
         "summary": "Update an Item",
         "operationId": "UpdateItem",
         "responses": {

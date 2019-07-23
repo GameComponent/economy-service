@@ -113,7 +113,7 @@ service EconomyService {
 	// Update an Item
 	rpc UpdateItem(UpdateItemRequest) returns (UpdateItemResponse) {
 		option (google.api.http) = {
-			put: "/v1/item/{item_id}"
+			patch: "/v1/item/{item_id}"
 			body: "*"
 		};
 	}
