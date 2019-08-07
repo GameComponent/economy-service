@@ -212,6 +212,7 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 		if res.StorageItemID.Valid {
 			storageItem.Id = res.StorageItemID.String
 			storageItem.Item = item
+			storageItem.Amount = res.StorageItemAmount.Int64
 
 			// Only show the amount if the item is stackable
 			if res.ItemStackable.Bool {
