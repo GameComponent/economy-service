@@ -4,7 +4,7 @@
     "title": "Economy service",
     "version": "0.0",
     "contact": {
-      "name": "economy-service",
+      "name": "economy_service",
       "url": "https://github.com/GameComponent/economy-service",
       "email": "info@gamecomponent.com"
     }
