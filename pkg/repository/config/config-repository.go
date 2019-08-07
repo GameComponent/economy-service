@@ -3,25 +3,26 @@ package configrepository
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"strings"
 
-	"github.com/golang/protobuf/jsonpb"
-
-	repository "github.com/GameComponent/economy-service/pkg/repository"
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
+	repository "github.com/GameComponent/economy-service/pkg/repository"
+	"github.com/golang/protobuf/jsonpb"
 	_struct "github.com/golang/protobuf/ptypes/struct"
+	"go.uber.org/zap"
 )
 
 // ConfigRepository struct
 type ConfigRepository struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *zap.Logger
 }
 
 // NewConfigRepository constructor
-func NewConfigRepository(db *sql.DB) repository.ConfigRepository {
+func NewConfigRepository(db *sql.DB, logger *zap.Logger) repository.ConfigRepository {
 	return &ConfigRepository{
-		db: db,
+		db:     db,
+		logger: logger,
 	}
 }
 
@@ -62,9 +63,6 @@ func (r *ConfigRepository) Set(ctx context.Context, key string, value *_struct.V
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Println("set default")
-	fmt.Println(jsonValue)
 
 	_, err = r.db.ExecContext(
 		ctx,

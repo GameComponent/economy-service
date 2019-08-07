@@ -10,17 +10,20 @@ import (
 	repository "github.com/GameComponent/economy-service/pkg/repository"
 	jsonpb "github.com/golang/protobuf/jsonpb"
 	_struct "github.com/golang/protobuf/ptypes/struct"
+	"go.uber.org/zap"
 )
 
 // PlayerRepository struct
 type PlayerRepository struct {
 	db *sql.DB
+	logger *zap.Logger
 }
 
 // NewPlayerRepository constructor
-func NewPlayerRepository(db *sql.DB) repository.PlayerRepository {
+func NewPlayerRepository(db *sql.DB, logger *zap.Logger) repository.PlayerRepository {
 	return &PlayerRepository{
 		db: db,
+		logger: logger,
 	}
 }
 

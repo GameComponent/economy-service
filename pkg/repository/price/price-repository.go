@@ -8,17 +8,20 @@ import (
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
 	repository "github.com/GameComponent/economy-service/pkg/repository"
 	"github.com/golang/protobuf/ptypes"
+	"go.uber.org/zap"
 )
 
 // PriceRepository struct
 type PriceRepository struct {
 	db *sql.DB
+	logger *zap.Logger
 }
 
 // NewPriceRepository constructor
-func NewPriceRepository(db *sql.DB) repository.PriceRepository {
+func NewPriceRepository(db *sql.DB, logger *zap.Logger) repository.PriceRepository {
 	return &PriceRepository{
 		db: db,
+		logger: logger,
 	}
 }
 

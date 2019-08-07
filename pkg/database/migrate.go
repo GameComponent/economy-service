@@ -36,8 +36,6 @@ func Init(host string, port string, user string, password string, dbname string,
 		password,
 	)
 
-	fmt.Println(connectString)
-
 	// Setup the database
 	_, err := setupDatabase(connectString, dbname)
 	if err != nil {
@@ -51,8 +49,6 @@ func Init(host string, port string, user string, password string, dbname string,
 		user,
 		password,
 	)
-
-	fmt.Println(databaseConnectString)
 
 	// Migrate the database
 	_, err = migrateDatabase(databaseConnectString)

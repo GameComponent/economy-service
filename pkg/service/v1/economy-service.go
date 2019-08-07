@@ -8,6 +8,7 @@ import (
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
 	repository "github.com/GameComponent/economy-service/pkg/repository"
+	"go.uber.org/zap"
 )
 
 const (
@@ -16,21 +17,23 @@ const (
 
 // Config for the server
 type Config struct {
-	DB *sql.DB
-	AccountRepository repository.AccountRepository
-	ConfigRepository repository.ConfigRepository
+	DB 								 *sql.DB
+	Logger           	 *zap.Logger
+	AccountRepository  repository.AccountRepository
+	ConfigRepository	 repository.ConfigRepository
 	CurrencyRepository repository.CurrencyRepository
-	ItemRepository repository.ItemRepository
-	PlayerRepository repository.PlayerRepository
-	PriceRepository repository.PriceRepository
-	ProductRepository repository.ProductRepository
-	ShopRepository repository.ShopRepository
-	StorageRepository repository.StorageRepository
+	ItemRepository 		 repository.ItemRepository
+	PlayerRepository 	 repository.PlayerRepository
+	PriceRepository 	 repository.PriceRepository
+	ProductRepository  repository.ProductRepository
+	ShopRepository 	 	 repository.ShopRepository
+	StorageRepository  repository.StorageRepository
 }
 
 // economyServiceServer is implementation of v1.EconomyServiceServer proto interface
 type economyServiceServer struct {
 	db                 *sql.DB
+	logger             *zap.Logger
 	accountRepository  repository.AccountRepository
 	configRepository   repository.ConfigRepository
 	currencyRepository repository.CurrencyRepository
@@ -46,6 +49,7 @@ type economyServiceServer struct {
 func NewEconomyServiceServer(config Config) v1.EconomyServiceServer {
 	return &economyServiceServer{
 		config.DB,
+		config.Logger,
 		config.AccountRepository,
 		config.ConfigRepository,
 		config.CurrencyRepository,

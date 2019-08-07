@@ -11,11 +11,13 @@ import (
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
 	repository "github.com/GameComponent/economy-service/pkg/repository"
+	"go.uber.org/zap"
 )
 
 // ProductRepository struct
 type ProductRepository struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *zap.Logger
 }
 
 // NullTime is a nullable time.Time
@@ -39,9 +41,10 @@ func (nt NullTime) Value() (driver.Value, error) {
 }
 
 // NewProductRepository constructor
-func NewProductRepository(db *sql.DB) repository.ProductRepository {
+func NewProductRepository(db *sql.DB, logger *zap.Logger) repository.ProductRepository {
 	return &ProductRepository{
-		db: db,
+		db:     db,
+		logger: logger,
 	}
 }
 

@@ -6,13 +6,12 @@ import (
 	"strconv"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
+	"go.uber.org/zap"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
 )
 
 func (s *economyServiceServer) GetConfig(ctx context.Context, req *v1.GetConfigRequest) (*v1.GetConfigResponse, error) {
-	fmt.Println("GetConfig")
-
 	config, err := s.configRepository.Get(ctx, req.GetKey())
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "config not found")
@@ -24,10 +23,9 @@ func (s *economyServiceServer) GetConfig(ctx context.Context, req *v1.GetConfigR
 }
 
 func (s *economyServiceServer) SetConfig(ctx context.Context, req *v1.SetConfigRequest) (*v1.SetConfigResponse, error) {
-	fmt.Println("SetConfig")
-
 	config, err := s.configRepository.Set(ctx, req.GetKey(), req.GetValue())
 	if err != nil {
+		s.logger.Error("unable to set config", zap.Error(err))
 		return nil, status.Error(codes.Internal, "unable to set config")
 	}
 

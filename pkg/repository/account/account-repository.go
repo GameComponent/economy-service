@@ -3,20 +3,23 @@ package accountrepository
 import (
 	"context"
 	"database/sql"
-
+	
+	"go.uber.org/zap"
 	repository "github.com/GameComponent/economy-service/pkg/repository"
 )
 
 // AccountRepository struct
 type AccountRepository struct {
 	db *sql.DB
+	logger *zap.Logger
 }
 
 
 // NewAccountRepository constructor
-func NewAccountRepository(db *sql.DB) repository.AccountRepository {
+func NewAccountRepository(db *sql.DB, logger *zap.Logger) repository.AccountRepository {
 	return &AccountRepository{
 		db: db,
+		logger: logger,
 	}
 }
 

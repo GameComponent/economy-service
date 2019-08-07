@@ -22,8 +22,6 @@ func Connect(
 		sslmode,
 	)
 
-	fmt.Println(connectStringBase)
-
 	connectString := fmt.Sprintf(
 		"%s dbname=%s user=%s password=%s",
 		connectStringBase,

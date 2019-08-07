@@ -12,30 +12,23 @@ import (
 	"google.golang.org/grpc"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
-	"github.com/GameComponent/economy-service/pkg/logger"
 	jwt "github.com/dgrijalva/jwt-go"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
 // RunServer runs gRPC service to publish Economy service
-func RunServer(ctx context.Context, v1API v1.EconomyServiceServer, port string) error {
+func RunServer(ctx context.Context, v1API v1.EconomyServiceServer, logger *zap.Logger, port string) error {
 	listen, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		return err
 	}
 
-	// gRPC server statup options
-	// opts := []grpc.ServerOption{}
-
-	// Add middleware
-	// middleware.AddLogging(logger.Log, opts)
-
 	// Register service
 	server := grpc.NewServer(
-		// grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(streamInterceptor)),
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(unaryInterceptor)),
 	)
 
@@ -56,27 +49,11 @@ func RunServer(ctx context.Context, v1API v1.EconomyServiceServer, port string) 
 	}()
 
 	// Start gRPC server
-	logger.Log.Info("starting gRPC server...")
+	logger.Info("starting gRPC server", zap.String("port", port))
 	return server.Serve(listen)
 }
 
-// func streamInterceptor(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
-// 	fmt.Println("streamInterceptor")
-
-// 	return fmt.Errorf("wat")
-
-// 	if err := authorize(stream.Context()); err != nil {
-// 		return err
-// 	}
-
-// 	fmt.Println("streamInterceptor valid")
-
-// 	return handler(srv, stream)
-// }
-
 func unaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-	fmt.Println("unaryInterceptor")
-
 	if info.FullMethod == "/v1.EconomyService/Authenticate" {
 		return handler(ctx, req)
 	}
@@ -94,8 +71,6 @@ func unaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServ
 }
 
 func authorize(ctx context.Context) error {
-	fmt.Println("authorize")
-
 	// Check if metadata is present
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {

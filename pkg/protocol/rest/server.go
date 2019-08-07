@@ -12,12 +12,11 @@ import (
 	"google.golang.org/grpc"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
-	"github.com/GameComponent/economy-service/pkg/logger"
 	"github.com/GameComponent/economy-service/pkg/protocol/rest/middleware"
 )
 
 // RunServer runs HTTP/REST gateway
-func RunServer(ctx context.Context, grpcPort, httpPort string) error {
+func RunServer(ctx context.Context, logger *zap.Logger, grpcPort string, httpPort string) error {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
@@ -29,7 +28,7 @@ func RunServer(ctx context.Context, grpcPort, httpPort string) error {
 	)
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 	if err := v1.RegisterEconomyServiceHandlerFromEndpoint(ctx, mux, "0.0.0.0:"+grpcPort, opts); err != nil {
-		logger.Log.Fatal("failed to start HTTP gateway", zap.String("reason", err.Error()))
+		logger.Fatal("failed to start HTTP gateway", zap.String("reason", err.Error()))
 	}
 
 	srv := &http.Server{
@@ -37,7 +36,7 @@ func RunServer(ctx context.Context, grpcPort, httpPort string) error {
 		// add handler with middleware
 		Handler: middleware.AddCors(
 			middleware.AddRequestID(
-				middleware.AddLogger(logger.Log, mux),
+				middleware.AddLogger(logger, mux),
 			),
 		),
 	}
@@ -56,6 +55,6 @@ func RunServer(ctx context.Context, grpcPort, httpPort string) error {
 		_ = srv.Shutdown(ctx)
 	}()
 
-	logger.Log.Info("starting HTTP/REST gateway...")
+	logger.Info("starting HTTP/REST gateway", zap.String("port", httpPort))
 	return srv.ListenAndServe()
 }

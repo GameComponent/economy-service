@@ -12,17 +12,20 @@ import (
 	jsonpb "github.com/golang/protobuf/jsonpb"
 	ptypes "github.com/golang/protobuf/ptypes"
 	_struct "github.com/golang/protobuf/ptypes/struct"
+	"go.uber.org/zap"
 )
 
 // ItemRepository struct
 type ItemRepository struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *zap.Logger
 }
 
 // NewItemRepository constructor
-func NewItemRepository(db *sql.DB) repository.ItemRepository {
+func NewItemRepository(db *sql.DB, logger *zap.Logger) repository.ItemRepository {
 	return &ItemRepository{
-		db: db,
+		db:     db,
+		logger: logger,
 	}
 }
 

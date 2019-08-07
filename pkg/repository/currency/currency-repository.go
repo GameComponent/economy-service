@@ -10,17 +10,20 @@ import (
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
 	repository "github.com/GameComponent/economy-service/pkg/repository"
 	"github.com/golang/protobuf/ptypes"
+	"go.uber.org/zap"
 )
 
 // CurrencyRepository struct
 type CurrencyRepository struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *zap.Logger
 }
 
 // NewCurrencyRepository constructor
-func NewCurrencyRepository(db *sql.DB) repository.CurrencyRepository {
+func NewCurrencyRepository(db *sql.DB, logger *zap.Logger) repository.CurrencyRepository {
 	return &CurrencyRepository{
-		db: db,
+		db:     db,
+		logger: logger,
 	}
 }
 
@@ -37,7 +40,6 @@ func (r *CurrencyRepository) Create(ctx context.Context, name string, shortName 
 	).Scan(
 		&lastInsertUUID,
 	)
-
 	if err != nil {
 		return nil, err
 	}

@@ -13,6 +13,7 @@ import (
 	jsonpb "github.com/golang/protobuf/jsonpb"
 	ptypes "github.com/golang/protobuf/ptypes"
 	_struct "github.com/golang/protobuf/ptypes/struct"
+	"go.uber.org/zap"
 )
 
 // NullTime is a nullable time.Time
@@ -37,13 +38,15 @@ func (nt NullTime) Value() (driver.Value, error) {
 
 // ShopRepository struct
 type ShopRepository struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *zap.Logger
 }
 
 // NewShopRepository constructor
-func NewShopRepository(db *sql.DB) repository.ShopRepository {
+func NewShopRepository(db *sql.DB, logger *zap.Logger) repository.ShopRepository {
 	return &ShopRepository{
-		db: db,
+		db:     db,
+		logger: logger,
 	}
 }
 

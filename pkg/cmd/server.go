@@ -3,13 +3,11 @@ package cmd
 import (
 	"context"
 	"flag"
-	"fmt"
 	"log"
 
 	database "github.com/GameComponent/economy-service/pkg/database"
-	"github.com/GameComponent/economy-service/pkg/logger"
-	"github.com/GameComponent/economy-service/pkg/protocol/grpc"
-	"github.com/GameComponent/economy-service/pkg/protocol/rest"
+	grpc "github.com/GameComponent/economy-service/pkg/protocol/grpc"
+	rest "github.com/GameComponent/economy-service/pkg/protocol/rest"
 	accountrepository "github.com/GameComponent/economy-service/pkg/repository/account"
 	configrepository "github.com/GameComponent/economy-service/pkg/repository/config"
 	currencyrepository "github.com/GameComponent/economy-service/pkg/repository/currency"
@@ -22,6 +20,7 @@ import (
 	v1 "github.com/GameComponent/economy-service/pkg/service/v1"
 	pflag "github.com/spf13/pflag"
 	viper "github.com/spf13/viper"
+	"go.uber.org/zap"
 )
 
 // Config for the server
@@ -41,6 +40,9 @@ type Config struct {
 // RunServer runs gRPC server and HTTP gateway
 func RunServer() error {
 	ctx := context.Background()
+
+	// Create the logger
+	logger, _ := zap.NewProduction()
 
 	// Set the configuration
 	v := viper.New()
@@ -70,9 +72,10 @@ func RunServer() error {
 	err := v.ReadInConfig()
 	if err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			fmt.Println("No config file found")
+			logger.Info("No config file found")
 		} else {
-			return fmt.Errorf("Unable to read in config")
+			logger.Error("Unable to read in config", zap.Error(err))
+			return err
 		}
 	}
 
@@ -97,16 +100,13 @@ func RunServer() error {
 	var cfg Config
 	err = v.Unmarshal(&cfg)
 	if err != nil {
-		return fmt.Errorf("Unable to unmarshal config")
+		logger.Error("Unable to unmarshal config", zap.Error(err))
+		return err
 	}
 
 	if len(cfg.GRPCPort) == 0 {
-		return fmt.Errorf("invalid TCP port for gRPC server: '%s'", cfg.GRPCPort)
-	}
-
-	// Setup the logger
-	if err := logger.Init(cfg.LogLevel, cfg.LogTimeFormat); err != nil {
-		return fmt.Errorf("failed to initialize logger: %v", err)
+		logger.Error("invalid TCP port for gRPC server", zap.String("port", cfg.GRPCPort))
+		return err
 	}
 
 	// Setup database & migrate
@@ -133,23 +133,24 @@ func RunServer() error {
 	defer db.Close()
 
 	if err != nil {
-		log.Fatal("Could create a database connection")
+		logger.Fatal("Could create a database connection", zap.Error(err))
 	}
 
 	// Setup the repositories
-	itemRepository := itemrepository.NewItemRepository(db)
-	playerRepository := playerrepository.NewPlayerRepository(db)
-	currencyRepository := currencyrepository.NewCurrencyRepository(db)
-	storageRepository := storagerepository.NewStorageRepository(db)
-	configRepository := configrepository.NewConfigRepository(db)
-	accountRepository := accountrepository.NewAccountRepository(db)
-	shopRepository := shoprepository.NewShopRepository(db)
-	productRepository := productrepository.NewProductRepository(db)
-	priceRepository := pricerepository.NewPriceRepository(db)
+	itemRepository := itemrepository.NewItemRepository(db, logger)
+	playerRepository := playerrepository.NewPlayerRepository(db, logger)
+	currencyRepository := currencyrepository.NewCurrencyRepository(db, logger)
+	storageRepository := storagerepository.NewStorageRepository(db, logger)
+	configRepository := configrepository.NewConfigRepository(db, logger)
+	accountRepository := accountrepository.NewAccountRepository(db, logger)
+	shopRepository := shoprepository.NewShopRepository(db, logger)
+	productRepository := productrepository.NewProductRepository(db, logger)
+	priceRepository := pricerepository.NewPriceRepository(db, logger)
 
 	// Create the config
 	config := v1.Config{
 		DB:                 db,
+		Logger:             logger,
 		ItemRepository:     itemRepository,
 		PlayerRepository:   playerRepository,
 		CurrencyRepository: currencyRepository,
@@ -166,9 +167,9 @@ func RunServer() error {
 
 	// Start the REST server
 	go func() {
-		_ = rest.RunServer(ctx, cfg.GRPCPort, cfg.HTTPPort)
+		_ = rest.RunServer(ctx, logger, cfg.GRPCPort, cfg.HTTPPort)
 	}()
 
 	// Start the GRCP server
-	return grpc.RunServer(ctx, v1API, cfg.GRPCPort)
+	return grpc.RunServer(ctx, v1API, logger, cfg.GRPCPort)
 }
