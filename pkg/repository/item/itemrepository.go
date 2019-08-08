@@ -29,6 +29,11 @@ func NewItemRepository(db *sql.DB, logger *zap.Logger) repository.ItemRepository
 
 // Create a new item
 func (r *ItemRepository) Create(ctx context.Context, name string, stackable bool, stackMaxAmount int64, stackBalancingMethod int64, metadata string) (*v1.Item, error) {
+	// Set the default metadata value to an empty object
+	if metadata == "" {
+		metadata = "{}"
+	}
+
 	lastInsertUUID := ""
 	err := r.db.QueryRowContext(
 		ctx,

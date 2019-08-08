@@ -399,6 +399,11 @@ func (r *ShopRepository) Get(ctx context.Context, shopID string) (*v1.Shop, erro
 
 // Create a new shop
 func (r *ShopRepository) Create(ctx context.Context, name string, metadata string) (*v1.Shop, error) {
+	// Set the default metadata value to an empty object
+	if metadata == "" {
+		metadata = "{}"
+	}
+
 	shopID := ""
 	err := r.db.QueryRowContext(
 		ctx,

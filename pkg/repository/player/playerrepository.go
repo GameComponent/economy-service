@@ -13,20 +13,24 @@ import (
 
 // PlayerRepository struct
 type PlayerRepository struct {
-	db *sql.DB
+	db     *sql.DB
 	logger *zap.Logger
 }
 
 // NewPlayerRepository constructor
 func NewPlayerRepository(db *sql.DB, logger *zap.Logger) repository.PlayerRepository {
 	return &PlayerRepository{
-		db: db,
+		db:     db,
 		logger: logger,
 	}
 }
 
 // Create a new player
 func (r *PlayerRepository) Create(ctx context.Context, playerID string, name string, metadata string) (*v1.Player, error) {
+	// Set the default metadata value to an empty object
+	if metadata == "" {
+		metadata = "{}"
+	}
 	_, err := r.db.ExecContext(
 		ctx,
 		`INSERT INTO player(id, name, metadata) VALUES ($1, $2, $3)`,

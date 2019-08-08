@@ -29,6 +29,11 @@ func NewStorageRepository(db *sql.DB, logger *zap.Logger) repository.StorageRepo
 
 // Create a storage
 func (r *StorageRepository) Create(ctx context.Context, playerID string, name string, metadata string) (*v1.Storage, error) {
+	// Set the default metadata value to an empty object
+	if metadata == "" {
+		metadata = "{}"
+	}
+
 	// Add item to the databased return the generated UUID
 	lastInsertUUID := ""
 	err := r.db.QueryRowContext(
