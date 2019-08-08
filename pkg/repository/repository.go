@@ -4,7 +4,6 @@ import (
 	"context"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
-	_struct "github.com/golang/protobuf/ptypes/struct"
 )
 
 // Account struct
@@ -24,7 +23,7 @@ type AccountRepository interface {
 // ConfigRepository interface
 type ConfigRepository interface {
 	Get(ctx context.Context, key string) (*v1.Config, error)
-	Set(ctx context.Context, key string, value *_struct.Value) (*v1.Config, error)
+	Set(ctx context.Context, key string, value string) (*v1.Config, error)
 	List(ctx context.Context, limit int32, offset int32) ([]*v1.Config, int32, error)
 }
 
@@ -38,17 +37,17 @@ type CurrencyRepository interface {
 
 // ItemRepository interface
 type ItemRepository interface {
-	Create(ctx context.Context, name string, stackable bool, stackMaxAmount int64, stackBalancingMethod int64, metadata *_struct.Struct) (*v1.Item, error)
+	Create(ctx context.Context, name string, stackable bool, stackMaxAmount int64, stackBalancingMethod int64, metadata string) (*v1.Item, error)
 	Get(ctx context.Context, itemID string) (*v1.Item, error)
-	Update(ctx context.Context, itemID string, name string, metadata *_struct.Struct) (*v1.Item, error)
+	Update(ctx context.Context, itemID string, name string, metadata string) (*v1.Item, error)
 	List(ctx context.Context, limit int32, offset int32) ([]*v1.Item, int32, error)
 	Search(ctx context.Context, query string, limit int32, offset int32) ([]*v1.Item, int32, error)
 }
 
 // PlayerRepository interface
 type PlayerRepository interface {
-	Create(ctx context.Context, playerID string, name string, metadata *_struct.Struct) (*v1.Player, error)
-	Update(ctx context.Context, playerID string, name string, metadata *_struct.Struct) (*v1.Player, error)
+	Create(ctx context.Context, playerID string, name string, metadata string) (*v1.Player, error)
+	Update(ctx context.Context, playerID string, name string, metadata string) (*v1.Player, error)
 	Get(ctx context.Context, playerID string) (*v1.Player, error)
 	List(ctx context.Context, limit int32, offset int32) ([]*v1.Player, int32, error)
 	Search(ctx context.Context, query string, limit int32, offset int32) ([]*v1.Player, int32, error)
@@ -83,8 +82,8 @@ type ProductRepository interface {
 // ShopRepository interface
 type ShopRepository interface {
 	Get(ctx context.Context, shopID string) (*v1.Shop, error)
-	Create(ctx context.Context, name string, metadata *_struct.Struct) (*v1.Shop, error)
-	Update(ctx context.Context, shopID string, name string, metadata *_struct.Struct) (*v1.Shop, error)
+	Create(ctx context.Context, name string, metadata string) (*v1.Shop, error)
+	Update(ctx context.Context, shopID string, name string, metadata string) (*v1.Shop, error)
 	List(ctx context.Context, limit int32, offset int32) ([]*v1.Shop, int32, error)
 	AttachProduct(ctx context.Context, shopID string, productID string) (*v1.Shop, error)
 	DetachProduct(ctx context.Context, shopProductID string) (*v1.Shop, error)
@@ -92,8 +91,8 @@ type ShopRepository interface {
 
 // StorageRepository interface
 type StorageRepository interface {
-	Create(ctx context.Context, playerID string, name string, metadata *_struct.Struct) (*v1.Storage, error)
-	Update(ctx context.Context, storageID string, name string, metadata *_struct.Struct) (*v1.Storage, error)
+	Create(ctx context.Context, playerID string, name string, metadata string) (*v1.Storage, error)
+	Update(ctx context.Context, storageID string, name string, metadata string) (*v1.Storage, error)
 	Get(ctx context.Context, storageID string) (*v1.Storage, error)
 	GiveItem(ctx context.Context, storageID string, itemID string, amount int64) (*string, error)
 	IncreaseItemAmount(ctx context.Context, storageItemID string, amount int64) error

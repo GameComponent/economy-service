@@ -1618,72 +1618,6 @@
     }
   },
   "definitions": {
-    "protobufListValue": {
-      "type": "object",
-      "properties": {
-        "values": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/protobufValue"
-          },
-          "description": "Repeated field of dynamically typed values."
-        }
-      },
-      "description": "`ListValue` is a wrapper around a repeated field of values.\n\nThe JSON representation for `ListValue` is JSON array."
-    },
-    "protobufNullValue": {
-      "type": "string",
-      "enum": [
-        "NULL_VALUE"
-      ],
-      "default": "NULL_VALUE",
-      "description": "`NullValue` is a singleton enumeration to represent the null value for the\n`Value` type union.\n\n The JSON representation for `NullValue` is JSON `null`.\n\n - NULL_VALUE: Null value."
-    },
-    "protobufStruct": {
-      "type": "object",
-      "properties": {
-        "fields": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/protobufValue"
-          },
-          "description": "Unordered map of dynamically typed values."
-        }
-      },
-      "description": "`Struct` represents a structured data value, consisting of fields\nwhich map to dynamically typed values. In some languages, `Struct`\nmight be supported by a native representation. For example, in\nscripting languages like JS a struct is represented as an\nobject. The details of that representation are described together\nwith the proto support for the language.\n\nThe JSON representation for `Struct` is JSON object."
-    },
-    "protobufValue": {
-      "type": "object",
-      "properties": {
-        "null_value": {
-          "$ref": "#/definitions/protobufNullValue",
-          "description": "Represents a null value."
-        },
-        "number_value": {
-          "type": "number",
-          "format": "double",
-          "description": "Represents a double value."
-        },
-        "string_value": {
-          "type": "string",
-          "description": "Represents a string value."
-        },
-        "bool_value": {
-          "type": "boolean",
-          "format": "boolean",
-          "description": "Represents a boolean value."
-        },
-        "struct_value": {
-          "$ref": "#/definitions/protobufStruct",
-          "description": "Represents a structured value."
-        },
-        "list_value": {
-          "$ref": "#/definitions/protobufListValue",
-          "description": "Represents a repeated `Value`."
-        }
-      },
-      "description": "`Value` represents a dynamically typed value which can be either\nnull, a number, a string, a boolean, a recursive struct value, or a\nlist of values. A producer of value is expected to set one of that\nvariants, absence of any variant indicates an error.\n\nThe JSON representation for `Value` is JSON value."
-    },
     "v1Amount": {
       "type": "object",
       "properties": {
@@ -1867,7 +1801,7 @@
           "type": "string"
         },
         "value": {
-          "$ref": "#/definitions/protobufValue"
+          "type": "string"
         }
       }
     },
@@ -1912,7 +1846,7 @@
           "$ref": "#/definitions/v1StackBalancingMethod"
         },
         "metadata": {
-          "$ref": "#/definitions/protobufStruct"
+          "type": "string"
         }
       },
       "title": "CreateItem"
@@ -1935,7 +1869,7 @@
           "type": "string"
         },
         "metadata": {
-          "$ref": "#/definitions/protobufStruct"
+          "type": "string"
         }
       },
       "title": "CreatePlayer"
@@ -1989,7 +1923,7 @@
           "type": "string"
         },
         "metadata": {
-          "$ref": "#/definitions/protobufStruct"
+          "type": "string"
         }
       },
       "title": "CreateShop"
@@ -2012,7 +1946,7 @@
           "type": "string"
         },
         "metadata": {
-          "$ref": "#/definitions/protobufStruct"
+          "type": "string"
         }
       },
       "title": "CreateStorage"
@@ -2242,7 +2176,7 @@
           "$ref": "#/definitions/v1StackBalancingMethod"
         },
         "metadata": {
-          "$ref": "#/definitions/protobufStruct"
+          "type": "string"
         }
       }
     },
@@ -2399,7 +2333,7 @@
           }
         },
         "metadata": {
-          "$ref": "#/definitions/protobufStruct"
+          "type": "string"
         }
       }
     },
@@ -2497,7 +2431,7 @@
           }
         },
         "metadata": {
-          "$ref": "#/definitions/protobufValue"
+          "type": "string"
         }
       }
     },
@@ -2626,7 +2560,7 @@
           "type": "string"
         },
         "value": {
-          "$ref": "#/definitions/protobufValue"
+          "type": "string"
         }
       },
       "title": "SetConfig"
@@ -2663,7 +2597,7 @@
           }
         },
         "metadata": {
-          "$ref": "#/definitions/protobufValue"
+          "type": "string"
         }
       }
     },
@@ -2712,7 +2646,7 @@
           }
         },
         "metadata": {
-          "$ref": "#/definitions/protobufStruct"
+          "type": "string"
         }
       }
     },
@@ -2790,7 +2724,7 @@
           "type": "string"
         },
         "metadata": {
-          "$ref": "#/definitions/protobufStruct"
+          "type": "string"
         }
       },
       "title": "UpdateItem"
@@ -2813,7 +2747,7 @@
           "type": "string"
         },
         "metadata": {
-          "$ref": "#/definitions/protobufStruct"
+          "type": "string"
         }
       },
       "title": "UpdatePlayer"
@@ -2856,7 +2790,7 @@
           "type": "string"
         },
         "metadata": {
-          "$ref": "#/definitions/protobufStruct"
+          "type": "string"
         }
       },
       "title": "UpdateShop"
@@ -2879,7 +2813,7 @@
           "type": "string"
         },
         "metadata": {
-          "$ref": "#/definitions/protobufStruct"
+          "type": "string"
         }
       },
       "title": "UpdateStorage"

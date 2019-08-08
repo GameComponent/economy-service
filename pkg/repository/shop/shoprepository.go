@@ -10,9 +10,7 @@ import (
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
 	repository "github.com/GameComponent/economy-service/pkg/repository"
-	jsonpb "github.com/golang/protobuf/jsonpb"
 	ptypes "github.com/golang/protobuf/ptypes"
-	_struct "github.com/golang/protobuf/ptypes/struct"
 	"go.uber.org/zap"
 )
 
@@ -400,24 +398,13 @@ func (r *ShopRepository) Get(ctx context.Context, shopID string) (*v1.Shop, erro
 }
 
 // Create a new shop
-func (r *ShopRepository) Create(ctx context.Context, name string, metadata *_struct.Struct) (*v1.Shop, error) {
-	// Parse struct to JSON string
-	jsonMetadata := "{}"
-	if metadata != nil {
-		var err error
-		marshaler := jsonpb.Marshaler{}
-		jsonMetadata, err = marshaler.MarshalToString(metadata)
-		if err != nil {
-			return nil, err
-		}
-	}
-
+func (r *ShopRepository) Create(ctx context.Context, name string, metadata string) (*v1.Shop, error) {
 	shopID := ""
 	err := r.db.QueryRowContext(
 		ctx,
 		`INSERT INTO shop(name, metadata) VALUES ($1, $2) RETURNING id`,
 		name,
-		jsonMetadata,
+		metadata,
 	).Scan(&shopID)
 
 	if err != nil {
@@ -428,7 +415,7 @@ func (r *ShopRepository) Create(ctx context.Context, name string, metadata *_str
 }
 
 // Update a shop
-func (r *ShopRepository) Update(ctx context.Context, shopID string, name string, metadata *_struct.Struct) (*v1.Shop, error) {
+func (r *ShopRepository) Update(ctx context.Context, shopID string, name string, metadata string) (*v1.Shop, error) {
 	index := 1
 	queries := []string{}
 	arguments := []interface{}{}
@@ -441,18 +428,9 @@ func (r *ShopRepository) Update(ctx context.Context, shopID string, name string,
 	}
 
 	// Add metadata to the query
-	if metadata != nil {
-		// Parse the metadata to a JSON string
-		jsonMetadata := "{}"
-		var err error
-		marshaler := jsonpb.Marshaler{}
-		jsonMetadata, err = marshaler.MarshalToString(metadata)
-		if err != nil {
-			return nil, err
-		}
-
+	if metadata != "" {
 		queries = append(queries, fmt.Sprintf("metadata = $%v", index))
-		arguments = append(arguments, jsonMetadata)
+		arguments = append(arguments, metadata)
 		index++
 	}
 

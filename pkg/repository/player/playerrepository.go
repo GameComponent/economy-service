@@ -8,8 +8,6 @@ import (
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
 	repository "github.com/GameComponent/economy-service/pkg/repository"
-	jsonpb "github.com/golang/protobuf/jsonpb"
-	_struct "github.com/golang/protobuf/ptypes/struct"
 	"go.uber.org/zap"
 )
 
@@ -28,24 +26,13 @@ func NewPlayerRepository(db *sql.DB, logger *zap.Logger) repository.PlayerReposi
 }
 
 // Create a new player
-func (r *PlayerRepository) Create(ctx context.Context, playerID string, name string, metadata *_struct.Struct) (*v1.Player, error) {
-	// Parse struct to JSON string
-	jsonMetadata := "{}"
-	if metadata != nil {
-		var err error
-		marshaler := jsonpb.Marshaler{}
-		jsonMetadata, err = marshaler.MarshalToString(metadata)
-		if err != nil {
-			return nil, err
-		}
-	}
-
+func (r *PlayerRepository) Create(ctx context.Context, playerID string, name string, metadata string) (*v1.Player, error) {
 	_, err := r.db.ExecContext(
 		ctx,
 		`INSERT INTO player(id, name, metadata) VALUES ($1, $2, $3)`,
 		playerID,
 		name,
-		jsonMetadata,
+		metadata,
 	)
 
 	if err != nil {
@@ -56,7 +43,7 @@ func (r *PlayerRepository) Create(ctx context.Context, playerID string, name str
 }
 
 // Update a player
-func (r *PlayerRepository) Update(ctx context.Context, playerID string, name string, metadata *_struct.Struct) (*v1.Player, error) {
+func (r *PlayerRepository) Update(ctx context.Context, playerID string, name string, metadata string) (*v1.Player, error) {
 	index := 1
 	queries := []string{}
 	arguments := []interface{}{}
@@ -69,18 +56,9 @@ func (r *PlayerRepository) Update(ctx context.Context, playerID string, name str
 	}
 
 	// Add metadata to the query
-	if metadata != nil {
-		// Parse the metadata to a JSON string
-		jsonMetadata := "{}"
-		var err error
-		marshaler := jsonpb.Marshaler{}
-		jsonMetadata, err = marshaler.MarshalToString(metadata)
-		if err != nil {
-			return nil, err
-		}
-
+	if metadata != "" {
 		queries = append(queries, fmt.Sprintf("metadata = $%v", index))
-		arguments = append(arguments, jsonMetadata)
+		arguments = append(arguments, metadata)
 		index++
 	}
 
@@ -166,20 +144,8 @@ func (r *PlayerRepository) Get(ctx context.Context, playerID string) (*v1.Player
 	player := &v1.Player{
 		Id:       res.PlayerID,
 		Name:     res.PlayerName,
+		Metadata: res.PlayerMetadata,
 		Storages: storages,
-	}
-
-	// Convert metadata json to a proto Struct
-	if res.PlayerMetadata != "" {
-		metadataStruct := _struct.Struct{}
-		stringReader := strings.NewReader(res.PlayerMetadata)
-		unmarshaler := jsonpb.Unmarshaler{}
-		err = unmarshaler.Unmarshal(stringReader, &metadataStruct)
-		if err != nil {
-			return nil, err
-		}
-
-		player.Metadata = &metadataStruct
 	}
 
 	return player, nil

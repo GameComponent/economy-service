@@ -2,7 +2,6 @@ syntax = "proto3";
 package v1;
 
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/struct.proto";
 import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
 
@@ -429,7 +428,7 @@ message Item {
 	bool stackable = 5;
 	int64 stack_max_amount = 6;
 	StackBalancingMethod stack_balancing_method = 7;
-	google.protobuf.Struct metadata = 8;
+	string metadata = 8;
 }
 
 message StorageItem {
@@ -438,7 +437,7 @@ message StorageItem {
 	google.protobuf.Timestamp updated_at = 3;
 	Item item = 4;
 	int64 amount = 5;
-	//google.protobuf.Struct metadata = 3;
+	//string metadata = 3;
 }
 
 // If the max_amount is smaller than the min_amount the amount will be the min_amount
@@ -472,19 +471,19 @@ message Storage {
 	string name = 5;
 	repeated StorageItem items = 6;
 	repeated StorageCurrency currencies = 7;
-	google.protobuf.Struct metadata = 8;
+	string metadata = 8;
 }
 
 message Player {
 	string id = 1;
 	string name = 2;
 	repeated Storage storages = 3;
-	google.protobuf.Struct metadata = 4;
+	string metadata = 4;
 }
 
 message Config {
 	string key = 1;
-	google.protobuf.Value value = 2;
+	string value = 2;
 }
 
 message Shop {
@@ -493,7 +492,7 @@ message Shop {
 	google.protobuf.Timestamp updated_at = 3;
 	string name = 4;
 	repeated Product products = 5;
-	google.protobuf.Value metadata = 6;
+	string metadata = 6;
 }
 
 message Product {
@@ -504,7 +503,7 @@ message Product {
 	repeated ProductItem items = 5;
 	repeated ProductCurrency currencies = 6;
 	repeated Price prices = 7;	
-	google.protobuf.Value metadata = 8;
+	string metadata = 8;
 }
 
 message ProductItem {
@@ -576,7 +575,7 @@ message ListStorageResponse{
 message CreateStorageRequest{	
 	string player_id = 1;
 	string name = 2;
-	google.protobuf.Struct metadata = 3;
+	string metadata = 3;
 }
 
 message CreateStorageResponse{	
@@ -587,7 +586,7 @@ message CreateStorageResponse{
 message UpdateStorageRequest{	
 	string storage_id = 1;
 	string name = 2;
-	google.protobuf.Struct metadata = 3;
+	string metadata = 3;
 }
 
 message UpdateStorageResponse{	
@@ -598,7 +597,7 @@ message UpdateStorageResponse{
 message CreatePlayerRequest{	
 	string player_id = 1;
 	string name = 2;
-	google.protobuf.Struct metadata = 3;
+	string metadata = 3;
 }
 
 message CreatePlayerResponse{	
@@ -609,7 +608,7 @@ message CreatePlayerResponse{
 message UpdatePlayerRequest{	
 	string player_id = 1;
 	string name = 2;
-	google.protobuf.Struct metadata = 3;
+	string metadata = 3;
 }
 
 message UpdatePlayerResponse{	
@@ -656,7 +655,7 @@ message CreateItemRequest{
 	bool stackable = 2;
 	int64 stack_max_amount = 3;
 	StackBalancingMethod stack_balancing_method = 4;
-	google.protobuf.Struct metadata = 5;
+	string metadata = 5;
 }
 
 message CreateItemResponse{	
@@ -667,7 +666,7 @@ message CreateItemResponse{
 message UpdateItemRequest{	
 	string item_id = 1;
 	string name = 2;
-	google.protobuf.Struct metadata = 3;
+	string metadata = 3;
 }
 
 message UpdateItemResponse{	
@@ -775,7 +774,7 @@ message GetConfigResponse{
 // SetConfig
 message SetConfigRequest{	
 	string key = 1;
-	google.protobuf.Value value = 2;
+	string value = 2;
 }
 
 // ListConfig
@@ -826,7 +825,7 @@ message GetShopResponse{
 // CreateShop
 message CreateShopRequest{	
 	string name = 1;
-	google.protobuf.Struct metadata = 2;
+	string metadata = 2;
 }
 
 message CreateShopResponse{	
@@ -837,7 +836,7 @@ message CreateShopResponse{
 message UpdateShopRequest{	
 	string shop_id = 1;
 	string name = 2;
-	google.protobuf.Struct metadata = 3;
+	string metadata = 3;
 }
 
 message UpdateShopResponse{	

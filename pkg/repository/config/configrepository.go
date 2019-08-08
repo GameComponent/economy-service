@@ -3,12 +3,9 @@ package configrepository
 import (
 	"context"
 	"database/sql"
-	"strings"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
 	repository "github.com/GameComponent/economy-service/pkg/repository"
-	"github.com/golang/protobuf/jsonpb"
-	_struct "github.com/golang/protobuf/ptypes/struct"
 	"go.uber.org/zap"
 )
 
@@ -28,43 +25,26 @@ func NewConfigRepository(db *sql.DB, logger *zap.Logger) repository.ConfigReposi
 
 // Get a player
 func (r *ConfigRepository) Get(ctx context.Context, key string) (*v1.Config, error) {
-	var jsonString string
+	config := &v1.Config{
+		Key:   key,
+	}
 
 	err := r.db.QueryRowContext(
 		ctx,
 		`SELECT value FROM config WHERE key = $1`,
 		key,
-	).Scan(&jsonString)
+	).Scan(&config.Value)
 
 	if err != nil {
 		return nil, err
-	}
-
-	stringReader := strings.NewReader(jsonString)
-	valueStruct := _struct.Value{}
-	unmarshaler := jsonpb.Unmarshaler{}
-	err = unmarshaler.Unmarshal(stringReader, &valueStruct)
-	if err != nil {
-		return nil, err
-	}
-
-	config := &v1.Config{
-		Key:   key,
-		Value: &valueStruct,
 	}
 
 	return config, nil
 }
 
 // Set a new config
-func (r *ConfigRepository) Set(ctx context.Context, key string, value *_struct.Value) (*v1.Config, error) {
-	marshaler := jsonpb.Marshaler{}
-	jsonValue, err := marshaler.MarshalToString(value)
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = r.db.ExecContext(
+func (r *ConfigRepository) Set(ctx context.Context, key string, value string) (*v1.Config, error) {
+	_, err := r.db.ExecContext(
 		ctx,
 		`
 			INSERT INTO config(key, value)
@@ -74,7 +54,7 @@ func (r *ConfigRepository) Set(ctx context.Context, key string, value *_struct.V
 			SET value = excluded.value
 		`,
 		key,
-		jsonValue,
+		value,
 	)
 
 	if err != nil {
@@ -116,26 +96,15 @@ func (r *ConfigRepository) List(ctx context.Context, limit int32, offset int32) 
 
 	for rows.Next() {
 		config := v1.Config{}
-		var jsonString string
 
 		err := rows.Scan(
 			&config.Key,
-			&jsonString,
+			&config.Value,
 			&totalSize,
 		)
 		if err != nil {
 			return nil, 0, err
 		}
-
-		stringReader := strings.NewReader(jsonString)
-		unmarshaler := jsonpb.Unmarshaler{}
-		valueStruct := _struct.Value{}
-		err = unmarshaler.Unmarshal(stringReader, &valueStruct)
-		if err != nil {
-			return nil, 0, err
-		}
-
-		config.Value = &valueStruct
 
 		configs = append(configs, &config)
 	}
