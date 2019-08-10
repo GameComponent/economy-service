@@ -7,7 +7,9 @@ stages:
 
 dependencies:
   stage: dependencies
-  script: go mod download
+  script: 
+    - apt install protobuf-compiler
+    - go mod download
 
 setup:
   stage: setup
