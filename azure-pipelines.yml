@@ -40,29 +40,17 @@ steps:
 - script: |
     go version
     go get -d ./...
-
     echo "path"
     echo $PATH
-
-    # go get -u github.com/golang/protobuf/protoc-gen-go
-    # go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
-    # go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
-
     echo "bin"
     ls $GOROOT/bin
     ls $GOPATH/bin
-
     echo "gopath src"
     ls $GOPATH/src
     ls $GOPATH/src/github.com
-
     echo "gobinsrc"
     ls $GOBIN/src
     ls $GOBIN/src/github.com
-
-    export PATH=$PATH:$GOPATH/bin
-    export PATH=$PATH:$GOROOT/bin
-
     make api
     make build
   workingDirectory: '$(modulePath)'
