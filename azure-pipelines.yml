@@ -37,5 +37,5 @@ steps:
     sudo apt install protobuf-compiler
     make api
     make build
-  workingDirectory: '$(modulePath)'
+  # workingDirectory: '$(modulePath)'
   displayName: 'Get dependencies, then build'
