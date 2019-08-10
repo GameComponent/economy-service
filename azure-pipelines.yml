@@ -42,6 +42,9 @@ steps:
     sudo mv protoc3/include/* /usr/local/include/
     echo "protocgengo"
     go get -u github.com/golang/protobuf/protoc-gen-go
+    go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
+    go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
+    go get -u github.com/golang/protobuf/protoc-gen-go
     export PATH=$PATH:$GOPATH/bin
     echo "debug"
     pwd
