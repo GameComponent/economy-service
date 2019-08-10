@@ -35,7 +35,9 @@ steps:
         dep ensure
     fi
     sudo apt install protobuf-compiler
+    ls
+    pwd
     make api
     make build
-  # workingDirectory: '$(modulePath)'
+  workingDirectory: '$(modulePath)'
   displayName: 'Get dependencies, then build'
