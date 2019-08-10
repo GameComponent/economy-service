@@ -1,0 +1,20 @@
+image: golang:1.12
+
+stages:
+  - dependencies
+  - setup
+  - build
+
+dependencies:
+  stage: dependencies
+  script: go mod download
+
+setup:
+  stage: setup
+  script:
+    - make api
+  
+build:
+  stage: build
+  script:
+    - make build
