@@ -39,6 +39,10 @@ steps:
     unzip protoc-3.2.0-linux-x86_64.zip -d protoc3
     sudo mv protoc3/bin/* /usr/local/bin/
     sudo mv protoc3/include/* /usr/local/include/
+    echo "protocgengo"
+    go get -u github.com/golang/protobuf/protoc-gen-go
+    export PATH=$PATH:$GOPATH/bin
+    echo "debug"
     pwd
     ls
     ls api/
