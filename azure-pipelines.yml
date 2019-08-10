@@ -35,6 +35,6 @@ steps:
         dep ensure
     fi
     make api
-		make build
+        make build
   workingDirectory: '$(modulePath)'
   displayName: 'Get dependencies, then build'
