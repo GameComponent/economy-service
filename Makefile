@@ -7,7 +7,7 @@ api_go:
 	-I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
 	-I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway \
 	--go_out=plugins=grpc:pkg/api/v1 \
-	./api/proto/v1/economy_service.proto
+	economy_service.proto
 
 api_gateway:
 	protoc -I ./api/proto/v1/ \
@@ -15,7 +15,7 @@ api_gateway:
 	-I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
 	-I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway \
 	--grpc-gateway_out=logtostderr=true:pkg/api/v1 \
-	./api/proto/v1/economy_service.proto
+	economy_service.proto
 
 api_swagger:
 	protoc -I ./api/proto/v1/ \
@@ -23,7 +23,7 @@ api_swagger:
 	-I${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
 	-I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway \
 	--swagger_out=logtostderr=true:api/swagger/v1 \
-	./api/proto/v1/economy_service.proto
+	economy_service.proto
 
 api: api_go api_gateway api_swagger
 
