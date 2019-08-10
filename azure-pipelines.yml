@@ -45,15 +45,15 @@ steps:
     # go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
     # go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
 
-    ls $GOROOT/bin
-    ls $GOPATH/bin
+    # ls $GOROOT/bin
+    # ls $GOPATH/bin
 
-    export PATH=$PATH:$GOPATH/bin
-    export PATH=$PATH:$GOROOT/bin
+    # export PATH=$PATH:$GOPATH/bin
+    # export PATH=$PATH:$GOROOT/bin
     export PATH=$PATH:/usr/local/bin
     export PATH=$PATH:/usr/local/include
 
     make api
     make build
-  workingDirectory: '$(modulePath)'
+  # workingDirectory: '$(modulePath)'
   displayName: 'Get dependencies, then build'
