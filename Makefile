@@ -2,7 +2,7 @@ build:
 	go build -o ./bin/server/server ./cmd/server
 
 api_go:
-	protoc -I api/proto/v1/ \
+	protoc -I ./api/proto/v1/ \
 	-I ${GOPATH}/src \
 	-I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
 	-I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway \
@@ -10,7 +10,7 @@ api_go:
 	economy_service.proto
 
 api_gateway:
-	protoc -I api/proto/v1/ \
+	protoc -I ./api/proto/v1/ \
 	-I${GOPATH}/src \
 	-I${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
 	-I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway \
@@ -18,7 +18,7 @@ api_gateway:
 	economy_service.proto
 
 api_swagger:
-	protoc -I api/proto/v1/ \
+	protoc -I ./api/proto/v1/ \
 	-I${GOPATH}/src \
 	-I${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
 	-I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway \
