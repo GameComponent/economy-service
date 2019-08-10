@@ -34,7 +34,7 @@ steps:
         curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
         dep ensure
     fi
-		apt install protobuf-compiler
+    apt install protobuf-compiler
     make api
     make build
   workingDirectory: '$(modulePath)'
