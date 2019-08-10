@@ -39,7 +39,10 @@ steps:
 
 - script: |
     go version
-    go get -d ./...
+    go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
+    go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
+    go get -u github.com/golang/protobuf/protoc-gen-go
+    go get -u ./...
     echo "path"
     echo $PATH
     echo "bin"
