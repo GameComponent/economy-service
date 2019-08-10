@@ -19,8 +19,8 @@ api_gateway:
 
 api_swagger:
 	protoc -I ./api/proto/v1/ \
-	-I${GOPATH}/src \
-	-I${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
+	-I ${GOPATH}/src \
+	-I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
 	-I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway \
 	--swagger_out=logtostderr=true:api/swagger/v1 \
 	economy_service.proto
