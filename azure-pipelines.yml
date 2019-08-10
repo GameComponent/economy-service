@@ -39,7 +39,7 @@ steps:
     ls
     ls api/
     ls api/proto/
-    ls api/proto/1
+    ls api/proto/v1/
     echo "proto"
     protoc -I api/proto/v1/ -I ${GOPATH}/src -I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis -I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway --go_out=plugins=grpc:pkg/api/v1 economy_service.proto
     echo "make"
