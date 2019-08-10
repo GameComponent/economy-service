@@ -14,7 +14,7 @@ variables:
   GOBIN:  '$(GOPATH)/bin' # Go binaries path
   GOROOT: '/usr/local/go1.12' # Go installation path
   GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
-  modulePath: '/app/$(build.repository.name)' # Path to the module's code
+  modulePath: '$(GOPATH)/src/github.com/$(build.repository.name)' # Path to the module's code
 
 steps:
 - script: |
@@ -46,9 +46,11 @@ steps:
     ls $GOROOT/bin
     ls $GOPATH/bin
     echo "gopath src"
+    echo $GOPATH
     ls $GOPATH/src
     ls $GOPATH/src/github.com
     echo "gobinsrc"
+    echo $GOBIN
     ls $GOBIN/src
     ls $GOBIN/src/github.com
     make api
