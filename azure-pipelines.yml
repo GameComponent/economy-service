@@ -7,26 +7,26 @@ trigger:
 - master
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'ubuntu-16.04'
 
-variables:
-  GO111MODULE: 'on'
-  GOBIN:  '$(GOPATH)/bin' # Go binaries path
-  GOROOT: '/usr/local/go1.12' # Go installation path
-  GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
-  modulePath: '$(GOPATH)/src/github.com/$(build.repository.name)' # Path to the module's code
+# variables:
+#   GO111MODULE: 'on'
+#   GOBIN:  '$(GOPATH)/bin' # Go binaries path
+#   GOROOT: '/usr/local/go1.12' # Go installation path
+#   GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
+#   modulePath: '$(GOPATH)/src/github.com/$(build.repository.name)' # Path to the module's code
 
 steps:
-- script: |
-    mkdir -p '$(GOBIN)'
-    mkdir -p '$(GOPATH)/pkg'
-    mkdir -p '$(modulePath)'
-    shopt -s extglob
-    shopt -s dotglob
-    mv !(gopath) '$(modulePath)'
-    echo '##vso[task.prependpath]$(GOBIN)'
-    echo '##vso[task.prependpath]$(GOROOT)/bin'
-  displayName: 'Set up the Go workspace'
+# - script: |
+#     mkdir -p '$(GOBIN)'
+#     mkdir -p '$(GOPATH)/pkg'
+#     mkdir -p '$(modulePath)'
+#     shopt -s extglob
+#     shopt -s dotglob
+#     mv !(gopath) '$(modulePath)'
+#     echo '##vso[task.prependpath]$(GOBIN)'
+#     echo '##vso[task.prependpath]$(GOROOT)/bin'
+#   displayName: 'Set up the Go workspace'
 
 - script: |
     go version
