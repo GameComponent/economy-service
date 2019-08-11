@@ -51,3 +51,6 @@ steps:
     make build
   workingDirectory: '$(MODULEPATH)'
   displayName: 'Get dependencies, then build'
+
+- publish: $(MODULEPATH)/bin/server
+  artifact: Server
