@@ -14,16 +14,16 @@ variables:
   GOBIN:  '$(GOPATH)/bin' # Go binaries path
   GOROOT: '/usr/local/go1.12' # Go installation path
   GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
-  modulePath: '$(GOPATH)/src/github.com/$(build.repository.name)' # Path to the module's code
+  MODULEPATH: '$(GOPATH)/src/github.com/$(build.repository.name)' # Path to the module's code
 
 steps:
 - script: |
     mkdir -p '$(GOBIN)'
     mkdir -p '$(GOPATH)/pkg'
-    mkdir -p '$(modulePath)'
+    mkdir -p '$(MODULEPATH)'
     shopt -s extglob
     shopt -s dotglob
-    mv !(gopath) '$(modulePath)'
+    mv !(gopath) '$(MODULEPATH)'
     echo '##vso[task.prependpath]$(GOBIN)'
     echo '##vso[task.prependpath]$(GOROOT)/bin'
   displayName: 'Set up the Go workspace'
@@ -39,12 +39,12 @@ steps:
 
 - script: |
     echo "GOPATH IS $GOPATH"
-    echo "MODULEPATH IS $modulePath"
+    echo "MODULEPATH IS $MODULEPATH"
     go get -v github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
     go get -v github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
     go get -v github.com/golang/protobuf/protoc-gen-go
     make api
-  workingDirectory: '$(modulePath)'
+  workingDirectory: '$(MODULEPATH)'
   displayName: 'Generating protobuf'
 
 - script: |
@@ -63,5 +63,5 @@ steps:
     ls $GOBIN/src
     ls $GOBIN/src/github.com
     make build
-  workingDirectory: '$(modulePath)'
+  workingDirectory: '$(MODULEPATH)'
   displayName: 'Get dependencies, then build'
