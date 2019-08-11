@@ -10,7 +10,7 @@ pool:
   vmImage: 'ubuntu-16.04'
 
 variables:
-  GO111MODULE: 'on'
+  # GO111MODULE: 'on'
   GOBIN:  '$(GOPATH)/bin' # Go binaries path
   GOROOT: '/usr/local/go1.12' # Go installation path
   GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
