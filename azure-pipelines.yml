@@ -38,9 +38,11 @@ steps:
   displayName: 'Set up protobuf'
 
 - script: |
-    go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
-    go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
-    go get -u github.com/golang/protobuf/protoc-gen-go
+    echo "GOPATH IS $GOPATH"
+    echo "MODULEPATH IS $modulePath"
+    go get -v github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
+    go get -v github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
+    go get -v github.com/golang/protobuf/protoc-gen-go
     make api
   workingDirectory: '$(modulePath)'
   displayName: 'Generating protobuf'
