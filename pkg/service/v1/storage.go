@@ -137,6 +137,10 @@ func (s *economyServiceServer) SplitStack(ctx context.Context, req *v1.SplitStac
 	// Find the selected StorageItem
 	selectedStorageItem := &v1.StorageItem{}
 	storage, err := s.storageRepository.Get(ctx, req.GetStorageId())
+	if err != nil {
+		return nil, status.Error(codes.NotFound, "storage not found")
+	}
+
 	for _, storageItem := range storage.Items {
 		if storageItem.Id == req.GetStorageItemId() {
 			selectedStorageItem = storageItem
