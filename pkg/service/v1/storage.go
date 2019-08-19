@@ -207,11 +207,15 @@ func (s *economyServiceServer) SplitStack(ctx context.Context, req *v1.SplitStac
 func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemRequest) (*v1.GiveItemResponse, error) {
 	fmt.Println("GiveItem")
 
+	amount := int64(1)
+
 	// Generate a random amount
-	amount := random.GenerateRandomInt(
-		req.GetAmount().MinAmount,
-		req.GetAmount().MaxAmount,
-	)
+	if req.GetAmount() != nil {
+		amount = random.GenerateRandomInt(
+			req.GetAmount().MinAmount,
+			req.GetAmount().MaxAmount,
+		)
+	}
 
 	// Create a remainder so whe know how many items still need to be created
 	remainder := amount
