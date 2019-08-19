@@ -205,7 +205,7 @@ func (s *economyServiceServer) SplitStack(ctx context.Context, req *v1.SplitStac
 		amounts,
 	)
 	if err != nil {
-		return nil, status.Error(codes.Aborted, "unable to remove currency from storage")
+		return nil, status.Error(codes.Aborted, "unable to split stacks")
 	}
 
 	return &v1.SplitStackResponse{
