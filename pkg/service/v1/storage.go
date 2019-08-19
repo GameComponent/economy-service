@@ -147,6 +147,11 @@ func (s *economyServiceServer) SplitStack(ctx context.Context, req *v1.SplitStac
 		return nil, status.Error(codes.NotFound, "storage_item not found")
 	}
 
+	// Make sure the items are stackable
+	if selectedStorageItem.Item.Stackable == false {
+		return nil, status.Error(codes.Aborted, "item is not stackable")
+	}
+
 	amounts := req.GetAmounts()
 
 	// Use the chunking method to determine the amounts
