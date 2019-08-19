@@ -1548,6 +1548,39 @@
         ]
       }
     },
+    "/v1/storage/split/stack": {
+      "post": {
+        "summary": "Split stack",
+        "operationId": "SplitStack",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1SplitStackResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1SplitStackRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
     "/v1/storage/{storage_id}": {
       "get": {
         "summary": "Get the contents of a storage",
@@ -2598,6 +2631,44 @@
         },
         "metadata": {
           "type": "string"
+        }
+      }
+    },
+    "v1SplitStackRequest": {
+      "type": "object",
+      "properties": {
+        "storage_id": {
+          "type": "string"
+        },
+        "storage_item_id": {
+          "type": "string"
+        },
+        "chunks": {
+          "type": "string",
+          "format": "int64",
+          "title": "Chunks will seperate a stack into chunks, f(10, 3) =\u003e [3, 3, 4]"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64",
+          "title": "Amount split the stack until the amount is reached, f(10, 3) =\u003e [3, 3, 3, 1]"
+        },
+        "amounts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "int64"
+          },
+          "title": "Split the stack into custom amounts, f(10, [5, 3, 2]) =\u003e [5, 3, 2]"
+        }
+      },
+      "title": "SplitStack"
+    },
+    "v1SplitStackResponse": {
+      "type": "object",
+      "properties": {
+        "storage": {
+          "$ref": "#/definitions/v1Storage"
         }
       }
     },

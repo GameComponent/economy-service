@@ -131,6 +131,79 @@ func (s *economyServiceServer) GiveCurrency(ctx context.Context, req *v1.GiveCur
 	}, nil
 }
 
+func (s *economyServiceServer) SplitStack(ctx context.Context, req *v1.SplitStackRequest) (*v1.SplitStackResponse, error) {
+	fmt.Println("SplitStack")
+
+	// Find the selected StorageItem
+	selectedStorageItem := &v1.StorageItem{}
+	storage, err := s.storageRepository.Get(ctx, req.GetStorageId())
+	for _, storageItem := range storage.Items {
+		if storageItem.Id == req.GetStorageItemId() {
+			selectedStorageItem = storageItem
+		}
+	}
+
+	if selectedStorageItem.Id == "" {
+		return nil, status.Error(codes.NotFound, "storage_item not found")
+	}
+
+	amounts := req.GetAmounts()
+
+	// Use the chunking method to determine the amounts
+	if len(amounts) == 0 && req.GetChunks() != 0 {
+		// Determine the size of the chunks and add these chunks to the amounts
+		chunkSize := math.Floor(float64(selectedStorageItem.Amount) / float64(req.GetChunks()))
+		for i := int64(0); i < req.GetChunks(); i++ {
+			amounts = append(amounts, int64(chunkSize))
+		}
+
+		// Add the remainder to the amounts
+		remainderSize := selectedStorageItem.Amount / req.GetChunks()
+		if remainderSize > 0 {
+			amounts = append(amounts, remainderSize)
+		}
+	}
+
+	// Use the amount method to determine the amounts
+	if len(amounts) == 0 && req.GetAmount() != 0 {
+		remainder := selectedStorageItem.Amount
+
+		for remainder > 0 {
+			amount := req.GetAmount()
+			if amount > remainder {
+				amount = remainder
+			}
+
+			amounts = append(amounts, amount)
+			remainder = remainder - amount
+		}
+	}
+
+	// Calculate the total amount
+	totalAmount := int64(0)
+	for _, amount := range amounts {
+		totalAmount = totalAmount + amount
+	}
+
+	// Amounts dont match
+	if totalAmount != selectedStorageItem.Amount {
+		return nil, status.Error(codes.Aborted, "The storage_item's amount does not match the given amounts")
+	}
+
+	storage, err = s.storageRepository.SplitStack(
+		ctx,
+		req.GetStorageItemId(),
+		amounts,
+	)
+	if err != nil {
+		return nil, status.Error(codes.Aborted, "unable to remove currency from storage")
+	}
+
+	return &v1.SplitStackResponse{
+		Storage: storage,
+	}, nil
+}
+
 func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemRequest) (*v1.GiveItemResponse, error) {
 	fmt.Println("GiveItem")
 

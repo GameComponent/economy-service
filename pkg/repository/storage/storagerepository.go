@@ -378,3 +378,79 @@ func (r *StorageRepository) List(ctx context.Context, limit int32, offset int32)
 
 	return storages, totalSize, nil
 }
+
+// SplitStack splits a stack in a storage into multiple stacks
+func (r *StorageRepository) SplitStack(ctx context.Context, storageItemID string, amounts []int64) (*v1.Storage, error) {
+	options := sql.TxOptions{
+		ReadOnly: false,
+	}
+
+	// Start a transaction
+	tx, err := r.db.BeginTx(ctx, &options)
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback()
+
+	// Calculate the total amount
+	totalAmount := int64(0)
+	for _, amount := range amounts {
+		totalAmount = totalAmount + amount
+	}
+
+	storageID := ""
+	tx.QueryRowContext(
+		ctx,
+		`
+			SELECT storage_id
+			FROM storage_item
+			WHERE id = $1
+			AND amount = $2
+		`,
+		storageItemID,
+		totalAmount,
+	).Scan(&storageID)
+
+	// Either the item does not exist anymore or its amount has changed
+	if storageID == "" {
+		return nil, fmt.Errorf("Unable to update storage_item")
+	}
+
+	// Update the existing stack
+	tx.ExecContext(
+		ctx,
+		`
+			UPDATE storage_item
+			SET amount = $1
+			WHERE id = $2
+		`,
+		amounts[0],
+		storageItemID,
+	)
+
+	// Create new stacks for the other amounts
+	for i := 1; i < len(amounts); i++ {
+		_, err = tx.ExecContext(
+			ctx,
+			`
+				INSERT INTO storage_item(item_id, storage_id, metadata, amount)
+				SELECT item_id, storage_id, metadata, $1
+				FROM storage_item
+				WHERE id = $2
+			`,
+			amounts[i],
+			storageItemID,
+		)
+
+		if err != nil {
+			return nil, fmt.Errorf("unable to create extra stacks")
+		}
+	}
+
+	// Commit all changes to the database
+	if err = tx.Commit(); err != nil {
+		return nil, err
+	}
+
+	return r.Get(ctx, storageID)
+}

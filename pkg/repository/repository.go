@@ -98,4 +98,5 @@ type StorageRepository interface {
 	IncreaseItemAmount(ctx context.Context, storageItemID string, amount int64) error
 	GiveCurrency(ctx context.Context, storageID string, currencyID string, amount int64) (*v1.StorageCurrency, error)
 	List(ctx context.Context, limit int32, offset int32) ([]*v1.Storage, int32, error)
+	SplitStack(ctx context.Context, storageItemID string, amounts []int64) (*v1.Storage, error)
 }

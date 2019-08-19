@@ -159,6 +159,14 @@ service EconomyService {
 		};
 	}
 
+	// Split stack
+	rpc SplitStack(SplitStackRequest) returns (SplitStackResponse) {
+		option (google.api.http) = {
+			post: "/v1/storage/split/stack"
+			body: "*"
+		};
+	}
+
 	// Update a currency
 	rpc UpdateCurrency(UpdateCurrencyRequest) returns (UpdateCurrencyResponse) {
 		option (google.api.http) = {
@@ -716,6 +724,22 @@ message CreateCurrencyRequest{
 
 message CreateCurrencyResponse{	
 	Currency currency = 1;
+}
+
+// SplitStack
+message SplitStackRequest{	
+	string storage_id = 1;
+	string storage_item_id = 2;
+	// Chunks will seperate a stack into chunks, f(10, 3) => [3, 3, 4]
+	int64 chunks = 3;
+	// Amount split the stack until the amount is reached, f(10, 3) => [3, 3, 3, 1]
+	int64 amount = 4;
+	// Split the stack into custom amounts, f(10, [5, 3, 2]) => [5, 3, 2]
+	repeated int64 amounts = 5;
+}
+
+message SplitStackResponse{	
+	Storage storage = 1;
 }
 
 // UpdateCurrency
