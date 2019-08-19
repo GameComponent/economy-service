@@ -458,3 +458,54 @@ func (r *StorageRepository) SplitStack(ctx context.Context, storageItemID string
 
 	return r.Get(ctx, storageID)
 }
+
+// MergeStack merges two stacks into one
+func (r *StorageRepository) MergeStack(ctx context.Context, toStorageItemID string, fromStorageItemID string) (*v1.Storage, error) {
+	options := sql.TxOptions{
+		ReadOnly: false,
+	}
+
+	// Start a transaction
+	tx, err := r.db.BeginTx(ctx, &options)
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback()
+
+	storageID := ""
+	tx.QueryRowContext(
+		ctx,
+		`
+			UPDATE storage_item
+			SET amount = amount + (
+				SELECT amount
+				FROM storage_item
+				WHERE storage_item.id = $1
+			)
+			WHERE id = $2
+			RETURNING storage_id
+		`,
+		fromStorageItemID,
+		toStorageItemID,
+	).Scan(&storageID)
+
+	_, err = tx.ExecContext(
+		ctx,
+		`
+			DELETE FROM storage_item
+			WHERE id = $1
+		`,
+		fromStorageItemID,
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf("unable to merge stacks")
+	}
+
+	// Commit all changes to the database
+	if err = tx.Commit(); err != nil {
+		return nil, err
+	}
+
+	return r.Get(ctx, storageID)
+}

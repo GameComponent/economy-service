@@ -167,6 +167,14 @@ service EconomyService {
 		};
 	}
 
+	// Merge stack
+	rpc MergeStack(MergeStackRequest) returns (MergeStackResponse) {
+		option (google.api.http) = {
+			post: "/v1/storage/merge/stack"
+			body: "*"
+		};
+	}
+
 	// Update a currency
 	rpc UpdateCurrency(UpdateCurrencyRequest) returns (UpdateCurrencyResponse) {
 		option (google.api.http) = {
@@ -739,6 +747,18 @@ message SplitStackRequest{
 }
 
 message SplitStackResponse{	
+	Storage storage = 1;
+}
+
+// MergeStack
+message MergeStackRequest{	
+	string to_storage_id = 1;
+	string to_storage_item_id = 2;
+	string from_storage_id = 3;
+	string from_storage_item_id = 4;
+}
+
+message MergeStackResponse{	
 	Storage storage = 1;
 }
 

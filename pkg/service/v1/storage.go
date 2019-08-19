@@ -213,6 +213,85 @@ func (s *economyServiceServer) SplitStack(ctx context.Context, req *v1.SplitStac
 	}, nil
 }
 
+func (s *economyServiceServer) MergeStack(ctx context.Context, req *v1.MergeStackRequest) (*v1.MergeStackResponse, error) {
+	fmt.Println("MergeStack")
+
+	toStorage, err := s.storageRepository.Get(ctx, req.GetToStorageId())
+	if err != nil {
+		return nil, status.Error(codes.NotFound, "to_storage not found")
+	}
+
+	// Get the fromStorage if it is not the same as the toStorage
+	fromStorage := toStorage
+	if req.GetToStorageId() != req.GetFromStorageId() {
+		fromStorage, err = s.storageRepository.Get(ctx, req.GetToStorageId())
+		if err != nil {
+			return nil, status.Error(codes.NotFound, "from_storage not found")
+		}
+	}
+
+	toStorageItem := &v1.StorageItem{}
+	fromStorageItem := &v1.StorageItem{}
+
+	// Get the toStorageItem
+	for _, storageItem := range toStorage.Items {
+		if storageItem.Id == req.GetToStorageItemId() {
+			toStorageItem = storageItem
+		}
+
+		if storageItem.Id == req.GetFromStorageItemId() {
+			fromStorageItem = storageItem
+		}
+	}
+
+	// Make sure we found our toStorageItem
+	if toStorageItem.Id == "" {
+		return nil, status.Error(codes.NotFound, "to_storage_item not found")
+	}
+
+	// Get the fromStorageItem
+	if fromStorageItem.Id == "" {
+		for _, storageItem := range fromStorage.Items {
+			if storageItem.Id == req.GetFromStorageItemId() {
+				fromStorageItem = storageItem
+			}
+		}
+	}
+
+	// Make sure we found our fromStorageItem
+	if fromStorageItem.Id == "" {
+		return nil, status.Error(codes.NotFound, "from_storage_item not found")
+	}
+
+	// Make sure the item ids are the same
+	if toStorageItem.Item.Id != fromStorageItem.Item.Id {
+		return nil, status.Error(codes.Aborted, "to_storage_item.id and from_storage_item.id do not match")
+	}
+
+	// Metadata also needs to be the same otherwise we lose metadata after a merge
+	if toStorageItem.Item.Metadata != fromStorageItem.Item.Metadata {
+		return nil, status.Error(codes.Aborted, "to_storage_item.metadata and from_storage_item.metadata do not match")
+	}
+
+	// Make sure the items are stackable
+	if toStorageItem.Item.Stackable == false {
+		return nil, status.Error(codes.Aborted, "item is not stackable")
+	}
+
+	storage, err := s.storageRepository.MergeStack(
+		ctx,
+		req.GetToStorageItemId(),
+		req.GetFromStorageItemId(),
+	)
+	if err != nil {
+		return nil, status.Error(codes.Aborted, "unable to merge stacks")
+	}
+
+	return &v1.MergeStackResponse{
+		Storage: storage,
+	}, nil
+}
+
 func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemRequest) (*v1.GiveItemResponse, error) {
 	fmt.Println("GiveItem")
 

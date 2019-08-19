@@ -1548,6 +1548,39 @@
         ]
       }
     },
+    "/v1/storage/merge/stack": {
+      "post": {
+        "summary": "Merge stack",
+        "operationId": "MergeStack",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1MergeStackResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1MergeStackRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
     "/v1/storage/split/stack": {
       "post": {
         "summary": "Split stack",
@@ -2347,6 +2380,32 @@
         "total_size": {
           "type": "integer",
           "format": "int32"
+        }
+      }
+    },
+    "v1MergeStackRequest": {
+      "type": "object",
+      "properties": {
+        "to_storage_id": {
+          "type": "string"
+        },
+        "to_storage_item_id": {
+          "type": "string"
+        },
+        "from_storage_id": {
+          "type": "string"
+        },
+        "from_storage_item_id": {
+          "type": "string"
+        }
+      },
+      "title": "MergeStack"
+    },
+    "v1MergeStackResponse": {
+      "type": "object",
+      "properties": {
+        "storage": {
+          "$ref": "#/definitions/v1Storage"
         }
       }
     },
