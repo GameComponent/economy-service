@@ -131,6 +131,23 @@ func (s *economyServiceServer) GiveCurrency(ctx context.Context, req *v1.GiveCur
 	}, nil
 }
 
+func (s *economyServiceServer) RemoveCurrency(ctx context.Context, req *v1.RemoveCurrencyRequest) (*v1.RemoveCurrencyResponse, error) {
+	fmt.Println("Remove")
+
+	storageCurrency, err := s.storageRepository.RemoveCurrency(
+		ctx,
+		req.GetStorageCurrencyId(),
+		req.GetAmount(),
+	)
+	if err != nil {
+		return nil, status.Error(codes.Aborted, "unable to remove currency from storage")
+	}
+
+	return &v1.RemoveCurrencyResponse{
+		Currency: storageCurrency,
+	}, nil
+}
+
 func (s *economyServiceServer) SplitStack(ctx context.Context, req *v1.SplitStackRequest) (*v1.SplitStackResponse, error) {
 	fmt.Println("SplitStack")
 

@@ -322,6 +322,33 @@ func (r *StorageRepository) GiveCurrency(ctx context.Context, storageID string, 
 	return storageCurrency, nil
 }
 
+// RemoveCurrency from a storage
+func (r *StorageRepository) RemoveCurrency(ctx context.Context, storageCurrencyID string, amount int64) (*v1.StorageCurrency, error) {
+	storageCurrency := &v1.StorageCurrency{}
+
+	err := r.db.QueryRowContext(
+		ctx,
+		`
+			UPDATE storage_currency
+			SET amount = amount - $1
+			WHERE id = $2
+			AND amount - $1 >= 0
+      RETURNING id, amount
+    `,
+		amount,
+		storageCurrencyID,
+	).Scan(
+		&storageCurrency.Id,
+		&storageCurrency.Amount,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return storageCurrency, nil
+}
+
 // List all storages
 func (r *StorageRepository) List(ctx context.Context, limit int32, offset int32) ([]*v1.Storage, int32, error) {
 	// Query items from the database

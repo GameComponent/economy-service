@@ -1,418 +1,259 @@
 syntax = "proto3";
 package v1;
 
-import "google/protobuf/timestamp.proto";
-import "google/api/annotations.proto";
-import "protoc-gen-swagger/options/annotations.proto";
+
+message Timestamp {
+  int64 seconds = 1;
+  int32 nanos = 2;
+}
+
+
+
 
 option java_multiple_files = true;
 option java_package = "com.gamecomponent.economyservice";
 option java_outer_classname = "EconomyServiceClass";
 
-option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
-	info: {
-		title: "Economy service";
-		version: "0.0";
-		contact: {
-			name: "economy_service";
-			url: "https://github.com/GameComponent/economy-service";
-			email: "info@gamecomponent.com";
-		};
-	};
-	schemes: HTTP;
-	consumes: "application/json";
-	produces: "application/json";
-	responses: {
-		key: "404";
-		value: {
-			description: "Returned when the resource does not exist.";
-			schema: {
-				json_schema: {
-					type: STRING;
-				}
-			}
-		}
-	}
-};
-
-// Service definition
+ // Service definition
 service EconomyService {
 	// To see what Storages belong to an User
 	rpc GetPlayer(GetPlayerRequest) returns (GetPlayerResponse) {
-		option (google.api.http) = {
-			get: "/v1/player/{player_id}"
-		};
+		 
 	}
 
 	// Create a player
 	rpc CreatePlayer(CreatePlayerRequest) returns (CreatePlayerResponse) {
-		option (google.api.http) = {
-			post: "/v1/player"
-			body: "*"
-		};
+		 
 	}
 
 	// Update a player
 	rpc UpdatePlayer(UpdatePlayerRequest) returns (UpdatePlayerResponse) {
-		option (google.api.http) = {
-			patch: "/v1/player/{player_id}"
-			body: "*"
-		};
+		 
 	}
 
 	// List all players
 	rpc ListPlayer(ListPlayerRequest) returns (ListPlayerResponse) {
-		option (google.api.http) = {
-			get: "/v1/player"
-		};
+		 
 	}
 
 	// Search player
 	rpc SearchPlayer(SearchPlayerRequest) returns (SearchPlayerResponse) {
-		option (google.api.http) = {
-			post: "/v1/player/search"
-			body: "*"
-		};
+		 
 	}
 
 	// Get the contents of a storage
 	rpc GetStorage(GetStorageRequest) returns (GetStorageResponse) {
-		option (google.api.http) = {
-			get: "/v1/storage/{storage_id}"
-		};
+		 
 	}
 
 	// List all storages
 	rpc ListStorage(ListStorageRequest) returns (ListStorageResponse) {
-		option (google.api.http) = {
-			get: "/v1/storage"
-		};
+		 
 	}
 	
 	// Create a new Storage
 	rpc CreateStorage(CreateStorageRequest) returns (CreateStorageResponse) {
-		option (google.api.http) = {
-			post: "/v1/storage"
-			body: "*"
-		};
+		 
 	}
 
 	// Update Storage
 	rpc UpdateStorage(UpdateStorageRequest) returns (UpdateStorageResponse) {
-		option (google.api.http) = {
-			patch: "/v1/storage/{storage_id}"
-			body: "*"
-		};
+		 
 	}
 
 	// Create an Item
 	rpc CreateItem(CreateItemRequest) returns (CreateItemResponse) {
-		option (google.api.http) = {
-			post: "/v1/item"
-			body: "*"
-		};
+		 
 	}
 
 	// Update an Item
 	rpc UpdateItem(UpdateItemRequest) returns (UpdateItemResponse) {
-		option (google.api.http) = {
-			patch: "/v1/item/{item_id}"
-			body: "*"
-		};
+		 
 	}
 
 	// Get an Item
 	rpc GetItem(GetItemRequest) returns (GetItemResponse) {
-		option (google.api.http) = {
-			get: "/v1/item/{item_id}"
-		};
+		 
 	}
 
 	// List all Items
 	rpc ListItem(ListItemRequest) returns (ListItemResponse) {
-		option (google.api.http) = {
-			get: "/v1/item"
-		};
+		 
 	}
 
 	// Search item
 	rpc SearchItem(SearchItemRequest) returns (SearchItemResponse) {
-		option (google.api.http) = {
-			post: "/v1/item/search"
-			body: "*"
-		};
+		 
 	}
 
 	// Give Item to a Storage
 	rpc GiveItem(GiveItemRequest) returns (GiveItemResponse) {
-		option (google.api.http) = {
-			post: "/v1/storage/give/item"
-			body: "*"
-		};
+		 
 	}
 
 	// Create a currency
 	rpc CreateCurrency(CreateCurrencyRequest) returns (CreateCurrencyResponse) {
-		option (google.api.http) = {
-			post: "/v1/currency"
-			body: "*"
-		};
-	}
-
-	// Split stack
-	rpc SplitStack(SplitStackRequest) returns (SplitStackResponse) {
-		option (google.api.http) = {
-			post: "/v1/storage/split/stack"
-			body: "*"
-		};
+		 
 	}
 
 	// Update a currency
 	rpc UpdateCurrency(UpdateCurrencyRequest) returns (UpdateCurrencyResponse) {
-		option (google.api.http) = {
-			patch: "/v1/currency/{currency_id}"
-			body: "*"
-		};
+		 
 	}
 
 	// Get a currency
 	rpc GetCurrency(GetCurrencyRequest) returns (GetCurrencyResponse) {
-		option (google.api.http) = {
-			get: "/v1/currency/{currency_id}"
-		};
+		 
 	}
 
 	// Shows all currencies
 	rpc ListCurrency(ListCurrencyRequest) returns (ListCurrencyResponse) {
-		option (google.api.http) = {
-			get: "/v1/currency"
-		};
+		 
 	}
 
 	// Give an amount of Currency to a Storage
 	rpc GiveCurrency(GiveCurrencyRequest) returns (GiveCurrencyResponse) {
-		option (google.api.http) = {
-			post: "/v1/storage/give/currency"
-			body: "*"
-		};
-	}
-
-	// Remove an amount of Currency from a Storage
-	rpc RemoveCurrency(RemoveCurrencyRequest) returns (RemoveCurrencyResponse) {
-		option (google.api.http) = {
-			post: "/v1/storage/remove/currency"
-			body: "*"
-		};
+		 
 	}
 
 	// Set a config
 	rpc SetConfig(SetConfigRequest) returns (SetConfigResponse) {
-		option (google.api.http) = {
-			post: "/v1/config"
-			body: "*"
-		};
+		 
 	}
 
 	// Get a config
 	rpc GetConfig(GetConfigRequest) returns (GetConfigResponse) {
-		option (google.api.http) = {
-			get: "/v1/config/{key}"
-		};
+		 
 	}
 
 	// List all configs
 	rpc ListConfig(ListConfigRequest) returns (ListConfigResponse) {
-		option (google.api.http) = {
-			get: "/v1/config"
-		};
+		 
 	}
 
 	// Authenticate an account
 	rpc Authenticate(AuthenticateRequest) returns (AuthenticateResponse) {
-		option (google.api.http) = {
-			post: "/v1/authenticate"
-			body: "*"
-		};
+		 
 	}
 
 	// Register an account
 	rpc Register(RegisterRequest) returns (RegisterResponse) {
-		option (google.api.http) = {
-			post: "/v1/register"
-			body: "*"
-		};
+		 
 	}
 
 	// Get a shop
 	rpc GetShop(GetShopRequest) returns (GetShopResponse) {
-		option (google.api.http) = {
-			get: "/v1/shop/{shop_id}"
-		};
+		 
 	}
 
 	// Create a shop
 	rpc CreateShop(CreateShopRequest) returns (CreateShopResponse) {
-		option (google.api.http) = {
-			post: "/v1/shop"
-			body: "*"
-		};
+		 
 	}	
 
 	// Update a shop
 	rpc UpdateShop(UpdateShopRequest) returns (UpdateShopResponse) {
-		option (google.api.http) = {
-			patch: "/v1/shop/{shop_id}"
-			body: "*"
-		};
+		 
 	}	
 
 	// List all shops
 	rpc ListShop(ListShopRequest) returns (ListShopResponse) {
-		option (google.api.http) = {
-			get: "/v1/shop"
-		};
+		 
 	}
 
 	// Create a product
 	rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse) {
-		option (google.api.http) = {
-			post: "/v1/product"
-			body: "*"
-		};
+		 
 	}	
 
 	// Update a product
 	rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse) {
-		option (google.api.http) = {
-			patch: "/v1/product/{product_id}"
-			body: "*"
-		};
+		 
 	}	
 
 	// List all product
 	rpc ListProduct(ListProductRequest) returns (ListProductResponse) {
-		option (google.api.http) = {
-			get: "/v1/product"
-		};
+		 
 	}
 
 	// Get a product
 	rpc GetProduct(GetProductRequest) returns (GetProductResponse) {
-		option (google.api.http) = {
-			get: "/v1/product/{product_id}"
-		};
+		 
 	}
 
 	// Buy product from the store
 	rpc BuyProduct(BuyProductRequest) returns (BuyProductResponse) {
-		option (google.api.http) = {
-			post: "/v1/product/buy"
-			body: "*"
-		};
+		 
 	}	
 
 	// Attach item to a product
 	rpc AttachItem(AttachItemRequest) returns (AttachItemResponse) {
-		option (google.api.http) = {
-			post: "/v1/product/attach/item"
-			body: "*"
-		};
+		 
 	}	
 
 	// Detach item from a product
 	rpc DetachItem(DetachItemRequest) returns (DetachItemResponse) {
-		option (google.api.http) = {
-			delete: "/v1/product/detach/item/{product_item_id}"
-		};
+		 
 	}	
 
 	// Attach currency to a product
 	rpc AttachCurrency(AttachCurrencyRequest) returns (AttachCurrencyResponse) {
-		option (google.api.http) = {
-			post: "/v1/product/attach/currency"
-			body: "*"
-		};
+		 
 	}	
 
 	// Detach currency from a product
 	rpc DetachCurrency(DetachCurrencyRequest) returns (DetachCurrencyResponse) {
-		option (google.api.http) = {
-			delete: "/v1/product/detach/currency/{product_currency_id}"
-		};
+		 
 	}	
 
 	// Get a Price
 	rpc GetPrice(GetPriceRequest) returns (GetPriceResponse) {
-		option (google.api.http) = {
-			get: "/v1/price/{price_id}"
-		};
+		 
 	}
 
 	// Create a price
 	rpc CreatePrice(CreatePriceRequest) returns (CreatePriceResponse) {
-		option (google.api.http) = {
-			post: "/v1/price"
-			body: "*"
-		};
+		 
 	}
 
 	// Delete a price
 	rpc DeletePrice(DeletePriceRequest) returns (DeletePriceResponse) {
-		option (google.api.http) = {
-			delete: "/v1/price/{price_id}"
-		};
+		 
 	}
 
 	// Create a price
 	rpc ListProductPrice(ListProductPriceRequest) returns (ListProductPriceResponse) {
-		option (google.api.http) = {
-			get: "/v1/product/{product_id}/price"
-		};
+		 
 	}
 
 	// Attach currency to a Price
 	rpc AttachPriceCurrency(AttachPriceCurrencyRequest) returns (AttachPriceCurrencyResponse) {
-		option (google.api.http) = {			
-			post: "/v1/price/attach/currency"
-			body: "*"
-		};
+		 
 	}	
 
 	// Detach currency from a Price
 	rpc DetachPriceCurrency(DetachPriceCurrencyRequest) returns (DetachPriceCurrencyResponse) {
-		option (google.api.http) = {
-			delete: "/v1/price/detach/currency/{price_currency_id}"
-		};
+		 
 	}
 
 	// Attach item to a Price
 	rpc AttachPriceItem(AttachPriceItemRequest) returns (AttachPriceItemResponse) {
-		option (google.api.http) = {
-			post: "/v1/price/attach/item"
-			body: "*"
-		};
+		 
 	}	
 
 	// Detach item to a Price
 	rpc DetachPriceItem(DetachPriceItemRequest) returns (DetachPriceItemResponse) {
-		option (google.api.http) = {
-			delete: "/v1/price/detach/item/{price_item_id}"
-		};
+		 
 	}	
 
 	// Attach product to a shop
 	rpc AttachProduct(AttachProductRequest) returns (AttachProductResponse) {
-		option (google.api.http) = {
-			post: "/v1/shop/attach/product"
-			body: "*"
-		};
+		 
 	}	
 
 	// Detach product from a shop
 	rpc DetachProduct(DetachProductRequest) returns (DetachProductResponse) {
-		option (google.api.http) = {
-			delete: "/v1/shop/detach/product/{shop_product_id}"
-		};
+		 
 	}
 }
 
@@ -438,8 +279,8 @@ enum StackBalancingMethod {
 
 message Item {
 	string id = 1;
-	google.protobuf.Timestamp created_at = 2;
-	google.protobuf.Timestamp updated_at = 3;
+	Timestamp created_at = 2;
+	Timestamp updated_at = 3;
 	string name = 4;
 	bool stackable = 5;
 	int64 stack_max_amount = 6;
@@ -449,8 +290,8 @@ message Item {
 
 message StorageItem {
 	string id = 1;
-	google.protobuf.Timestamp created_at = 2;
-	google.protobuf.Timestamp updated_at = 3;
+	Timestamp created_at = 2;
+	Timestamp updated_at = 3;
 	Item item = 4;
 	int64 amount = 5;
 	//string metadata = 3;
@@ -466,8 +307,8 @@ message Amount {
 
 message Currency {
 	string id = 1;
-	google.protobuf.Timestamp created_at = 2;
-	google.protobuf.Timestamp updated_at = 3;
+	Timestamp created_at = 2;
+	Timestamp updated_at = 3;
 	string name = 4;
 	string short_name = 5;
 	string symbol = 6;
@@ -481,8 +322,8 @@ message StorageCurrency {
 
 message Storage {
 	string id = 1;
-	google.protobuf.Timestamp created_at = 2;
-	google.protobuf.Timestamp updated_at = 3;
+	Timestamp created_at = 2;
+	Timestamp updated_at = 3;
 	string player_id = 4;
 	string name = 5;
 	repeated StorageItem items = 6;
@@ -504,8 +345,8 @@ message Config {
 
 message Shop {
 	string id = 1;
-	google.protobuf.Timestamp created_at = 2;
-	google.protobuf.Timestamp updated_at = 3;
+	Timestamp created_at = 2;
+	Timestamp updated_at = 3;
 	string name = 4;
 	repeated Product products = 5;
 	string metadata = 6;
@@ -513,8 +354,8 @@ message Shop {
 
 message Product {
 	string id = 1;
-	google.protobuf.Timestamp created_at = 2;
-	google.protobuf.Timestamp updated_at = 3;
+	Timestamp created_at = 2;
+	Timestamp updated_at = 3;
 	string name = 4;
 	repeated ProductItem items = 5;
 	repeated ProductCurrency currencies = 6;
@@ -536,8 +377,8 @@ message ProductCurrency {
 
 message Price {
 	string id = 1;
-	google.protobuf.Timestamp created_at = 2;
-	google.protobuf.Timestamp updated_at = 3;
+	Timestamp created_at = 2;
+	Timestamp updated_at = 3;
 	repeated PriceCurrency currencies = 4;
 	repeated PriceItem items = 5;
 }
@@ -734,22 +575,6 @@ message CreateCurrencyResponse{
 	Currency currency = 1;
 }
 
-// SplitStack
-message SplitStackRequest{	
-	string storage_id = 1;
-	string storage_item_id = 2;
-	// Chunks will seperate a stack into chunks, f(10, 3) => [3, 3, 4]
-	int64 chunks = 3;
-	// Amount split the stack until the amount is reached, f(10, 3) => [3, 3, 3, 1]
-	int64 amount = 4;
-	// Split the stack into custom amounts, f(10, [5, 3, 2]) => [5, 3, 2]
-	repeated int64 amounts = 5;
-}
-
-message SplitStackResponse{	
-	Storage storage = 1;
-}
-
 // UpdateCurrency
 message UpdateCurrencyRequest{	
 	string currency_id = 1;
@@ -770,16 +595,6 @@ message GiveCurrencyRequest{
 }
 
 message GiveCurrencyResponse{	
-	StorageCurrency currency = 1;
-}
-
-// RemoveCurrency
-message RemoveCurrencyRequest{	
-	string storage_currency_id = 1;
-	int64 amount = 2;
-}
-
-message RemoveCurrencyResponse{	
 	StorageCurrency currency = 1;
 }
 

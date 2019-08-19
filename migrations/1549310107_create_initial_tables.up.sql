@@ -77,6 +77,15 @@ CREATE TABLE IF NOT EXISTS storage_currency (
   UNIQUE (currency_id, storage_id)
 );
 
+CREATE TABLE IF NOT EXISTS storage_event (
+  id UUID NOT NULL,
+	storage_id UUID NOT NULL,
+	metadata JSONB DEFAULT '{}' NOT null, 
+
+  PRIMARY KEY (id),
+	FOREIGN KEY (storage_id) REFERENCES storage(id)
+);
+
 CREATE TABLE IF NOT EXISTS config (  
   key STRING NOT NULL,
 	value JSONB,
