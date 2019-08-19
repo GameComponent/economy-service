@@ -231,6 +231,10 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 		}
 	}
 
+	if res.StorageID == "" {
+		return nil, fmt.Errorf("Unable to retrieve storage")
+	}
+
 	// Convert item map into item slice
 	items := []*v1.StorageItem{}
 	for _, value := range storageItems {

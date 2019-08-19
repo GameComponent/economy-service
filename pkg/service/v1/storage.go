@@ -62,7 +62,7 @@ func (s *economyServiceServer) GetStorage(ctx context.Context, req *v1.GetStorag
 
 	storage, err := s.storageRepository.Get(ctx, req.GetStorageId())
 	if err != nil {
-		return nil, status.Error(codes.Internal, "unable to retrieve storage")
+		return nil, status.Error(codes.NotFound, "storage not found")
 	}
 
 	return &v1.GetStorageResponse{
