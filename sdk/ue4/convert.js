@@ -16,13 +16,13 @@ const outputIndex = args.indexOf('--output');
 
 // Check if the start arguments are present
 if (inputIndex == -1) {
-  console.log('No path to input file given. Use --input.')
-  process.exit(1);
+	console.log('No path to input file given. Use --input.')
+	process.exit(1);
 }
 
 if (outputIndex == -1) {
-  console.log('No path to output file given. Use --output.')
-  process.exit(1);
+	console.log('No path to output file given. Use --output.')
+	process.exit(1);
 }
 
 const inputValue = args[inputIndex + 1];
@@ -30,19 +30,19 @@ const outputValue = args[outputIndex + 1];
 
 // Validate the inputs
 if (!inputValue) {
-  console.log('No path to input file given. Use --input.')
-  process.exit(1);
+	console.log('No path to input file given. Use --input.')
+	process.exit(1);
 }
 
 if (!outputValue) {
-  console.log('No path to output file given. Use --output.')
-  process.exit(1);
+	console.log('No path to output file given. Use --output.')
+	process.exit(1);
 }
 
 // Match settings
-const MATCH_GRPC_GATEWAY_OPTIONS = /option(\s?)\(grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger\)[^{]*\{*[\w\W]*?};[\r\n][\r\n]+/g;
+const MATCH_GRPC_GATEWAY_OPTIONS_START = /option(\s?)\(grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger\)/g;
 const MATCH_IMPORT_TIMESTAMP = 'import "google/protobuf/timestamp.proto";';
-const MATCH_IMPORT_STRUCT= 'import "google/protobuf/struct.proto";';
+const MATCH_IMPORT_STRUCT = 'import "google/protobuf/struct.proto";';
 const MATCH_IMPORTS = /import[^;]*;/g;
 const MATCH_GOOGLE_API_HTTP_OPTIONS = /option(\s?)\(google.api.http\)[^{]*\{*[\w\W]*?};+/g;
 const MATCH_GOOGLE_PROTOBUF_TIMESTAMP = 'google.protobuf.Timestamp';
@@ -85,12 +85,36 @@ message ListValue {
 const INLINE_GOOGLE_PROTOBUF_TIMESTAMP = 'Timestamp';
 const INLINE_GOOGLE_PROTOBUF_STRUCT = 'Struct';
 const INLINE_GOOGLE_PROTOBUF_VALUE = 'Value';
- 
+
 // Read the file
 let contents = fs.readFileSync(inputValue, 'utf8');
 
+// Remove until the bracket closes
+let open = 0;
+let startLine = -1;
+let endLine = -1;
+
+const lines = contents.split('\n');
+lines.forEach((line, index) => {
+	if (endLine > -1) return;
+	if (line.match(MATCH_GRPC_GATEWAY_OPTIONS_START)) {
+		startLine = index;
+	}
+	if (startLine == -1) return
+
+	open += line.split('{').length - 1;
+	open -= line.split('}').length - 1;
+
+	if (open === 0 && startLine !== index) {
+		endLine = index + 1;
+	}
+});
+
+if (startLine > -1 && endLine > -1) {
+	contents = [...lines.slice(0, startLine), ...lines.slice(endLine)].join('\n');
+}
+
 // Process the contents
-contents = contents.split(MATCH_GRPC_GATEWAY_OPTIONS).join('');
 contents = contents.split(MATCH_IMPORT_STRUCT).join(INLINE_STUCT);
 contents = contents.split(MATCH_IMPORT_TIMESTAMP).join(INLINE_TIMESTAMP);
 contents = contents.split(MATCH_IMPORTS).join('');

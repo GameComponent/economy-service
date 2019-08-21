@@ -1,0 +1,8 @@
+src_path: 'proto'
+dst_path: 'dist'
+module_name: 'EconomyService'
+precompiled_header: ''
+wrappers_path: 'Wrappers'
+company_name: 'GameComponent'
+log_level: 'all'
+no_fork: no
