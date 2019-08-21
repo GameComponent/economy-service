@@ -1,5 +1,13 @@
-build:
-	go build -o ./bin/server/server ./cmd/server
+build_darwin:
+	GOOS=darwin GOARD=amd64 go build -o ./bin/server/server_darwin_x86_64 ./cmd/server
+
+build_windows:
+	GOOS=windows GOARD=amd64 go build -o ./bin/server/server_windows_x86_64.exe ./cmd/server
+
+build_linux:
+	GOOS=linux GOARD=amd64 go build -o ./bin/server/server_linux_x86_64 ./cmd/server
+
+build: build_darwin build_windows build_linux
 
 api_go:
 	protoc -I api/proto/v1/ \

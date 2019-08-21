@@ -1,0 +1,54 @@
+name: sdk_ue4_push
+on: push
+jobs:
+  build_sdk_ue4_windows:
+    name: Build Unreal Engine 4 SDK
+    runs-on: ubuntu-latest
+    steps:
+    
+    - name: Check out code
+      uses: actions/checkout@v1  
+      
+    - name: Setup folders
+      run: |
+        mkdir cornerstone
+        mkdir cornerstone/proto
+        mkdir cornerstone/dist
+        mkdir plugins
+        cp -r sdk/ue4/EconomyService plugins
+        mkdir plugins/EconomyService/Source/EconomyService/Private/Generated
+        mkdir plugins/EconomyService/Source/EconomyService/Private/Generated/economy_service
+        mkdir plugins/EconomyService/Source/EconomyService/Private/Wrappers
+        mkdir plugins/EconomyService/Source/EconomyService/Private/Wrappers/economy_service
+        
+    - name: SDK Unreal Convert
+      run: |
+        node sdk/ue4/convert.js --input api/proto/v1/economy_service.proto --output cornerstone/proto/economy_service.proto
+              
+    - name: SDK Unreal Generate 
+      run: |
+        cp ./sdk/ue4/config.yml ./cornerstone/config.yml
+        cd ./cornerstone
+        curl -OL https://github.com/GameComponent/infraworld-cornerstone/releases/download/1.0/infraworld-cornerstone.jar
+        java -jar infraworld-cornerstone.jar  
+        
+    - name: Place generated files in the plugin
+      run: |
+        cp -r cornerstone/dist/economy_service plugins/EconomyService/Source/EconomyService/Private/Generated
+        
+    - name: Setup the runtime
+      run: |
+        cd ./plugins
+        curl -OL https://github.com/vizor-games/InfraworldRuntime/releases/download/battory/InfraworldRuntime_linux_x86_64.zip
+        unzip InfraworldRuntime_linux_x86_64.zip
+        rm InfraworldRuntime_linux_x86_64.zip
+        
+    - name: Generate C++ Wrappers
+      run: |
+        plugins/InfraworldRuntime/GrpcPrograms/Linux/protoc -I cornerstone/proto --cpp_out=plugins/EconomyService/Source/EconomyService/Private/Wrappers/economy_service economy_service.proto
+        plugins/InfraworldRuntime/GrpcPrograms/Linux/protoc -I cornerstone/proto --plugin=protoc-gen-grpc=plugins/InfraworldRuntime/GrpcPrograms/Linux/grpc_cpp_plugin --grpc_out=plugins/EconomyService/Source/EconomyService/Private/Wrappers/economy_service economy_service.proto
+
+    - name: Fix generated code
+      run: |
+        node sdk/ue4/fix_includes.js --file plugins/EconomyService/Source/EconomyService/Private/Generated/economy_service/EconomyService.cpp
+        node sdk/ue4/fix_pragmas.js --file plugins/EconomyService/Source/EconomyService/Private/Wrappers/economy_service/economy_service.pb.cc   

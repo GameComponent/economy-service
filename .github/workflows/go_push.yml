@@ -1,0 +1,40 @@
+name: go_push
+on: push
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Set up Go 1.12
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.12
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v1  
+          
+    - name: Generate
+      env:
+        GO111MODULE: 'off'
+      run: |
+        curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.9.1/protoc-3.9.1-linux-x86_32.zip
+        unzip protoc-3.9.1-linux-x86_32.zip -d protoc3
+        sudo mv protoc3/bin/* /usr/local/bin/
+        sudo mv protoc3/include/* /usr/local/include/
+        export PATH=$PATH:/usr/local/bin
+        export PATH=$PATH:/usr/local/include
+        export GOPATH=$HOME/go
+        export PATH=$PATH:$GOPATH
+        export PATH=$PATH:$GOPATH/bin
+        export PATH=$PATH:$GOROOT/bin
+        go get -v github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
+        go get -v github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
+        go get -v github.com/golang/protobuf/protoc-gen-go
+        make api
+        
+    - name: Build
+      run: |
+        go get -v ./...
+        make build
