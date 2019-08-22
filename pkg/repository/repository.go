@@ -6,18 +6,11 @@ import (
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
 )
 
-// Account struct
-// TODO: Generate a proto struct for Account
-type Account struct {
-	ID    string
-	Email string
-	Hash  string
-}
-
 // AccountRepository interface
 type AccountRepository interface {
-	Create(ctx context.Context, email string, password string) *Account
-	Get(ctx context.Context, email string) *Account
+	Create(ctx context.Context, email string, password string) (*v1.Account, error)
+	Update(ctx context.Context, email string, password string) (*v1.Account, error)
+	Get(ctx context.Context, email string) (*v1.Account, error)
 }
 
 // ConfigRepository interface

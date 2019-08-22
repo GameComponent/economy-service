@@ -12,6 +12,8 @@ import (
 	status "google.golang.org/grpc/status"
 )
 
+// TODO: Configurable expiration
+var expirationTime = time.Now().Add(2000 * time.Hour)
 var secret = []byte("my_secret_key")
 
 // Claims for the JWT token
@@ -35,9 +37,9 @@ func (s *economyServiceServer) Authenticate(ctx context.Context, req *v1.Authent
 	fmt.Println("Authenticate")
 
 	// Check if the user entered to correct credentials
-	account := s.accountRepository.Get(ctx, req.GetEmail())
+	account, err := s.accountRepository.Get(ctx, req.GetEmail())
 
-	if account == nil {
+	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, "invalid credentials")
 	}
 
@@ -45,35 +47,19 @@ func (s *economyServiceServer) Authenticate(ctx context.Context, req *v1.Authent
 		return nil, status.Error(codes.Unauthenticated, "invalid credentials")
 	}
 
-	// TODO: Configurable expiration
-	expirationTime := time.Now().Add(2000 * time.Hour)
-	claims := &Claims{
-		Subject: account.ID,
-		Email:   account.Email,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expirationTime.Unix(),
-		},
-	}
-
-	// Create a new token object, specifying signing method and the claims
-	// you would like it to contain.
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	// Sign and get the complete encoded token as a string using the secret
-	tokenString, err := token.SignedString(secret)
+	// Generate a JWT token
+	token, err := s.generateToken(account)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to generate token")
 	}
 
 	return &v1.AuthenticateResponse{
-		Token: tokenString,
+		Token: token,
 	}, nil
 }
 
 func (s *economyServiceServer) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.RegisterResponse, error) {
 	fmt.Println("Register")
-
-	// TODO: Sanity check on email
 
 	// Hash the password
 	hash, err := hashPassword(req.GetPassword())
@@ -81,18 +67,69 @@ func (s *economyServiceServer) Register(ctx context.Context, req *v1.RegisterReq
 		return nil, err
 	}
 
-	// TODO: Check if user with same email exists
+	// Check if user already exists
+	exstingAccount, _ := s.accountRepository.Get(ctx, req.GetEmail())
+	if exstingAccount != nil {
+		return nil, status.Error(codes.AlreadyExists, "user with email already exists")
+	}
 
 	// Create the user
-	account := s.accountRepository.Create(ctx, req.GetEmail(), hash)
-	if account == nil {
+	account, err := s.accountRepository.Create(ctx, req.GetEmail(), hash)
+	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to create account")
 	}
 
-	// TODO: Configurable expiration
-	expirationTime := time.Now().Add(2000 * time.Hour)
+	// Generate a JWT token
+	token, err := s.generateToken(account)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "unable to generate token")
+	}
+
+	return &v1.RegisterResponse{
+		Token: token,
+	}, nil
+}
+
+func (s *economyServiceServer) ChangePassword(ctx context.Context, req *v1.ChangePasswordRequest) (*v1.ChangePasswordResponse, error) {
+	fmt.Println("ChangePassword")
+
+	// Check if the user entered to correct credentials
+	account, err := s.accountRepository.Get(ctx, req.GetEmail())
+
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, "invalid credentials")
+	}
+
+	if !checkPasswordHash(req.GetPassword(), account.Hash) {
+		return nil, status.Error(codes.Unauthenticated, "invalid credentials")
+	}
+
+	// Hash the password
+	hash, err := hashPassword(req.GetNewPassword())
+	if err != nil {
+		return nil, err
+	}
+
+	// Update the account
+	updatedAccount, err := s.accountRepository.Update(ctx, req.GetEmail(), hash)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "unable to update account")
+	}
+
+	// Generate a JWT token
+	token, err := s.generateToken(updatedAccount)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "unable to generate token")
+	}
+
+	return &v1.ChangePasswordResponse{
+		Token: token,
+	}, nil
+}
+
+func (s *economyServiceServer) generateToken(account *v1.Account) (string, error) {
 	claims := &Claims{
-		Subject: account.ID,
+		Subject: account.Id,
 		Email:   account.Email,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
@@ -106,10 +143,8 @@ func (s *economyServiceServer) Register(ctx context.Context, req *v1.RegisterReq
 	// Sign and get the complete encoded token as a string using the secret
 	tokenString, err := token.SignedString(secret)
 	if err != nil {
-		return nil, status.Error(codes.Internal, "unable to generate token")
+		return "", fmt.Errorf("unable to sign token")
 	}
 
-	return &v1.RegisterResponse{
-		Token: tokenString,
-	}, nil
+	return tokenString, nil
 }

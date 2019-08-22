@@ -19,6 +19,39 @@
     "application/json"
   ],
   "paths": {
+    "/v1/account/password": {
+      "post": {
+        "summary": "Change password",
+        "operationId": "ChangePassword",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ChangePasswordResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ChangePasswordRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
     "/v1/authenticate": {
       "post": {
         "summary": "Authenticate an account",
@@ -1857,6 +1890,29 @@
       "properties": {
         "product": {
           "$ref": "#/definitions/v1Product"
+        }
+      }
+    },
+    "v1ChangePasswordRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "new_password": {
+          "type": "string"
+        }
+      },
+      "title": "Register"
+    },
+    "v1ChangePasswordResponse": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
         }
       }
     },

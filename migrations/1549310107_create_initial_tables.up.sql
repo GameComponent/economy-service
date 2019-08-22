@@ -91,7 +91,8 @@ CREATE TABLE IF NOT EXISTS account (
 	email STRING NOT NULL,
 	password STRING NOT NULL,
   
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+	UNIQUE (email)
 );
 
 CREATE TABLE IF NOT EXISTS shop (  
