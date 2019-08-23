@@ -159,12 +159,8 @@ func (s *economyServiceServer) RevokePermission(ctx context.Context, req *v1.Rev
 	}, nil
 }
 
-// TODO: Configurable expiration
-// var expirationTime = time.Now().Add(2000 * time.Hour)
-// var secret = []byte("my_secret_key")
-
 func (s *economyServiceServer) generateToken(account *v1.Account) (string, error) {
-	//expirationTime := time.Now().Add(time.Duration(s.config.JWTExpiration) * time.Second)
+	expirationTime := time.Now().Add(time.Duration(s.config.JWTExpiration) * time.Second)
 	secret := []byte(s.config.JWTSecret)
 
 	claims := &Claims{
@@ -172,7 +168,7 @@ func (s *economyServiceServer) generateToken(account *v1.Account) (string, error
 		Email:          account.Email,
 		Permissions:    account.Permissions,
 		StandardClaims: jwt.StandardClaims{
-			//ExpiresAt: expirationTime.Unix(),
+			ExpiresAt: expirationTime.Unix(),
 		},
 	}
 
