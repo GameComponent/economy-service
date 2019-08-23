@@ -52,6 +52,72 @@
         ]
       }
     },
+    "/v1/account/permission/assign": {
+      "post": {
+        "summary": "Assigns a permission",
+        "operationId": "AssignPermission",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AssignPermissionResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1AssignPermissionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
+    "/v1/account/permission/revoke": {
+      "post": {
+        "summary": "Revokes a permission",
+        "operationId": "RevokePermission",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1RevokePermissionResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1RevokePermissionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
     "/v1/authenticate": {
       "post": {
         "summary": "Authenticate an account",
@@ -1717,6 +1783,26 @@
     }
   },
   "definitions": {
+    "v1Account": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "v1Amount": {
       "type": "object",
       "properties": {
@@ -1730,6 +1816,26 @@
         }
       },
       "title": "If the max_amount is smaller than the min_amount the amount will be the min_amount\nIf the min_amount and max_amount are the same that amount will be given\nIf max_amount is higher than min_amount a random number between min_amount and max_amount will be chosen"
+    },
+    "v1AssignPermissionRequest": {
+      "type": "object",
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "permission": {
+          "type": "string"
+        }
+      },
+      "title": "AssignPermission"
+    },
+    "v1AssignPermissionResponse": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "$ref": "#/definitions/v1Account"
+        }
+      }
     },
     "v1AttachCurrencyRequest": {
       "type": "object",
@@ -2630,6 +2736,26 @@
       "properties": {
         "token": {
           "type": "string"
+        }
+      }
+    },
+    "v1RevokePermissionRequest": {
+      "type": "object",
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "permission": {
+          "type": "string"
+        }
+      },
+      "title": "RevokePermission"
+    },
+    "v1RevokePermissionResponse": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "$ref": "#/definitions/v1Account"
         }
       }
     },

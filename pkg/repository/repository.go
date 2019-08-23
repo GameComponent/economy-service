@@ -9,8 +9,11 @@ import (
 // AccountRepository interface
 type AccountRepository interface {
 	Create(ctx context.Context, email string, password string) (*v1.Account, error)
-	Update(ctx context.Context, email string, password string) (*v1.Account, error)
-	Get(ctx context.Context, email string) (*v1.Account, error)
+	Update(ctx context.Context, accountID string, password string) (*v1.Account, error)
+	Get(ctx context.Context, accountID string) (*v1.Account, error)
+	GetByEmail(ctx context.Context, email string) (*v1.Account, error)
+	AssignPermission(ctx context.Context, accountID string, permission string) (*v1.Account, error)
+	RevokePermission(ctx context.Context, accountID string, permission string) (*v1.Account, error)
 }
 
 // ConfigRepository interface

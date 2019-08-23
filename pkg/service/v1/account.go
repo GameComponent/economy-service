@@ -18,8 +18,9 @@ var secret = []byte("my_secret_key")
 
 // Claims for the JWT token
 type Claims struct {
-	Subject string `json:"sub"`
-	Email   string `json:"email"`
+	Subject     string   `json:"sub"`
+	Email       string   `json:"email"`
+	Permissions []string `json:"permissions"`
 	jwt.StandardClaims
 }
 
@@ -37,7 +38,7 @@ func (s *economyServiceServer) Authenticate(ctx context.Context, req *v1.Authent
 	fmt.Println("Authenticate")
 
 	// Check if the user entered to correct credentials
-	account, err := s.accountRepository.Get(ctx, req.GetEmail())
+	account, err := s.accountRepository.GetByEmail(ctx, req.GetEmail())
 
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, "invalid credentials")
@@ -68,7 +69,7 @@ func (s *economyServiceServer) Register(ctx context.Context, req *v1.RegisterReq
 	}
 
 	// Check if user already exists
-	exstingAccount, _ := s.accountRepository.Get(ctx, req.GetEmail())
+	exstingAccount, _ := s.accountRepository.GetByEmail(ctx, req.GetEmail())
 	if exstingAccount != nil {
 		return nil, status.Error(codes.AlreadyExists, "user with email already exists")
 	}
@@ -94,7 +95,7 @@ func (s *economyServiceServer) ChangePassword(ctx context.Context, req *v1.Chang
 	fmt.Println("ChangePassword")
 
 	// Check if the user entered to correct credentials
-	account, err := s.accountRepository.Get(ctx, req.GetEmail())
+	account, err := s.accountRepository.GetByEmail(ctx, req.GetEmail())
 
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, "invalid credentials")
@@ -111,7 +112,7 @@ func (s *economyServiceServer) ChangePassword(ctx context.Context, req *v1.Chang
 	}
 
 	// Update the account
-	updatedAccount, err := s.accountRepository.Update(ctx, req.GetEmail(), hash)
+	updatedAccount, err := s.accountRepository.Update(ctx, account.Id, hash)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to update account")
 	}
@@ -127,10 +128,47 @@ func (s *economyServiceServer) ChangePassword(ctx context.Context, req *v1.Chang
 	}, nil
 }
 
+func (s *economyServiceServer) AssignPermission(ctx context.Context, req *v1.AssignPermissionRequest) (*v1.AssignPermissionResponse, error) {
+	fmt.Println("AssignPermission")
+
+	account, err := s.accountRepository.AssignPermission(ctx, req.GetAccountId(), req.GetPermission())
+	if err != nil {
+		return nil, status.Error(codes.Internal, "unable to assign permission")
+	}
+
+	// Filter out the account's hash
+	if account.Hash != "" {
+		account.Hash = ""
+	}
+
+	return &v1.AssignPermissionResponse{
+		Account: account,
+	}, nil
+}
+
+func (s *economyServiceServer) RevokePermission(ctx context.Context, req *v1.RevokePermissionRequest) (*v1.RevokePermissionResponse, error) {
+	fmt.Println("RevokePermission")
+
+	account, err := s.accountRepository.RevokePermission(ctx, req.GetAccountId(), req.GetPermission())
+	if err != nil {
+		return nil, status.Error(codes.Internal, "unable to revoke permission")
+	}
+
+	// Filter out the account's hash
+	if account.Hash != "" {
+		account.Hash = ""
+	}
+
+	return &v1.RevokePermissionResponse{
+		Account: account,
+	}, nil
+}
+
 func (s *economyServiceServer) generateToken(account *v1.Account) (string, error) {
 	claims := &Claims{
-		Subject: account.Id,
-		Email:   account.Email,
+		Subject:     account.Id,
+		Email:       account.Email,
+		Permissions: account.Permissions,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},

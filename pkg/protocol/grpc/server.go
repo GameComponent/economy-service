@@ -7,11 +7,13 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"strings"
 
 	"google.golang.org/grpc"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
+	v1service "github.com/GameComponent/economy-service/pkg/service/v1"
 	jwt "github.com/dgrijalva/jwt-go"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"go.uber.org/zap"
@@ -54,6 +56,7 @@ func RunServer(ctx context.Context, v1API v1.EconomyServiceServer, logger *zap.L
 }
 
 func unaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	// Methods that should always work
 	if info.FullMethod == "/v1.EconomyService/Authenticate" {
 		return handler(ctx, req)
 	}
@@ -63,41 +66,64 @@ func unaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServ
 	}
 
 	// Check authorization
-	if err := authorize(ctx); err != nil {
+	_, claims, err := authorize(ctx)
+
+	if err != nil {
 		return nil, err
 	}
 
-	return handler(ctx, req)
+	// Methods that should always work with a valid token
+	if info.FullMethod == "/v1.EconomyService/ChangePassword" {
+		return handler(ctx, req)
+	}
+
+	// Methods that only work if the account has the right permissions
+	for _, permission := range claims.Permissions {
+		matched, _ := filepath.Match("/v1.EconomyService/"+permission, info.FullMethod)
+		if matched {
+			return handler(ctx, req)
+		}
+	}
+
+	return nil, status.Error(codes.PermissionDenied, "Not allowed to execute this method")
 }
 
-func authorize(ctx context.Context) error {
+func authorize(ctx context.Context) (*jwt.Token, *v1service.Claims, error) {
 	// Check if metadata is present
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return status.Errorf(codes.InvalidArgument, "Unable to retrieve metadata")
+		return nil, nil, status.Errorf(codes.InvalidArgument, "Unable to retrieve metadata")
 	}
 
 	// Check if authorization header is present
 	authorization, ok := md["authorization"]
 	if !ok {
-		return status.Errorf(codes.Unauthenticated, "Authorization token is not supplied")
+		return nil, nil, status.Errorf(codes.Unauthenticated, "Authorization token is not supplied")
 	}
 
 	// Extract the key value from the Authorization header
 	splits := strings.Split(authorization[0], " ")
+
+	// The token should contain a type and the token
+	if len(splits) < 2 {
+		return nil, nil, status.Errorf(codes.Unauthenticated, "Invalid token")
+	}
+
 	tokenType := strings.ToLower(splits[0])
 	tokenString := splits[1]
 
 	// Check if we received a Bearer token
 	if tokenType != "bearer" {
-		return status.Errorf(codes.Unauthenticated, "Unable to parse this kind of token")
+		return nil, nil, status.Errorf(codes.Unauthenticated, "Unable to parse this kind of token")
 	}
 
 	// TODO: get secret another way
 	var secret = []byte("my_secret_key")
 
+	var claims = &v1service.Claims{}
+
 	// Parse the token and check the encryption method
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
@@ -105,12 +131,12 @@ func authorize(ctx context.Context) error {
 		return secret, nil
 	})
 	if err != nil {
-		return status.Errorf(codes.Unauthenticated, "Unable to parse this token")
+		return nil, nil, status.Errorf(codes.Unauthenticated, "Unable to parse this token")
 	}
 
 	if !token.Valid {
-		return status.Errorf(codes.Unauthenticated, "Invalid token")
+		return nil, nil, status.Errorf(codes.Unauthenticated, "Invalid token")
 	}
 
-	return nil
+	return token, claims, nil
 }

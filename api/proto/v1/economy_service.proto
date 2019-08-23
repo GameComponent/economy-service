@@ -251,6 +251,22 @@ service EconomyService {
 		};
 	}
 
+	// Assigns a permission
+	rpc AssignPermission(AssignPermissionRequest) returns (AssignPermissionResponse) {
+		option (google.api.http) = {
+			post: "/v1/account/permission/assign"
+			body: "*"
+		};
+	}
+
+	// Revokes a permission
+	rpc RevokePermission(RevokePermissionRequest) returns (RevokePermissionResponse) {
+		option (google.api.http) = {
+			post: "/v1/account/permission/revoke"
+			body: "*"
+		};
+	}
+
 	// Get a shop
 	rpc GetShop(GetShopRequest) returns (GetShopResponse) {
 		option (google.api.http) = {
@@ -562,6 +578,13 @@ message PriceItem {
 	int64 amount = 3;
 }
 
+message Account {
+	string id = 1;
+	string email = 2;
+	string hash = 3;
+	repeated string permissions = 4;
+}
+
 // GiveItem
 message GiveItemRequest{	
 	string storage_id = 1;
@@ -853,6 +876,26 @@ message AuthenticateRequest{
 
 message AuthenticateResponse{	
 	string token = 1;
+}
+
+// AssignPermission
+message AssignPermissionRequest{	
+	string account_id = 1;
+	string permission = 2;
+}
+
+message AssignPermissionResponse{	
+	Account account = 1;
+}
+
+// RevokePermission
+message RevokePermissionRequest{	
+	string account_id = 1;
+	string permission = 2;
+}
+
+message RevokePermissionResponse{	
+	Account account = 1;
 }
 
 // Register

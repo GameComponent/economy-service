@@ -95,6 +95,14 @@ CREATE TABLE IF NOT EXISTS account (
 	UNIQUE (email)
 );
 
+CREATE TABLE IF NOT EXISTS account_permission (  
+	account_id UUID NOT NULL,
+	permission STRING NOT NULL,
+
+  PRIMARY KEY (account_id, permission),
+  FOREIGN KEY (account_id) REFERENCES account(id)
+);
+
 CREATE TABLE IF NOT EXISTS shop (  
   id UUID DEFAULT gen_random_uuid() NOT NULL,
 	created_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),
