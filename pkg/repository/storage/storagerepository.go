@@ -97,11 +97,11 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 		`SELECT
       storage.id as storageId,
       storage.name as storageName,
-      storage.metadata as storageData,
+      storage.metadata as storageMetadata,
       storage.player_id as playerId,
       storage_item.id as storageItemId,
       storage_item.amount as storageItemAmount,
-			storage_item.metadata as storageItemData,
+			storage_item.metadata as storageItemMetaata,
       item.id as itemId,
 			item.name as itemName,
 			item.stackable as itemStackable,
@@ -130,11 +130,11 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 	type row struct {
 		StorageID                string
 		StorageName              string
-		StorageData              string
+		StorageMetadata          string
 		PlayerID                 string
 		StorageItemID            sql.NullString
 		StorageItemAmount        sql.NullInt64
-		StorageItemItemData      sql.NullString
+		StorageItemMetadata      sql.NullString
 		ItemID                   sql.NullString
 		ItemName                 sql.NullString
 		ItemStackable            sql.NullBool
@@ -157,11 +157,11 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 		err = rows.Scan(
 			&res.StorageID,
 			&res.StorageName,
-			&res.StorageData,
+			&res.StorageMetadata,
 			&res.PlayerID,
 			&res.StorageItemID,
 			&res.StorageItemAmount,
-			&res.StorageItemItemData,
+			&res.StorageItemMetadata,
 			&res.ItemID,
 			&res.ItemName,
 			&res.ItemStackable,
@@ -196,6 +196,7 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 			storageItem.Id = res.StorageItemID.String
 			storageItem.Item = item
 			storageItem.Amount = res.StorageItemAmount.Int64
+			storageItem.Metadata = res.StorageItemMetadata.String
 
 			// Only show the amount if the item is stackable
 			if res.ItemStackable.Bool {
@@ -253,22 +254,29 @@ func (r *StorageRepository) Get(ctx context.Context, storageID string) (*v1.Stor
 		Name:       res.StorageName,
 		Items:      items,
 		Currencies: currencies,
-		Metadata:   res.StorageData,
+		Metadata:   res.StorageMetadata,
 	}
 
 	return storage, nil
 }
 
 // GiveItem to a storage
-func (r *StorageRepository) GiveItem(ctx context.Context, storageID string, itemID string, amount int64) (*string, error) {
+func (r *StorageRepository) GiveItem(ctx context.Context, storageID string, itemID string, amount int64, metadata string) (*string, error) {
+	// Set the default metadata value to an empty object
+	if metadata == "" {
+		metadata = "{}"
+	}
+
 	// Add item to the databased return the generated UUID
 	lastInsertUUID := ""
+
 	err := r.db.QueryRowContext(
 		ctx,
-		`INSERT INTO storage_item(item_id, storage_id, amount) VALUES ($1, $2, $3) RETURNING id`,
+		`INSERT INTO storage_item(item_id, storage_id, amount, metadata) VALUES ($1, $2, $3, $4) RETURNING id`,
 		itemID,
 		storageID,
 		amount,
+		metadata,
 	).Scan(&lastInsertUUID)
 
 	if err != nil {

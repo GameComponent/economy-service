@@ -319,6 +319,7 @@ func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemReq
 		ctx,
 		req.GetStorageId(),
 		req.GetItemId(),
+		req.GetMetadata(),
 		remainder,
 		item,
 	)
@@ -335,6 +336,7 @@ func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemReq
 				req.GetStorageId(),
 				req.GetItemId(),
 				1,
+				req.GetMetadata(),
 			)
 			if err != nil {
 				return nil, status.Error(codes.Internal, "unable to give item to storage")
@@ -373,6 +375,7 @@ func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemReq
 				req.GetStorageId(),
 				req.GetItemId(),
 				resultAmount,
+				req.GetMetadata(),
 			)
 			if err != nil {
 				return nil, status.Error(codes.Internal, "unable to give item to storage")
@@ -386,13 +389,17 @@ func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemReq
 		return nil, status.Error(codes.Internal, "unable to give item to storage")
 	}
 
+	storage, err := s.storageRepository.Get(ctx, req.GetStorageId())
+	if err != nil {
+		return nil, status.Error(codes.Aborted, "unable to retrieve storage")
+	}
+
 	return &v1.GiveItemResponse{
-		StorageId: req.GetStorageId(),
-		Amount:    amount,
+		Storage: storage,
 	}, nil
 }
 
-func (s *economyServiceServer) GetExistingStorageItems(ctx context.Context, storageID string, itemID string) ([]*v1.StorageItem, error) {
+func (s *economyServiceServer) GetExistingStorageItems(ctx context.Context, storageID string, itemID string, metadata string) ([]*v1.StorageItem, error) {
 	// Get the storage
 	storage, err := s.storageRepository.Get(ctx, storageID)
 	if err != nil {
@@ -410,13 +417,17 @@ func (s *economyServiceServer) GetExistingStorageItems(ctx context.Context, stor
 			continue
 		}
 
+		if storageItem.Metadata != metadata {
+			continue
+		}
+
 		existingStorageItems = append(existingStorageItems, storageItem)
 	}
 
 	return existingStorageItems, nil
 }
 
-func (s *economyServiceServer) GiveToExistingStorageItems(ctx context.Context, storageID string, itemID string, remainder int64, item *v1.Item) (int64, error) {
+func (s *economyServiceServer) GiveToExistingStorageItems(ctx context.Context, storageID string, itemID string, metadata string, remainder int64, item *v1.Item) (int64, error) {
 	if !item.Stackable {
 		return remainder, nil
 	}
@@ -431,6 +442,7 @@ func (s *economyServiceServer) GiveToExistingStorageItems(ctx context.Context, s
 		ctx,
 		storageID,
 		itemID,
+		metadata,
 	)
 
 	if err != nil {

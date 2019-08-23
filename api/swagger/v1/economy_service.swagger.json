@@ -2359,6 +2359,9 @@
         },
         "amount": {
           "$ref": "#/definitions/v1Amount"
+        },
+        "metadata": {
+          "type": "string"
         }
       },
       "title": "GiveItem"
@@ -2366,12 +2369,8 @@
     "v1GiveItemResponse": {
       "type": "object",
       "properties": {
-        "storage_id": {
-          "type": "string"
-        },
-        "amount": {
-          "type": "string",
-          "format": "int64"
+        "storage": {
+          "$ref": "#/definitions/v1Storage"
         }
       }
     },
@@ -2997,6 +2996,9 @@
         "amount": {
           "type": "string",
           "format": "int64"
+        },
+        "metadata": {
+          "type": "string"
         }
       }
     },

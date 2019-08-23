@@ -90,7 +90,7 @@ type StorageRepository interface {
 	Create(ctx context.Context, playerID string, name string, metadata string) (*v1.Storage, error)
 	Update(ctx context.Context, storageID string, name string, metadata string) (*v1.Storage, error)
 	Get(ctx context.Context, storageID string) (*v1.Storage, error)
-	GiveItem(ctx context.Context, storageID string, itemID string, amount int64) (*string, error)
+	GiveItem(ctx context.Context, storageID string, itemID string, amount int64, metadata string) (*string, error)
 	IncreaseItemAmount(ctx context.Context, storageItemID string, amount int64) error
 	GiveCurrency(ctx context.Context, storageID string, currencyID string, amount int64) (*v1.StorageCurrency, error)
 	List(ctx context.Context, limit int32, offset int32) ([]*v1.Storage, int32, error)

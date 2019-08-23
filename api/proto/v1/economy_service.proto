@@ -477,7 +477,7 @@ message StorageItem {
 	google.protobuf.Timestamp updated_at = 3;
 	Item item = 4;
 	int64 amount = 5;
-	//string metadata = 3;
+	string metadata = 6;
 }
 
 // If the max_amount is smaller than the min_amount the amount will be the min_amount
@@ -590,11 +590,11 @@ message GiveItemRequest{
 	string storage_id = 1;
 	string item_id = 2;
 	Amount amount = 3;
+	string metadata = 4;
 }
 
 message GiveItemResponse{	
-	string storage_id = 1;
-	int64 amount = 2;
+	Storage storage = 1;
 }
 
 // GetStorage
