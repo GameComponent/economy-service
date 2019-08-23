@@ -3,7 +3,6 @@ package v1
 import (
 	"context"
 	"fmt"
-	"time"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
 	jwt "github.com/dgrijalva/jwt-go"
@@ -11,10 +10,6 @@ import (
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
 )
-
-// TODO: Configurable expiration
-var expirationTime = time.Now().Add(2000 * time.Hour)
-var secret = []byte("my_secret_key")
 
 // Claims for the JWT token
 type Claims struct {
@@ -164,13 +159,20 @@ func (s *economyServiceServer) RevokePermission(ctx context.Context, req *v1.Rev
 	}, nil
 }
 
+// TODO: Configurable expiration
+// var expirationTime = time.Now().Add(2000 * time.Hour)
+// var secret = []byte("my_secret_key")
+
 func (s *economyServiceServer) generateToken(account *v1.Account) (string, error) {
+	//expirationTime := time.Now().Add(time.Duration(s.config.JWTExpiration) * time.Second)
+	secret := []byte(s.config.JWTSecret)
+
 	claims := &Claims{
-		Subject:     account.Id,
-		Email:       account.Email,
-		Permissions: account.Permissions,
+		Subject:        account.Id,
+		Email:          account.Email,
+		Permissions:    account.Permissions,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expirationTime.Unix(),
+			//ExpiresAt: expirationTime.Unix(),
 		},
 	}
 

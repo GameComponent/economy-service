@@ -5,6 +5,7 @@ import (
 	"flag"
 	"log"
 
+	config "github.com/GameComponent/economy-service/pkg/config"
 	database "github.com/GameComponent/economy-service/pkg/database"
 	grpc "github.com/GameComponent/economy-service/pkg/protocol/grpc"
 	rest "github.com/GameComponent/economy-service/pkg/protocol/rest"
@@ -22,20 +23,6 @@ import (
 	viper "github.com/spf13/viper"
 	"go.uber.org/zap"
 )
-
-// Config for the server
-type Config struct {
-	GRPCPort         string `mapstructure:"grpc_port"`
-	HTTPPort         string `mapstructure:"http_port"`
-	DatabaseHost     string `mapstructure:"db_host"`
-	DatabasePort     string `mapstructure:"db_port"`
-	DatabaseUser     string `mapstructure:"db_user"`
-	DatabasePassword string `mapstructure:"db_password"`
-	DatabaseName     string `mapstructure:"db_name"`
-	DatabaseSsl      string `mapstructure:"db_ssl"`
-	LogLevel         int    `mapstructure:"log_level"`
-	LogTimeFormat    string `mapstructure:"log_time_format"`
-}
 
 // RunServer runs gRPC server and HTTP gateway
 func RunServer() error {
@@ -61,6 +48,8 @@ func RunServer() error {
 	v.SetDefault("db_ssl", "disable")
 	v.SetDefault("log_level", "0")
 	v.SetDefault("log_time_format", "")
+	v.SetDefault("jwt_secret", "my_secret_key")
+	v.SetDefault("jwt_expiration", 300)
 
 	// Set potential config locations
 	v.SetConfigName("config")
@@ -90,6 +79,8 @@ func RunServer() error {
 	flag.String("db_ssl", "disable", "ssl settings of the database")
 	flag.Int("log_level", 0, "level of the logger")
 	flag.String("log_time_format", "", "time format of the logger")
+	flag.String("jwt_secret", "my_secret_key", "secret used to sign JWT tokens")
+	flag.Int("jwt_expiration", 300, "seconds before the JWT expires")
 
 	// Add flags to Viper
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
@@ -97,7 +88,7 @@ func RunServer() error {
 	v.BindPFlags(pflag.CommandLine)
 
 	// Unmarhsal the viper config to a struct
-	var cfg Config
+	var cfg config.Config
 	err = v.Unmarshal(&cfg)
 	if err != nil {
 		logger.Error("Unable to unmarshal config", zap.Error(err))
@@ -151,6 +142,7 @@ func RunServer() error {
 	config := v1.Config{
 		DB:                 db,
 		Logger:             logger,
+		Config:             &cfg,
 		ItemRepository:     itemRepository,
 		PlayerRepository:   playerRepository,
 		CurrencyRepository: currencyRepository,

@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
+	config "github.com/GameComponent/economy-service/pkg/config"
 	repository "github.com/GameComponent/economy-service/pkg/repository"
 	"go.uber.org/zap"
 )
@@ -19,6 +20,7 @@ const (
 type Config struct {
 	DB 								 *sql.DB
 	Logger           	 *zap.Logger
+	Config						 *config.Config
 	AccountRepository  repository.AccountRepository
 	ConfigRepository	 repository.ConfigRepository
 	CurrencyRepository repository.CurrencyRepository
@@ -34,6 +36,7 @@ type Config struct {
 type economyServiceServer struct {
 	db                 *sql.DB
 	logger             *zap.Logger
+	config						 *config.Config
 	accountRepository  repository.AccountRepository
 	configRepository   repository.ConfigRepository
 	currencyRepository repository.CurrencyRepository
@@ -50,6 +53,7 @@ func NewEconomyServiceServer(config Config) v1.EconomyServiceServer {
 	return &economyServiceServer{
 		config.DB,
 		config.Logger,
+		config.Config,
 		config.AccountRepository,
 		config.ConfigRepository,
 		config.CurrencyRepository,
