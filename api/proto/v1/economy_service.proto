@@ -243,6 +243,13 @@ service EconomyService {
 		};
 	}
 
+	// Get an accounts
+	rpc getAccount(GetAccountRequest) returns (GetAccountResponse) {
+		option (google.api.http) = {
+			get: "/v1/account/{account_id}"
+		};
+	}
+
 	// List all accounts
 	rpc ListAccount(ListAccountRequest) returns (ListAccountResponse) {
 		option (google.api.http) = {
@@ -913,6 +920,15 @@ message RegisterRequest{
 
 message RegisterResponse{	
 	string token = 1;
+}
+
+// GetAccount
+message GetAccountRequest{	
+	string account_id = 1;
+}
+
+message GetAccountResponse{	
+	Account account = 1;
 }
 
 // ListAccount

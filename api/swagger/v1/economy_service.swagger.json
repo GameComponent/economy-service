@@ -156,6 +156,37 @@
         ]
       }
     },
+    "/v1/account/{account_id}": {
+      "get": {
+        "summary": "Get an accounts",
+        "operationId": "getAccount",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetAccountResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
     "/v1/authenticate": {
       "post": {
         "summary": "Authenticate an account",
@@ -2296,6 +2327,14 @@
       "properties": {
         "shop": {
           "$ref": "#/definitions/v1Shop"
+        }
+      }
+    },
+    "v1GetAccountResponse": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "$ref": "#/definitions/v1Account"
         }
       }
     },

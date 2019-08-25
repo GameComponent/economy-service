@@ -100,7 +100,7 @@ func (r *AccountRepository) Get(ctx context.Context, accountID string) (*v1.Acco
 		AccountID    string
 		AccountEmail string
 		AccountHash  string
-		Permission   string
+		Permission   sql.NullString
 	}
 
 	accountPermissions := []string{}
@@ -118,7 +118,9 @@ func (r *AccountRepository) Get(ctx context.Context, accountID string) (*v1.Acco
 			return nil, err
 		}
 
-		accountPermissions = append(accountPermissions, res.Permission)
+		if res.Permission.Valid {
+			accountPermissions = append(accountPermissions, res.Permission.String)
+		}
 	}
 
 	account := &v1.Account{

@@ -88,6 +88,22 @@ func (s *economyServiceServer) Register(ctx context.Context, req *v1.RegisterReq
 	}, nil
 }
 
+func (s *economyServiceServer) GetAccount(ctx context.Context, req *v1.GetAccountRequest) (*v1.GetAccountResponse, error) {
+	account, err := s.accountRepository.Get(ctx, req.GetAccountId())
+	if err != nil {
+		return nil, err
+	}
+
+	// Filter out the account's hash
+	if account.Hash != "" {
+		account.Hash = ""
+	}
+
+	return &v1.GetAccountResponse{
+		Account: account,
+	}, nil
+}
+
 func (s *economyServiceServer) ListAccount(ctx context.Context, req *v1.ListAccountRequest) (*v1.ListAccountResponse, error) {
 	fmt.Println("ListAccount")
 
