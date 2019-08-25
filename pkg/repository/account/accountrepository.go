@@ -131,6 +131,51 @@ func (r *AccountRepository) Get(ctx context.Context, accountID string) (*v1.Acco
 	return account, nil
 }
 
+// List all accounts
+func (r *AccountRepository) List(ctx context.Context, limit int32, offset int32) ([]*v1.Account, int32, error) {
+	// Query configs from the database
+	rows, err := r.db.QueryContext(
+		ctx,
+		`
+			SELECT
+				id,
+				email,
+				(SELECT COUNT(*) FROM account) AS total_size
+			FROM account
+			LIMIT $1
+			OFFSET $2
+		`,
+		limit,
+		offset,
+	)
+
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	// Unwrap rows into configs
+	accounts := []*v1.Account{}
+	totalSize := int32(0)
+
+	for rows.Next() {
+		account := v1.Account{}
+
+		err := rows.Scan(
+			&account.Id,
+			&account.Email,
+			&totalSize,
+		)
+		if err != nil {
+			return nil, 0, err
+		}
+
+		accounts = append(accounts, &account)
+	}
+
+	return accounts, totalSize, nil
+}
+
 // Create an account
 func (r *AccountRepository) Create(ctx context.Context, email string, password string) (*v1.Account, error) {
 	var id string

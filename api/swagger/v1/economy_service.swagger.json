@@ -19,6 +19,44 @@
     "application/json"
   ],
   "paths": {
+    "/v1/account": {
+      "get": {
+        "summary": "List all accounts",
+        "operationId": "ListAccount",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListAccountResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page_token",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
     "/v1/account/password": {
       "post": {
         "summary": "Change password",
@@ -2012,7 +2050,7 @@
           "type": "string"
         }
       },
-      "title": "Register"
+      "title": "ChangePassword"
     },
     "v1ChangePasswordResponse": {
       "type": "object",
@@ -2405,6 +2443,24 @@
         },
         "metadata": {
           "type": "string"
+        }
+      }
+    },
+    "v1ListAccountResponse": {
+      "type": "object",
+      "properties": {
+        "accounts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Account"
+          }
+        },
+        "next_page_token": {
+          "type": "string"
+        },
+        "total_size": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

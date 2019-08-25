@@ -243,6 +243,13 @@ service EconomyService {
 		};
 	}
 
+	// List all accounts
+	rpc ListAccount(ListAccountRequest) returns (ListAccountResponse) {
+		option (google.api.http) = {
+			get: "/v1/account"
+		};
+	}
+
 	// Change password
 	rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {
 		option (google.api.http) = {
@@ -908,7 +915,19 @@ message RegisterResponse{
 	string token = 1;
 }
 
-// Register
+// ListAccount
+message ListAccountRequest{	
+	int32 page_size = 1;
+	string page_token = 2;
+}
+
+message ListAccountResponse{	
+	repeated Account accounts = 1;
+	string next_page_token = 2;
+	int32 total_size = 3;
+}
+
+// ChangePassword 
 message ChangePasswordRequest{	
 	string email = 1;
 	string password = 2;

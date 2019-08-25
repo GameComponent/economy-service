@@ -10,6 +10,7 @@ import (
 type AccountRepository interface {
 	Create(ctx context.Context, email string, password string) (*v1.Account, error)
 	Update(ctx context.Context, accountID string, password string) (*v1.Account, error)
+	List(ctx context.Context, limit int32, offset int32) ([]*v1.Account, int32, error)
 	Get(ctx context.Context, accountID string) (*v1.Account, error)
 	GetByEmail(ctx context.Context, email string) (*v1.Account, error)
 	AssignPermission(ctx context.Context, accountID string, permission string) (*v1.Account, error)
