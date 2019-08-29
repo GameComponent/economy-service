@@ -67,7 +67,7 @@ func (s *economyServiceServer) Register(ctx context.Context, req *v1.RegisterReq
 
 	// Check if user already exists
 	exstingAccount, _ := s.accountRepository.GetByEmail(ctx, req.GetEmail())
-	if exstingAccount != nil {
+	if exstingAccount != nil && exstingAccount.Id != "" {
 		return nil, status.Error(codes.AlreadyExists, "user with email already exists")
 	}
 
@@ -182,6 +182,14 @@ func (s *economyServiceServer) ChangePassword(ctx context.Context, req *v1.Chang
 
 func (s *economyServiceServer) AssignPermission(ctx context.Context, req *v1.AssignPermissionRequest) (*v1.AssignPermissionResponse, error) {
 	fmt.Println("AssignPermission")
+
+	if req.GetAccountId() == "" {
+		return nil, status.Error(codes.InvalidArgument, "please enter account_id")
+	}
+
+	if req.GetPermission() == "" {
+		return nil, status.Error(codes.InvalidArgument, "please enter permission")
+	}
 
 	account, err := s.accountRepository.AssignPermission(ctx, req.GetAccountId(), req.GetPermission())
 	if err != nil {
