@@ -88,6 +88,27 @@ func (s *economyServiceServer) Register(ctx context.Context, req *v1.RegisterReq
 	}, nil
 }
 
+func (s *economyServiceServer) GenerateSecret(ctx context.Context, req *v1.GenerateSecretRequest) (*v1.GenerateSecretResponse, error) {
+	fmt.Println("GenerateSecret")
+	if req.GetAccountId() == "" {
+		return nil, status.Error(codes.InvalidArgument, "please enter an account_id")
+	}
+
+	account, err := s.accountRepository.Get(ctx, req.GetAccountId())
+	if err != nil {
+		return nil, status.Error(codes.Internal, "unbable to generate token")
+	}
+
+	token, err := s.generateLongLivedToken(account)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "unbable to generate token")
+	}
+
+	return &v1.GenerateSecretResponse{
+		Token: token,
+	}, nil
+}
+
 func (s *economyServiceServer) GetAccount(ctx context.Context, req *v1.GetAccountRequest) (*v1.GetAccountResponse, error) {
 	account, err := s.accountRepository.Get(ctx, req.GetAccountId())
 	if err != nil {
@@ -235,6 +256,29 @@ func (s *economyServiceServer) generateToken(account *v1.Account) (string, error
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},
+	}
+
+	// Create a new token object, specifying signing method and the claims
+	// you would like it to contain.
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	// Sign and get the complete encoded token as a string using the secret
+	tokenString, err := token.SignedString(secret)
+	if err != nil {
+		return "", fmt.Errorf("unable to sign token")
+	}
+
+	return tokenString, nil
+}
+
+func (s *economyServiceServer) generateLongLivedToken(account *v1.Account) (string, error) {
+	secret := []byte(s.config.JWTSecret)
+
+	claims := &Claims{
+		Subject:        account.Id,
+		Email:          account.Email,
+		Permissions:    account.Permissions,
+		StandardClaims: jwt.StandardClaims{},
 	}
 
 	// Create a new token object, specifying signing method and the claims

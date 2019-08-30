@@ -243,6 +243,14 @@ service EconomyService {
 		};
 	}
 
+	// GenerateSecret a long lived JWT
+	rpc GenerateSecret(GenerateSecretRequest) returns (GenerateSecretResponse) {
+		option (google.api.http) = {
+			post: "/v1/secret"
+			body: "*"
+		};
+	}
+
 	// Get an accounts
 	rpc getAccount(GetAccountRequest) returns (GetAccountResponse) {
 		option (google.api.http) = {
@@ -919,6 +927,15 @@ message RegisterRequest{
 }
 
 message RegisterResponse{	
+	string token = 1;
+}
+
+// GenerateSecret
+message GenerateSecretRequest{	
+	string account_id = 1;
+}
+
+message GenerateSecretResponse{	
 	string token = 1;
 }
 

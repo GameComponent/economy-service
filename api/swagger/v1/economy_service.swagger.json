@@ -1380,6 +1380,39 @@
         ]
       }
     },
+    "/v1/secret": {
+      "post": {
+        "summary": "GenerateSecret a long lived JWT",
+        "operationId": "GenerateSecret",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GenerateSecretResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1GenerateSecretRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
     "/v1/shop": {
       "get": {
         "summary": "List all shops",
@@ -2327,6 +2360,23 @@
       "properties": {
         "shop": {
           "$ref": "#/definitions/v1Shop"
+        }
+      }
+    },
+    "v1GenerateSecretRequest": {
+      "type": "object",
+      "properties": {
+        "account_id": {
+          "type": "string"
+        }
+      },
+      "title": "GenerateSecret"
+    },
+    "v1GenerateSecretResponse": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
         }
       }
     },
