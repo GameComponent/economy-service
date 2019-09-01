@@ -29,7 +29,7 @@ Make sure you have `go` (atleast version 1.11), `make`, `protoc`, `docker` and `
 
 ## Contributing
 
-We're an open source project and welcome contributions. Read our [Contribution guidelines](CONTRIBUTING.md) for more information
+We welcome contributions. Read our [Contribution guidelines](CONTRIBUTING.md) for more information
 
 
 ## License
