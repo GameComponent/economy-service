@@ -103,6 +103,15 @@ CREATE TABLE IF NOT EXISTS account_permission (
   FOREIGN KEY (account_id) REFERENCES account(id)
 );
 
+CREATE TABLE IF NOT EXISTS account_token (  
+	token UUID DEFAULT gen_random_uuid() NOT NULL,
+  account_id UUID NOT NULL,
+  expires TIMESTAMPTZ NOT NULL,
+
+  PRIMARY KEY (token),
+  FOREIGN KEY (account_id) REFERENCES account(id)
+);
+
 CREATE TABLE IF NOT EXISTS shop (  
   id UUID DEFAULT gen_random_uuid() NOT NULL,
 	created_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp(),

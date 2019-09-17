@@ -49,7 +49,8 @@ func RunServer() error {
 	v.SetDefault("log_level", "0")
 	v.SetDefault("log_time_format", "")
 	v.SetDefault("jwt_secret", "my_secret_key")
-	v.SetDefault("jwt_expiration", 300)
+	v.SetDefault("jwt_expiration", 300)             // 5 minutes
+	v.SetDefault("jwt_refresh_expiration", 2592000) // 30 days
 
 	// Set potential config locations
 	v.SetConfigName("config")
@@ -81,6 +82,7 @@ func RunServer() error {
 	flag.String("log_time_format", "", "time format of the logger")
 	flag.String("jwt_secret", "my_secret_key", "secret used to sign JWT tokens")
 	flag.Int("jwt_expiration", 300, "seconds before the JWT expires")
+	flag.Int("jwt_refresh_expiration", 2592000, "seconds before the refresh token expires")
 
 	// Add flags to Viper
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)

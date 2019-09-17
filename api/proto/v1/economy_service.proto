@@ -243,6 +243,14 @@ service EconomyService {
 		};
 	}
 
+	// Refresh a token
+	rpc Refresh(RefreshRequest) returns (RefreshResponse) {
+		option (google.api.http) = {
+			post: "/v1/refresh"
+			body: "*"
+		};
+	}
+
 	// GenerateSecret a long lived JWT
 	rpc GenerateSecret(GenerateSecretRequest) returns (GenerateSecretResponse) {
 		option (google.api.http) = {
@@ -897,7 +905,10 @@ message AuthenticateRequest{
 }
 
 message AuthenticateResponse{	
-	string token = 1;
+	string access_token = 1;
+	string token_type = 2;
+	int32 expires_in = 3;	
+	string refresh_token = 4;
 }
 
 // AssignPermission
@@ -928,6 +939,17 @@ message RegisterRequest{
 
 message RegisterResponse{	
 	string token = 1;
+}
+
+// Refresh
+message RefreshRequest{	
+	string token = 1;
+}
+
+message RefreshResponse{	
+	string access_token = 1;
+	string token_type = 2;
+	int32 expires_in = 3;	
 }
 
 // GenerateSecret

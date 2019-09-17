@@ -3,6 +3,8 @@ package accountrepository
 import (
 	"context"
 	"database/sql"
+	"time"
+	"fmt"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
 	repository "github.com/GameComponent/economy-service/pkg/repository"
@@ -255,4 +257,63 @@ func (r *AccountRepository) RevokePermission(ctx context.Context, accountID stri
 	}
 
 	return r.Get(ctx, accountID)
+}
+
+// CreateRefreshToken for an account
+func (r *AccountRepository) CreateRefreshToken(ctx context.Context, token string, accountID string, expires *time.Time) error {
+	_, err := r.db.ExecContext(
+		ctx,
+		`INSERT INTO account_token(token, account_id, expires) VALUES($1, $2, $3) RETURNING token`,
+		token,
+		accountID,
+		expires,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// InvalidateRefreshTokens for an account
+func (r *AccountRepository) InvalidateRefreshTokens(ctx context.Context, accountID string) error {
+	_, err := r.db.ExecContext(
+		ctx,
+		`DELETE FROM account_token WHERE account_id = $1`,
+		accountID,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// GetAccountIDFromRefreshToken for an account
+func (r *AccountRepository) GetAccountIDFromRefreshToken(ctx context.Context, token string) (string, error) {
+	accountID := ""
+
+	err := r.db.QueryRowContext(
+		ctx,
+		`
+			SELECT
+				account_id
+			FROM account_token
+			WHERE token = $1
+			AND expires > $2`,
+		token,
+		time.Now().UTC(),
+	).Scan(&accountID)
+
+	if err != nil {
+		return "", err
+	}
+
+	if accountID == "" {
+		return "", fmt.Errorf("Unable to get a valid token")
+	}
+
+	return accountID, nil
 }

@@ -9,10 +9,11 @@ import (
 	status "google.golang.org/grpc/status"
 )
 
-func (s *economyServiceServer) GetPrice(ctx context.Context, req *v1.GetPriceRequest) (*v1.GetPriceResponse, error) {
+// GetPrice get a price
+func (s *EconomyServiceServer) GetPrice(ctx context.Context, req *v1.GetPriceRequest) (*v1.GetPriceResponse, error) {
 	fmt.Println("GetPrice")
 
-	price, err := s.priceRepository.Get(ctx, req.GetPriceId())
+	price, err := s.PriceRepository.Get(ctx, req.GetPriceId())
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "price not found")
 	}
@@ -22,7 +23,8 @@ func (s *economyServiceServer) GetPrice(ctx context.Context, req *v1.GetPriceReq
 	}, nil
 }
 
-func (s *economyServiceServer) CreatePrice(ctx context.Context, req *v1.CreatePriceRequest) (*v1.CreatePriceResponse, error) {
+// CreatePrice creates a new price
+func (s *EconomyServiceServer) CreatePrice(ctx context.Context, req *v1.CreatePriceRequest) (*v1.CreatePriceResponse, error) {
 	fmt.Println("CreatePrice")
 
 	if req.GetProductId() == "" {
@@ -30,7 +32,7 @@ func (s *economyServiceServer) CreatePrice(ctx context.Context, req *v1.CreatePr
 	}
 
 	// Add the price to the databased return the generated UUID
-	price, err := s.priceRepository.Create(ctx, req.GetProductId())
+	price, err := s.PriceRepository.Create(ctx, req.GetProductId())
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to create price")
 	}
@@ -40,10 +42,11 @@ func (s *economyServiceServer) CreatePrice(ctx context.Context, req *v1.CreatePr
 	}, nil
 }
 
-func (s *economyServiceServer) AttachPriceCurrency(ctx context.Context, req *v1.AttachPriceCurrencyRequest) (*v1.AttachPriceCurrencyResponse, error) {
+// AttachPriceCurrency attaches a currency to a price
+func (s *EconomyServiceServer) AttachPriceCurrency(ctx context.Context, req *v1.AttachPriceCurrencyRequest) (*v1.AttachPriceCurrencyResponse, error) {
 	fmt.Println("AttachPriceCurrency")
 
-	price, err := s.priceRepository.AttachPriceCurrency(
+	price, err := s.PriceRepository.AttachPriceCurrency(
 		ctx,
 		req.GetPriceId(),
 		req.GetCurrencyId(),
@@ -59,10 +62,11 @@ func (s *economyServiceServer) AttachPriceCurrency(ctx context.Context, req *v1.
 	}, nil
 }
 
-func (s *economyServiceServer) DetachPriceCurrency(ctx context.Context, req *v1.DetachPriceCurrencyRequest) (*v1.DetachPriceCurrencyResponse, error) {
+// DetachPriceCurrency detaches a currency from a price
+func (s *EconomyServiceServer) DetachPriceCurrency(ctx context.Context, req *v1.DetachPriceCurrencyRequest) (*v1.DetachPriceCurrencyResponse, error) {
 	fmt.Println("DetachPriceCurrency")
 
-	price, err := s.priceRepository.DetachPriceCurrency(
+	price, err := s.PriceRepository.DetachPriceCurrency(
 		ctx,
 		req.GetPriceCurrencyId(),
 	)
@@ -76,10 +80,11 @@ func (s *economyServiceServer) DetachPriceCurrency(ctx context.Context, req *v1.
 	}, nil
 }
 
-func (s *economyServiceServer) AttachPriceItem(ctx context.Context, req *v1.AttachPriceItemRequest) (*v1.AttachPriceItemResponse, error) {
+// AttachPriceItem attaches an item to a price
+func (s *EconomyServiceServer) AttachPriceItem(ctx context.Context, req *v1.AttachPriceItemRequest) (*v1.AttachPriceItemResponse, error) {
 	fmt.Println("AttachPriceItem")
 
-	price, err := s.priceRepository.AttachPriceItem(
+	price, err := s.PriceRepository.AttachPriceItem(
 		ctx,
 		req.GetPriceId(),
 		req.GetItemId(),
@@ -95,10 +100,11 @@ func (s *economyServiceServer) AttachPriceItem(ctx context.Context, req *v1.Atta
 	}, nil
 }
 
-func (s *economyServiceServer) DetachPriceItem(ctx context.Context, req *v1.DetachPriceItemRequest) (*v1.DetachPriceItemResponse, error) {
+// DetachPriceItem detaches an item from a price
+func (s *EconomyServiceServer) DetachPriceItem(ctx context.Context, req *v1.DetachPriceItemRequest) (*v1.DetachPriceItemResponse, error) {
 	fmt.Println("DetachPriceItem")
 
-	price, err := s.priceRepository.DetachPriceCurrency(
+	price, err := s.PriceRepository.DetachPriceCurrency(
 		ctx,
 		req.GetPriceItemId(),
 	)
@@ -112,10 +118,11 @@ func (s *economyServiceServer) DetachPriceItem(ctx context.Context, req *v1.Deta
 	}, nil
 }
 
-func (s *economyServiceServer) DeletePrice(ctx context.Context, req *v1.DeletePriceRequest) (*v1.DeletePriceResponse, error) {
+// DeletePrice deletes a price
+func (s *EconomyServiceServer) DeletePrice(ctx context.Context, req *v1.DeletePriceRequest) (*v1.DeletePriceResponse, error) {
 	fmt.Println("DeletePrice")
 
-	success, err := s.priceRepository.Delete(
+	success, err := s.PriceRepository.Delete(
 		ctx,
 		req.GetPriceId(),
 	)

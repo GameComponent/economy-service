@@ -11,8 +11,9 @@ import (
 	status "google.golang.org/grpc/status"
 )
 
-func (s *economyServiceServer) GetConfig(ctx context.Context, req *v1.GetConfigRequest) (*v1.GetConfigResponse, error) {
-	config, err := s.configRepository.Get(ctx, req.GetKey())
+// GetConfig gets a config
+func (s *EconomyServiceServer) GetConfig(ctx context.Context, req *v1.GetConfigRequest) (*v1.GetConfigResponse, error) {
+	config, err := s.ConfigRepository.Get(ctx, req.GetKey())
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "config not found")
 	}
@@ -22,10 +23,11 @@ func (s *economyServiceServer) GetConfig(ctx context.Context, req *v1.GetConfigR
 	}, nil
 }
 
-func (s *economyServiceServer) SetConfig(ctx context.Context, req *v1.SetConfigRequest) (*v1.SetConfigResponse, error) {
-	config, err := s.configRepository.Set(ctx, req.GetKey(), req.GetValue())
+// SetConfig sets a config
+func (s *EconomyServiceServer) SetConfig(ctx context.Context, req *v1.SetConfigRequest) (*v1.SetConfigResponse, error) {
+	config, err := s.ConfigRepository.Set(ctx, req.GetKey(), req.GetValue())
 	if err != nil {
-		s.logger.Error("unable to set config", zap.Error(err))
+		s.Logger.Error("unable to set config", zap.Error(err))
 		return nil, status.Error(codes.Internal, "unable to set config")
 	}
 
@@ -34,7 +36,8 @@ func (s *economyServiceServer) SetConfig(ctx context.Context, req *v1.SetConfigR
 	}, nil
 }
 
-func (s *economyServiceServer) ListConfig(ctx context.Context, req *v1.ListConfigRequest) (*v1.ListConfigResponse, error) {
+// ListConfig lists configs
+func (s *EconomyServiceServer) ListConfig(ctx context.Context, req *v1.ListConfigRequest) (*v1.ListConfigResponse, error) {
 	fmt.Println("ListConfig")
 
 	// Parse the page token
@@ -54,7 +57,7 @@ func (s *economyServiceServer) ListConfig(ctx context.Context, req *v1.ListConfi
 	}
 
 	// Get the items from the repository
-	configs, totalSize, err := s.configRepository.List(ctx, limit, offset)
+	configs, totalSize, err := s.ConfigRepository.List(ctx, limit, offset)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to retrieve config list")
 	}

@@ -12,14 +12,15 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *economyServiceServer) CreateStorage(ctx context.Context, req *v1.CreateStorageRequest) (*v1.CreateStorageResponse, error) {
+// CreateStorage creates a new storage
+func (s *EconomyServiceServer) CreateStorage(ctx context.Context, req *v1.CreateStorageRequest) (*v1.CreateStorageResponse, error) {
 	fmt.Println("CreateStorage")
 
 	if req.GetName() == "" {
 		return nil, status.Error(codes.InvalidArgument, "no name given")
 	}
 
-	storage, err := s.storageRepository.Create(
+	storage, err := s.StorageRepository.Create(
 		ctx,
 		req.GetPlayerId(),
 		req.GetName(),
@@ -34,10 +35,11 @@ func (s *economyServiceServer) CreateStorage(ctx context.Context, req *v1.Create
 	}, nil
 }
 
-func (s *economyServiceServer) UpdateStorage(ctx context.Context, req *v1.UpdateStorageRequest) (*v1.UpdateStorageResponse, error) {
+// UpdateStorage updates an existing storage
+func (s *EconomyServiceServer) UpdateStorage(ctx context.Context, req *v1.UpdateStorageRequest) (*v1.UpdateStorageResponse, error) {
 	fmt.Println("UpdateStorage")
 
-	storage, err := s.storageRepository.Update(
+	storage, err := s.StorageRepository.Update(
 		ctx,
 		req.GetStorageId(),
 		req.GetName(),
@@ -52,7 +54,8 @@ func (s *economyServiceServer) UpdateStorage(ctx context.Context, req *v1.Update
 	}, nil
 }
 
-func (s *economyServiceServer) GetStorage(ctx context.Context, req *v1.GetStorageRequest) (*v1.GetStorageResponse, error) {
+// GetStorage get a storage
+func (s *EconomyServiceServer) GetStorage(ctx context.Context, req *v1.GetStorageRequest) (*v1.GetStorageResponse, error) {
 	fmt.Println("GetStorage")
 
 	// Check if the request
@@ -60,7 +63,7 @@ func (s *economyServiceServer) GetStorage(ctx context.Context, req *v1.GetStorag
 		return nil, status.Error(codes.InvalidArgument, "no storage_id given")
 	}
 
-	storage, err := s.storageRepository.Get(ctx, req.GetStorageId())
+	storage, err := s.StorageRepository.Get(ctx, req.GetStorageId())
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "storage not found")
 	}
@@ -70,7 +73,8 @@ func (s *economyServiceServer) GetStorage(ctx context.Context, req *v1.GetStorag
 	}, nil
 }
 
-func (s *economyServiceServer) ListStorage(ctx context.Context, req *v1.ListStorageRequest) (*v1.ListStorageResponse, error) {
+// ListStorage lists storages
+func (s *EconomyServiceServer) ListStorage(ctx context.Context, req *v1.ListStorageRequest) (*v1.ListStorageResponse, error) {
 	fmt.Println("ListStorage")
 
 	// Parse the page token
@@ -90,7 +94,7 @@ func (s *economyServiceServer) ListStorage(ctx context.Context, req *v1.ListStor
 	}
 
 	// Get the players
-	storages, totalSize, err := s.storageRepository.List(ctx, limit, offset)
+	storages, totalSize, err := s.StorageRepository.List(ctx, limit, offset)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to retrieve storage list")
 	}
@@ -108,7 +112,8 @@ func (s *economyServiceServer) ListStorage(ctx context.Context, req *v1.ListStor
 	}, nil
 }
 
-func (s *economyServiceServer) GiveCurrency(ctx context.Context, req *v1.GiveCurrencyRequest) (*v1.GiveCurrencyResponse, error) {
+// GiveCurrency gives currency to a storage
+func (s *EconomyServiceServer) GiveCurrency(ctx context.Context, req *v1.GiveCurrencyRequest) (*v1.GiveCurrencyResponse, error) {
 	fmt.Println("GiveCurrency")
 
 	amount := random.GenerateRandomInt(
@@ -116,7 +121,7 @@ func (s *economyServiceServer) GiveCurrency(ctx context.Context, req *v1.GiveCur
 		req.GetAmount().MaxAmount,
 	)
 
-	storageCurrency, err := s.storageRepository.GiveCurrency(
+	storageCurrency, err := s.StorageRepository.GiveCurrency(
 		ctx,
 		req.GetStorageId(),
 		req.GetCurrencyId(),
@@ -131,12 +136,13 @@ func (s *economyServiceServer) GiveCurrency(ctx context.Context, req *v1.GiveCur
 	}, nil
 }
 
-func (s *economyServiceServer) SplitStack(ctx context.Context, req *v1.SplitStackRequest) (*v1.SplitStackResponse, error) {
+// SplitStack splits a stack in the storage
+func (s *EconomyServiceServer) SplitStack(ctx context.Context, req *v1.SplitStackRequest) (*v1.SplitStackResponse, error) {
 	fmt.Println("SplitStack")
 
 	// Find the selected StorageItem
 	selectedStorageItem := &v1.StorageItem{}
-	storage, err := s.storageRepository.Get(ctx, req.GetStorageId())
+	storage, err := s.StorageRepository.Get(ctx, req.GetStorageId())
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "storage not found")
 	}
@@ -199,7 +205,7 @@ func (s *economyServiceServer) SplitStack(ctx context.Context, req *v1.SplitStac
 		return nil, status.Error(codes.Aborted, "The storage_item's amount does not match the given amounts")
 	}
 
-	storage, err = s.storageRepository.SplitStack(
+	storage, err = s.StorageRepository.SplitStack(
 		ctx,
 		req.GetStorageItemId(),
 		amounts,
@@ -213,10 +219,11 @@ func (s *economyServiceServer) SplitStack(ctx context.Context, req *v1.SplitStac
 	}, nil
 }
 
-func (s *economyServiceServer) MergeStack(ctx context.Context, req *v1.MergeStackRequest) (*v1.MergeStackResponse, error) {
+// MergeStack merges stacks in the storage
+func (s *EconomyServiceServer) MergeStack(ctx context.Context, req *v1.MergeStackRequest) (*v1.MergeStackResponse, error) {
 	fmt.Println("MergeStack")
 
-	toStorage, err := s.storageRepository.Get(ctx, req.GetToStorageId())
+	toStorage, err := s.StorageRepository.Get(ctx, req.GetToStorageId())
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "to_storage not found")
 	}
@@ -224,7 +231,7 @@ func (s *economyServiceServer) MergeStack(ctx context.Context, req *v1.MergeStac
 	// Get the fromStorage if it is not the same as the toStorage
 	fromStorage := toStorage
 	if req.GetToStorageId() != req.GetFromStorageId() {
-		fromStorage, err = s.storageRepository.Get(ctx, req.GetToStorageId())
+		fromStorage, err = s.StorageRepository.Get(ctx, req.GetToStorageId())
 		if err != nil {
 			return nil, status.Error(codes.NotFound, "from_storage not found")
 		}
@@ -278,7 +285,7 @@ func (s *economyServiceServer) MergeStack(ctx context.Context, req *v1.MergeStac
 		return nil, status.Error(codes.Aborted, "item is not stackable")
 	}
 
-	storage, err := s.storageRepository.MergeStack(
+	storage, err := s.StorageRepository.MergeStack(
 		ctx,
 		req.GetToStorageItemId(),
 		req.GetFromStorageItemId(),
@@ -292,7 +299,8 @@ func (s *economyServiceServer) MergeStack(ctx context.Context, req *v1.MergeStac
 	}, nil
 }
 
-func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemRequest) (*v1.GiveItemResponse, error) {
+// GiveItem gives an item to the storage
+func (s *EconomyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemRequest) (*v1.GiveItemResponse, error) {
 	fmt.Println("GiveItem")
 
 	amount := int64(1)
@@ -309,7 +317,7 @@ func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemReq
 	remainder := amount
 
 	// Get the item
-	item, err := s.itemRepository.Get(ctx, req.GetItemId())
+	item, err := s.ItemRepository.Get(ctx, req.GetItemId())
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to give item to storage")
 	}
@@ -330,7 +338,7 @@ func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemReq
 	if item.Stackable == false && remainder > 0 {
 		loops := int(remainder)
 		for i := 0; i < loops; i++ {
-			_, err := s.storageRepository.GiveItem(
+			_, err := s.StorageRepository.GiveItem(
 				ctx,
 				req.GetStorageId(),
 				req.GetItemId(),
@@ -368,7 +376,7 @@ func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemReq
 				continue
 			}
 
-			_, err := s.storageRepository.GiveItem(
+			_, err := s.StorageRepository.GiveItem(
 				ctx,
 				req.GetStorageId(),
 				req.GetItemId(),
@@ -392,9 +400,10 @@ func (s *economyServiceServer) GiveItem(ctx context.Context, req *v1.GiveItemReq
 	}, nil
 }
 
-func (s *economyServiceServer) GetExistingStorageItems(ctx context.Context, storageID string, itemID string) ([]*v1.StorageItem, error) {
+// GetExistingStorageItems gets the unique storage items
+func (s *EconomyServiceServer) GetExistingStorageItems(ctx context.Context, storageID string, itemID string) ([]*v1.StorageItem, error) {
 	// Get the storage
-	storage, err := s.storageRepository.Get(ctx, storageID)
+	storage, err := s.StorageRepository.Get(ctx, storageID)
 	if err != nil {
 		return nil, err
 	}
@@ -416,7 +425,8 @@ func (s *economyServiceServer) GetExistingStorageItems(ctx context.Context, stor
 	return existingStorageItems, nil
 }
 
-func (s *economyServiceServer) GiveToExistingStorageItems(ctx context.Context, storageID string, itemID string, remainder int64, item *v1.Item) (int64, error) {
+// GiveToExistingStorageItem increases stack amount of existing storage item
+func (s *EconomyServiceServer) GiveToExistingStorageItems(ctx context.Context, storageID string, itemID string, remainder int64, item *v1.Item) (int64, error) {
 	if !item.Stackable {
 		return remainder, nil
 	}
@@ -446,7 +456,7 @@ func (s *economyServiceServer) GiveToExistingStorageItems(ctx context.Context, s
 	if item.StackMaxAmount == 0 {
 		storageItem := existingStorageItems[0]
 
-		err := s.storageRepository.IncreaseItemAmount(
+		err := s.StorageRepository.IncreaseItemAmount(
 			ctx,
 			storageItem.Id,
 			remainder,
@@ -471,7 +481,7 @@ func (s *economyServiceServer) GiveToExistingStorageItems(ctx context.Context, s
 				existingStorageItemIncrease = existingStorageItemRemainder
 			}
 
-			err := s.storageRepository.IncreaseItemAmount(
+			err := s.StorageRepository.IncreaseItemAmount(
 				ctx,
 				existingStorageItem.Id,
 				existingStorageItemIncrease,

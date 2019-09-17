@@ -7,6 +7,7 @@ import (
 	"time"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
+	"github.com/GameComponent/economy-service/pkg/helper/random"
 	jwt "github.com/dgrijalva/jwt-go"
 	bcrypt "golang.org/x/crypto/bcrypt"
 	codes "google.golang.org/grpc/codes"
@@ -31,11 +32,12 @@ func checkPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-func (s *economyServiceServer) Authenticate(ctx context.Context, req *v1.AuthenticateRequest) (*v1.AuthenticateResponse, error) {
+// Authenticate an account
+func (s *EconomyServiceServer) Authenticate(ctx context.Context, req *v1.AuthenticateRequest) (*v1.AuthenticateResponse, error) {
 	fmt.Println("Authenticate")
 
 	// Check if the user entered to correct credentials
-	account, err := s.accountRepository.GetByEmail(ctx, req.GetEmail())
+	account, err := s.AccountRepository.GetByEmail(ctx, req.GetEmail())
 
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, "invalid credentials")
@@ -48,15 +50,34 @@ func (s *economyServiceServer) Authenticate(ctx context.Context, req *v1.Authent
 	// Generate a JWT token
 	token, err := s.generateToken(account)
 	if err != nil {
-		return nil, status.Error(codes.Internal, "unable to generate token")
+		return nil, status.Error(codes.Internal, "unable to generate access_token")
+	}
+
+	// Generate a save token
+	refreshToken, err := random.GenerateRandomString(128)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "unable to generate refresh_token")
+	}
+
+	// Calculate the expiration
+	refreshExpiration := time.Now().UTC().Add(time.Duration(s.Config.JWTRefreshExpiration) * time.Second)
+
+	// Add the refresh token to the database
+	err = s.AccountRepository.CreateRefreshToken(ctx, refreshToken, account.Id, &refreshExpiration)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "unable to generate refresh_token")
 	}
 
 	return &v1.AuthenticateResponse{
-		Token: token,
+		AccessToken:  token,
+		TokenType:    "Bearer",
+		ExpiresIn:    int32(s.Config.JWTExpiration),
+		RefreshToken: refreshToken,
 	}, nil
 }
 
-func (s *economyServiceServer) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.RegisterResponse, error) {
+// Register an account
+func (s *EconomyServiceServer) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.RegisterResponse, error) {
 	fmt.Println("Register")
 
 	// Hash the password
@@ -66,13 +87,13 @@ func (s *economyServiceServer) Register(ctx context.Context, req *v1.RegisterReq
 	}
 
 	// Check if user already exists
-	exstingAccount, _ := s.accountRepository.GetByEmail(ctx, req.GetEmail())
+	exstingAccount, _ := s.AccountRepository.GetByEmail(ctx, req.GetEmail())
 	if exstingAccount != nil && exstingAccount.Id != "" {
 		return nil, status.Error(codes.AlreadyExists, "user with email already exists")
 	}
 
 	// Create the user
-	account, err := s.accountRepository.Create(ctx, req.GetEmail(), hash)
+	account, err := s.AccountRepository.Create(ctx, req.GetEmail(), hash)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to create account")
 	}
@@ -88,13 +109,15 @@ func (s *economyServiceServer) Register(ctx context.Context, req *v1.RegisterReq
 	}, nil
 }
 
-func (s *economyServiceServer) GenerateSecret(ctx context.Context, req *v1.GenerateSecretRequest) (*v1.GenerateSecretResponse, error) {
+// GenerateSecret for an account
+func (s *EconomyServiceServer) GenerateSecret(ctx context.Context, req *v1.GenerateSecretRequest) (*v1.GenerateSecretResponse, error) {
 	fmt.Println("GenerateSecret")
+
 	if req.GetAccountId() == "" {
 		return nil, status.Error(codes.InvalidArgument, "please enter an account_id")
 	}
 
-	account, err := s.accountRepository.Get(ctx, req.GetAccountId())
+	account, err := s.AccountRepository.Get(ctx, req.GetAccountId())
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unbable to generate token")
 	}
@@ -109,8 +132,37 @@ func (s *economyServiceServer) GenerateSecret(ctx context.Context, req *v1.Gener
 	}, nil
 }
 
-func (s *economyServiceServer) GetAccount(ctx context.Context, req *v1.GetAccountRequest) (*v1.GetAccountResponse, error) {
-	account, err := s.accountRepository.Get(ctx, req.GetAccountId())
+// Refresh tokens for an account
+func (s *EconomyServiceServer) Refresh(ctx context.Context, req *v1.RefreshRequest) (*v1.RefreshResponse, error) {
+	fmt.Println("Refresh")
+
+	accountID, err := s.AccountRepository.GetAccountIDFromRefreshToken(ctx, req.Token)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, "unable to find valid refresh_token")
+	}
+
+	account, err := s.AccountRepository.Get(ctx, accountID)
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, "unable to find account")
+	}
+
+	// Generate a JWT token
+	token, err := s.generateToken(account)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "unable to generate access_token")
+	}
+
+	return &v1.RefreshResponse{
+		AccessToken: token,
+		TokenType:   "Bearer",
+		ExpiresIn:   int32(s.Config.JWTExpiration),
+	}, nil
+}
+
+// GetAccount gets an account
+func (s *EconomyServiceServer) GetAccount(ctx context.Context, req *v1.GetAccountRequest) (*v1.GetAccountResponse, error) {
+	account, err := s.AccountRepository.Get(ctx, req.GetAccountId())
 	if err != nil {
 		return nil, err
 	}
@@ -125,7 +177,8 @@ func (s *economyServiceServer) GetAccount(ctx context.Context, req *v1.GetAccoun
 	}, nil
 }
 
-func (s *economyServiceServer) ListAccount(ctx context.Context, req *v1.ListAccountRequest) (*v1.ListAccountResponse, error) {
+// ListAccount lists accounts
+func (s *EconomyServiceServer) ListAccount(ctx context.Context, req *v1.ListAccountRequest) (*v1.ListAccountResponse, error) {
 	fmt.Println("ListAccount")
 
 	// Parse the page token
@@ -145,7 +198,7 @@ func (s *economyServiceServer) ListAccount(ctx context.Context, req *v1.ListAcco
 	}
 
 	// Get the accounts from the repository
-	accounts, totalSize, err := s.accountRepository.List(ctx, limit, offset)
+	accounts, totalSize, err := s.AccountRepository.List(ctx, limit, offset)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to retrieve account list")
 	}
@@ -164,11 +217,12 @@ func (s *economyServiceServer) ListAccount(ctx context.Context, req *v1.ListAcco
 	}, nil
 }
 
-func (s *economyServiceServer) ChangePassword(ctx context.Context, req *v1.ChangePasswordRequest) (*v1.ChangePasswordResponse, error) {
+// ChangePassword for an account
+func (s *EconomyServiceServer) ChangePassword(ctx context.Context, req *v1.ChangePasswordRequest) (*v1.ChangePasswordResponse, error) {
 	fmt.Println("ChangePassword")
 
 	// Check if the user entered to correct credentials
-	account, err := s.accountRepository.GetByEmail(ctx, req.GetEmail())
+	account, err := s.AccountRepository.GetByEmail(ctx, req.GetEmail())
 
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, "invalid credentials")
@@ -178,6 +232,9 @@ func (s *economyServiceServer) ChangePassword(ctx context.Context, req *v1.Chang
 		return nil, status.Error(codes.Unauthenticated, "invalid credentials")
 	}
 
+	// Invalidate all existing refresh tokens
+	s.AccountRepository.InvalidateRefreshTokens(ctx, account.Id)
+
 	// Hash the password
 	hash, err := hashPassword(req.GetNewPassword())
 	if err != nil {
@@ -185,7 +242,7 @@ func (s *economyServiceServer) ChangePassword(ctx context.Context, req *v1.Chang
 	}
 
 	// Update the account
-	updatedAccount, err := s.accountRepository.Update(ctx, account.Id, hash)
+	updatedAccount, err := s.AccountRepository.Update(ctx, account.Id, hash)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to update account")
 	}
@@ -201,7 +258,8 @@ func (s *economyServiceServer) ChangePassword(ctx context.Context, req *v1.Chang
 	}, nil
 }
 
-func (s *economyServiceServer) AssignPermission(ctx context.Context, req *v1.AssignPermissionRequest) (*v1.AssignPermissionResponse, error) {
+// AssignPermission to an account
+func (s *EconomyServiceServer) AssignPermission(ctx context.Context, req *v1.AssignPermissionRequest) (*v1.AssignPermissionResponse, error) {
 	fmt.Println("AssignPermission")
 
 	if req.GetAccountId() == "" {
@@ -212,7 +270,7 @@ func (s *economyServiceServer) AssignPermission(ctx context.Context, req *v1.Ass
 		return nil, status.Error(codes.InvalidArgument, "please enter permission")
 	}
 
-	account, err := s.accountRepository.AssignPermission(ctx, req.GetAccountId(), req.GetPermission())
+	account, err := s.AccountRepository.AssignPermission(ctx, req.GetAccountId(), req.GetPermission())
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to assign permission")
 	}
@@ -227,10 +285,11 @@ func (s *economyServiceServer) AssignPermission(ctx context.Context, req *v1.Ass
 	}, nil
 }
 
-func (s *economyServiceServer) RevokePermission(ctx context.Context, req *v1.RevokePermissionRequest) (*v1.RevokePermissionResponse, error) {
+// RevokePermission from an account
+func (s *EconomyServiceServer) RevokePermission(ctx context.Context, req *v1.RevokePermissionRequest) (*v1.RevokePermissionResponse, error) {
 	fmt.Println("RevokePermission")
 
-	account, err := s.accountRepository.RevokePermission(ctx, req.GetAccountId(), req.GetPermission())
+	account, err := s.AccountRepository.RevokePermission(ctx, req.GetAccountId(), req.GetPermission())
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to revoke permission")
 	}
@@ -245,15 +304,16 @@ func (s *economyServiceServer) RevokePermission(ctx context.Context, req *v1.Rev
 	}, nil
 }
 
-func (s *economyServiceServer) generateToken(account *v1.Account) (string, error) {
-	expirationTime := time.Now().Add(time.Duration(s.config.JWTExpiration) * time.Second)
-	secret := []byte(s.config.JWTSecret)
+func (s *EconomyServiceServer) generateToken(account *v1.Account) (string, error) {
+	expirationTime := time.Now().Add(time.Duration(s.Config.JWTExpiration) * time.Second)
+	secret := []byte(s.Config.JWTSecret)
 
 	claims := &Claims{
 		Subject:     account.Id,
 		Email:       account.Email,
 		Permissions: account.Permissions,
 		StandardClaims: jwt.StandardClaims{
+			Audience:  "account",
 			ExpiresAt: expirationTime.Unix(),
 		},
 	}
@@ -271,14 +331,16 @@ func (s *economyServiceServer) generateToken(account *v1.Account) (string, error
 	return tokenString, nil
 }
 
-func (s *economyServiceServer) generateLongLivedToken(account *v1.Account) (string, error) {
-	secret := []byte(s.config.JWTSecret)
+func (s *EconomyServiceServer) generateLongLivedToken(account *v1.Account) (string, error) {
+	secret := []byte(s.Config.JWTSecret)
 
 	claims := &Claims{
-		Subject:        account.Id,
-		Email:          account.Email,
-		Permissions:    account.Permissions,
-		StandardClaims: jwt.StandardClaims{},
+		Subject:     account.Id,
+		Email:       account.Email,
+		Permissions: account.Permissions,
+		StandardClaims: jwt.StandardClaims{
+			Audience: "api",
+		},
 	}
 
 	// Create a new token object, specifying signing method and the claims

@@ -18,39 +18,39 @@ const (
 
 // Config for the server
 type Config struct {
-	DB 								 *sql.DB
-	Logger           	 *zap.Logger
-	Config						 *config.Config
+	DB                 *sql.DB
+	Logger             *zap.Logger
+	Config             *config.Config
 	AccountRepository  repository.AccountRepository
-	ConfigRepository	 repository.ConfigRepository
+	ConfigRepository   repository.ConfigRepository
 	CurrencyRepository repository.CurrencyRepository
-	ItemRepository 		 repository.ItemRepository
-	PlayerRepository 	 repository.PlayerRepository
-	PriceRepository 	 repository.PriceRepository
+	ItemRepository     repository.ItemRepository
+	PlayerRepository   repository.PlayerRepository
+	PriceRepository    repository.PriceRepository
 	ProductRepository  repository.ProductRepository
-	ShopRepository 	 	 repository.ShopRepository
+	ShopRepository     repository.ShopRepository
 	StorageRepository  repository.StorageRepository
 }
 
-// economyServiceServer is implementation of v1.EconomyServiceServer proto interface
-type economyServiceServer struct {
-	db                 *sql.DB
-	logger             *zap.Logger
-	config						 *config.Config
-	accountRepository  repository.AccountRepository
-	configRepository   repository.ConfigRepository
-	currencyRepository repository.CurrencyRepository
-	itemRepository     repository.ItemRepository
-	playerRepository   repository.PlayerRepository
-	priceRepository    repository.PriceRepository
-	productRepository  repository.ProductRepository
-	shopRepository     repository.ShopRepository
-	storageRepository  repository.StorageRepository
+// EconomyServiceServer is implementation of v1.EconomyServiceServer proto interface
+type EconomyServiceServer struct {
+	DB                 *sql.DB
+	Logger             *zap.Logger
+	Config             *config.Config
+	AccountRepository  repository.AccountRepository
+	ConfigRepository   repository.ConfigRepository
+	CurrencyRepository repository.CurrencyRepository
+	ItemRepository     repository.ItemRepository
+	PlayerRepository   repository.PlayerRepository
+	PriceRepository    repository.PriceRepository
+	ProductRepository  repository.ProductRepository
+	ShopRepository     repository.ShopRepository
+	StorageRepository  repository.StorageRepository
 }
 
 // NewEconomyServiceServer creates economy service
 func NewEconomyServiceServer(config Config) v1.EconomyServiceServer {
-	return &economyServiceServer{
+	return &EconomyServiceServer{
 		config.DB,
 		config.Logger,
 		config.Config,
@@ -67,7 +67,7 @@ func NewEconomyServiceServer(config Config) v1.EconomyServiceServer {
 }
 
 // checkAPI checks if the API version requested by client is supported by server
-func (s *economyServiceServer) checkAPI(api string) error {
+func (s *EconomyServiceServer) checkAPI(api string) error {
 	// API version is "" means use current version of the service
 	if len(api) > 0 {
 		if apiVersion != api {

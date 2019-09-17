@@ -1347,6 +1347,39 @@
         ]
       }
     },
+    "/v1/refresh": {
+      "post": {
+        "summary": "Refresh a token",
+        "operationId": "Refresh",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1RefreshResponse"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1RefreshRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EconomyService"
+        ]
+      }
+    },
     "/v1/register": {
       "post": {
         "summary": "Register an account",
@@ -2070,7 +2103,17 @@
     "v1AuthenticateResponse": {
       "type": "object",
       "properties": {
-        "token": {
+        "access_token": {
+          "type": "string"
+        },
+        "token_type": {
+          "type": "string"
+        },
+        "expires_in": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "refresh_token": {
           "type": "string"
         }
       }
@@ -2861,6 +2904,30 @@
         "amount": {
           "type": "string",
           "format": "int64"
+        }
+      }
+    },
+    "v1RefreshRequest": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        }
+      },
+      "title": "Refresh"
+    },
+    "v1RefreshResponse": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string"
+        },
+        "token_type": {
+          "type": "string"
+        },
+        "expires_in": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

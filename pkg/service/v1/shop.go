@@ -10,10 +10,11 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *economyServiceServer) GetShop(ctx context.Context, req *v1.GetShopRequest) (*v1.GetShopResponse, error) {
+// GetShop gets a shop
+func (s *EconomyServiceServer) GetShop(ctx context.Context, req *v1.GetShopRequest) (*v1.GetShopResponse, error) {
 	fmt.Println("GetShop")
 
-	shop, err := s.shopRepository.Get(ctx, req.GetShopId())
+	shop, err := s.ShopRepository.Get(ctx, req.GetShopId())
 
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "shop not found")
@@ -24,10 +25,11 @@ func (s *economyServiceServer) GetShop(ctx context.Context, req *v1.GetShopReque
 	}, nil
 }
 
-func (s *economyServiceServer) CreateShop(ctx context.Context, req *v1.CreateShopRequest) (*v1.CreateShopResponse, error) {
+// CreateShop creates a new shop
+func (s *EconomyServiceServer) CreateShop(ctx context.Context, req *v1.CreateShopRequest) (*v1.CreateShopResponse, error) {
 	fmt.Println("CreateShop")
 
-	shop, err := s.shopRepository.Create(
+	shop, err := s.ShopRepository.Create(
 		ctx,
 		req.GetName(),
 		req.GetMetadata(),
@@ -42,10 +44,11 @@ func (s *economyServiceServer) CreateShop(ctx context.Context, req *v1.CreateSho
 	}, nil
 }
 
-func (s *economyServiceServer) UpdateShop(ctx context.Context, req *v1.UpdateShopRequest) (*v1.UpdateShopResponse, error) {
+// UpdateShop update an existing shop
+func (s *EconomyServiceServer) UpdateShop(ctx context.Context, req *v1.UpdateShopRequest) (*v1.UpdateShopResponse, error) {
 	fmt.Println("UpdateShop")
 
-	shop, err := s.shopRepository.Update(
+	shop, err := s.ShopRepository.Update(
 		ctx,
 		req.GetShopId(),
 		req.GetName(),
@@ -61,7 +64,8 @@ func (s *economyServiceServer) UpdateShop(ctx context.Context, req *v1.UpdateSho
 	}, nil
 }
 
-func (s *economyServiceServer) ListShop(ctx context.Context, req *v1.ListShopRequest) (*v1.ListShopResponse, error) {
+// ListShop lists shops
+func (s *EconomyServiceServer) ListShop(ctx context.Context, req *v1.ListShopRequest) (*v1.ListShopResponse, error) {
 	fmt.Println("ListShop")
 
 	// Parse the page token
@@ -81,7 +85,7 @@ func (s *economyServiceServer) ListShop(ctx context.Context, req *v1.ListShopReq
 	}
 
 	// Get the shops
-	shops, totalSize, err := s.shopRepository.List(ctx, limit, offset)
+	shops, totalSize, err := s.ShopRepository.List(ctx, limit, offset)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to retrieve shop list")
 	}
@@ -100,11 +104,12 @@ func (s *economyServiceServer) ListShop(ctx context.Context, req *v1.ListShopReq
 	}, nil
 }
 
-func (s *economyServiceServer) AttachProduct(ctx context.Context, req *v1.AttachProductRequest) (*v1.AttachProductResponse, error) {
+// AttachProduct attaches a product to a shop
+func (s *EconomyServiceServer) AttachProduct(ctx context.Context, req *v1.AttachProductRequest) (*v1.AttachProductResponse, error) {
 	fmt.Println("AttachProduct")
 
 	// Add product to the database return the generated UUID
-	shop, err := s.shopRepository.AttachProduct(
+	shop, err := s.ShopRepository.AttachProduct(
 		ctx,
 		req.GetShopId(),
 		req.GetProductId(),
@@ -119,11 +124,12 @@ func (s *economyServiceServer) AttachProduct(ctx context.Context, req *v1.Attach
 	}, nil
 }
 
-func (s *economyServiceServer) DetachProduct(ctx context.Context, req *v1.DetachProductRequest) (*v1.DetachProductResponse, error) {
+// DetachProduct detaches a product from a shop
+func (s *EconomyServiceServer) DetachProduct(ctx context.Context, req *v1.DetachProductRequest) (*v1.DetachProductResponse, error) {
 	fmt.Println("DetachProduct")
 
 	// Add product to the databased return the generated UUID
-	shop, err := s.shopRepository.DetachProduct(
+	shop, err := s.ShopRepository.DetachProduct(
 		ctx,
 		req.GetShopProductId(),
 	)

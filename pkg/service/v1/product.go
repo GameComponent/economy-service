@@ -10,11 +10,12 @@ import (
 	status "google.golang.org/grpc/status"
 )
 
-func (s *economyServiceServer) CreateProduct(ctx context.Context, req *v1.CreateProductRequest) (*v1.CreateProductResponse, error) {
+// CreateProduct creates a new product
+func (s *EconomyServiceServer) CreateProduct(ctx context.Context, req *v1.CreateProductRequest) (*v1.CreateProductResponse, error) {
 	fmt.Println("CreateProduct")
 
 	// Add product to the databased return the generated UUID
-	product, err := s.productRepository.Create(ctx, req.GetName())
+	product, err := s.ProductRepository.Create(ctx, req.GetName())
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to create product")
 	}
@@ -24,7 +25,8 @@ func (s *economyServiceServer) CreateProduct(ctx context.Context, req *v1.Create
 	}, nil
 }
 
-func (s *economyServiceServer) UpdateProduct(ctx context.Context, req *v1.UpdateProductRequest) (*v1.UpdateProductResponse, error) {
+// UpdateProduct updates a product
+func (s *EconomyServiceServer) UpdateProduct(ctx context.Context, req *v1.UpdateProductRequest) (*v1.UpdateProductResponse, error) {
 	fmt.Println("UpdateProduct")
 
 	if req.GetProductId() == "" {
@@ -36,7 +38,7 @@ func (s *economyServiceServer) UpdateProduct(ctx context.Context, req *v1.Update
 	}
 
 	// Add product to the databased return the generated UUID
-	product, err := s.productRepository.Update(ctx, req.GetProductId(), req.GetName())
+	product, err := s.ProductRepository.Update(ctx, req.GetProductId(), req.GetName())
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to update product")
 	}
@@ -46,7 +48,8 @@ func (s *economyServiceServer) UpdateProduct(ctx context.Context, req *v1.Update
 	}, nil
 }
 
-func (s *economyServiceServer) ListProduct(ctx context.Context, req *v1.ListProductRequest) (*v1.ListProductResponse, error) {
+// ListProduct lists products
+func (s *EconomyServiceServer) ListProduct(ctx context.Context, req *v1.ListProductRequest) (*v1.ListProductResponse, error) {
 	fmt.Println("ListProduct")
 
 	// Parse the page token
@@ -66,7 +69,7 @@ func (s *economyServiceServer) ListProduct(ctx context.Context, req *v1.ListProd
 	}
 
 	// Get the products
-	products, totalSize, err := s.productRepository.List(ctx, limit, offset)
+	products, totalSize, err := s.ProductRepository.List(ctx, limit, offset)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to retrieve product list")
 	}
@@ -85,8 +88,9 @@ func (s *economyServiceServer) ListProduct(ctx context.Context, req *v1.ListProd
 	}, nil
 }
 
-func (s *economyServiceServer) GetProduct(ctx context.Context, req *v1.GetProductRequest) (*v1.GetProductResponse, error) {
-	product, err := s.productRepository.Get(ctx, req.GetProductId())
+// GetProduct gets a product
+func (s *EconomyServiceServer) GetProduct(ctx context.Context, req *v1.GetProductRequest) (*v1.GetProductResponse, error) {
+	product, err := s.ProductRepository.Get(ctx, req.GetProductId())
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "product not found")
 	}
@@ -96,11 +100,12 @@ func (s *economyServiceServer) GetProduct(ctx context.Context, req *v1.GetProduc
 	}, nil
 }
 
-func (s *economyServiceServer) AttachItem(ctx context.Context, req *v1.AttachItemRequest) (*v1.AttachItemResponse, error) {
+// AttachItem attaches an item to a product
+func (s *EconomyServiceServer) AttachItem(ctx context.Context, req *v1.AttachItemRequest) (*v1.AttachItemResponse, error) {
 	fmt.Println("AttachItem")
 
 	// Add product to the databased return the generated UUID
-	product, err := s.productRepository.AttachItem(
+	product, err := s.ProductRepository.AttachItem(
 		ctx,
 		req.GetProductId(),
 		req.GetItemId(),
@@ -116,11 +121,12 @@ func (s *economyServiceServer) AttachItem(ctx context.Context, req *v1.AttachIte
 	}, nil
 }
 
-func (s *economyServiceServer) DetachItem(ctx context.Context, req *v1.DetachItemRequest) (*v1.DetachItemResponse, error) {
+// DetachItem detaches an item from a product
+func (s *EconomyServiceServer) DetachItem(ctx context.Context, req *v1.DetachItemRequest) (*v1.DetachItemResponse, error) {
 	fmt.Println("DetachItem")
 
 	// Add product to the databased return the generated UUID
-	product, err := s.productRepository.DetachItem(
+	product, err := s.ProductRepository.DetachItem(
 		ctx,
 		req.GetProductItemId(),
 	)
@@ -134,11 +140,12 @@ func (s *economyServiceServer) DetachItem(ctx context.Context, req *v1.DetachIte
 	}, nil
 }
 
-func (s *economyServiceServer) AttachCurrency(ctx context.Context, req *v1.AttachCurrencyRequest) (*v1.AttachCurrencyResponse, error) {
+// AttachCurrency attaches a currency to a product
+func (s *EconomyServiceServer) AttachCurrency(ctx context.Context, req *v1.AttachCurrencyRequest) (*v1.AttachCurrencyResponse, error) {
 	fmt.Println("AttachCurrency")
 
 	// Add product to the databased return the generated UUID
-	product, err := s.productRepository.AttachCurrency(
+	product, err := s.ProductRepository.AttachCurrency(
 		ctx,
 		req.GetProductId(),
 		req.GetCurrencyId(),
@@ -154,11 +161,12 @@ func (s *economyServiceServer) AttachCurrency(ctx context.Context, req *v1.Attac
 	}, nil
 }
 
-func (s *economyServiceServer) DetachCurrency(ctx context.Context, req *v1.DetachCurrencyRequest) (*v1.DetachCurrencyResponse, error) {
+// DetachCurrency detaches a currency from a product
+func (s *EconomyServiceServer) DetachCurrency(ctx context.Context, req *v1.DetachCurrencyRequest) (*v1.DetachCurrencyResponse, error) {
 	fmt.Println("DetachCurrency")
 
 	// Add product to the databased return the generated UUID
-	product, err := s.productRepository.DetachCurrency(
+	product, err := s.ProductRepository.DetachCurrency(
 		ctx,
 		req.GetProductCurrencyId(),
 	)
@@ -172,14 +180,15 @@ func (s *economyServiceServer) DetachCurrency(ctx context.Context, req *v1.Detac
 	}, nil
 }
 
-func (s *economyServiceServer) ListProductPrice(ctx context.Context, req *v1.ListProductPriceRequest) (*v1.ListProductPriceResponse, error) {
+// ListProductPrice lists all prices for the product
+func (s *EconomyServiceServer) ListProductPrice(ctx context.Context, req *v1.ListProductPriceRequest) (*v1.ListProductPriceResponse, error) {
 	fmt.Println("ListProductPrice")
 
 	if req.GetProductId() == "" {
 		return nil, status.Error(codes.InvalidArgument, "no product_id given")
 	}
 
-	prices, err := s.productRepository.ListPrice(ctx, req.GetProductId())
+	prices, err := s.ProductRepository.ListPrice(ctx, req.GetProductId())
 	if err != nil {
 		return nil, err
 	}
@@ -189,7 +198,8 @@ func (s *economyServiceServer) ListProductPrice(ctx context.Context, req *v1.Lis
 	}, nil
 }
 
-func (s *economyServiceServer) BuyProduct(ctx context.Context, req *v1.BuyProductRequest) (*v1.BuyProductResponse, error) {
+// BuyProduct buys the product
+func (s *EconomyServiceServer) BuyProduct(ctx context.Context, req *v1.BuyProductRequest) (*v1.BuyProductResponse, error) {
 	fmt.Println("BuyProduct")
 
 	if req.GetProductId() == "" {
@@ -209,7 +219,7 @@ func (s *economyServiceServer) BuyProduct(ctx context.Context, req *v1.BuyProduc
 	}
 
 	// Get the Product
-	product, err := s.productRepository.Get(ctx, req.GetProductId())
+	product, err := s.ProductRepository.Get(ctx, req.GetProductId())
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "product not found")
 	}
@@ -228,7 +238,7 @@ func (s *economyServiceServer) BuyProduct(ctx context.Context, req *v1.BuyProduc
 	}
 
 	// Get the paying Storage
-	payingStorage, err := s.storageRepository.Get(ctx, req.GetPayingStorageId())
+	payingStorage, err := s.StorageRepository.Get(ctx, req.GetPayingStorageId())
 	if payingStorage == nil || payingStorage.Id == "" {
 		return nil, status.Error(codes.NotFound, "paying_storage_id not found")
 	}
@@ -243,7 +253,7 @@ func (s *economyServiceServer) BuyProduct(ctx context.Context, req *v1.BuyProduc
 
 	// Receiving Storage is different lets get it
 	if req.GetPayingStorageId() != req.GetReceivingStorageId() {
-		receivingStorage, err = s.storageRepository.Get(ctx, req.GetReceivingStorageId())
+		receivingStorage, err = s.StorageRepository.Get(ctx, req.GetReceivingStorageId())
 		if err != nil {
 			return nil, err
 		}
@@ -302,7 +312,7 @@ func (s *economyServiceServer) BuyProduct(ctx context.Context, req *v1.BuyProduc
 		}
 	}
 
-	_, err = s.productRepository.BuyProduct(
+	_, err = s.ProductRepository.BuyProduct(
 		ctx,
 		product,
 		price,

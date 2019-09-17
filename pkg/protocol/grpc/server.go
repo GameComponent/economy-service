@@ -65,8 +65,21 @@ func unaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServ
 		return handler(ctx, req)
 	}
 
+	if info.FullMethod == "/v1.EconomyService/Refresh" {
+		return handler(ctx, req)
+	}
+
+	// Get the server information
+	server, ok := info.Server.(*v1service.EconomyServiceServer)
+	if !ok {
+		return nil, fmt.Errorf("unable to cast server")
+	}
+
+	// Retrieve the secret from the server's config, cast to byte array
+	secret := []byte(server.Config.JWTSecret)
+
 	// Check authorization
-	_, claims, err := authorize(ctx)
+	_, claims, err := authorize(ctx, secret)
 
 	if err != nil {
 		return nil, err
@@ -88,7 +101,7 @@ func unaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServ
 	return nil, status.Error(codes.PermissionDenied, "Not allowed to execute this method")
 }
 
-func authorize(ctx context.Context) (*jwt.Token, *v1service.Claims, error) {
+func authorize(ctx context.Context, secret []byte) (*jwt.Token, *v1service.Claims, error) {
 	// Check if metadata is present
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
@@ -117,9 +130,6 @@ func authorize(ctx context.Context) (*jwt.Token, *v1service.Claims, error) {
 		return nil, nil, status.Errorf(codes.Unauthenticated, "Unable to parse this kind of token")
 	}
 
-	// TODO: get secret another way
-	var secret = []byte("my_secret_key")
-
 	var claims = &v1service.Claims{}
 
 	// Parse the token and check the encryption method
@@ -130,6 +140,7 @@ func authorize(ctx context.Context) (*jwt.Token, *v1service.Claims, error) {
 
 		return secret, nil
 	})
+
 	if err != nil {
 		return nil, nil, status.Errorf(codes.Unauthenticated, "Unable to parse this token")
 	}
@@ -138,5 +149,15 @@ func authorize(ctx context.Context) (*jwt.Token, *v1service.Claims, error) {
 		return nil, nil, status.Errorf(codes.Unauthenticated, "Invalid token")
 	}
 
-	return token, claims, nil
+	// Long lived JWT API tokens should expire and have the audience set to account
+	if claims.StandardClaims.Audience == "account" && claims.ExpiresAt != 0 {
+		return token, claims, nil
+	}
+
+	// Long lived JWT API tokens should not expire and have the audience set to api
+	if claims.StandardClaims.Audience == "api" && claims.ExpiresAt == 0 {
+		return token, claims, nil
+	}
+
+	return nil, nil, status.Errorf(codes.Unauthenticated, "Invalid token")
 }

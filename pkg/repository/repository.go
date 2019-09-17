@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
 )
@@ -15,6 +16,9 @@ type AccountRepository interface {
 	GetByEmail(ctx context.Context, email string) (*v1.Account, error)
 	AssignPermission(ctx context.Context, accountID string, permission string) (*v1.Account, error)
 	RevokePermission(ctx context.Context, accountID string, permission string) (*v1.Account, error)
+	CreateRefreshToken(ctx context.Context, token string, accountID string, expires *time.Time) error
+	InvalidateRefreshTokens(ctx context.Context, accountID string) error
+	GetAccountIDFromRefreshToken(ctx context.Context, token string) (string, error)
 }
 
 // ConfigRepository interface

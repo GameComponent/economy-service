@@ -10,7 +10,8 @@ import (
 	status "google.golang.org/grpc/status"
 )
 
-func (s *economyServiceServer) ListCurrency(ctx context.Context, req *v1.ListCurrencyRequest) (*v1.ListCurrencyResponse, error) {
+// ListCurrency lists currencies
+func (s *EconomyServiceServer) ListCurrency(ctx context.Context, req *v1.ListCurrencyRequest) (*v1.ListCurrencyResponse, error) {
 	fmt.Println("ListCurrency")
 
 	// Parse the page token
@@ -30,7 +31,7 @@ func (s *economyServiceServer) ListCurrency(ctx context.Context, req *v1.ListCur
 	}
 
 	// Get the currencies from the repository
-	currencies, totalSize, err := s.currencyRepository.List(ctx, limit, offset)
+	currencies, totalSize, err := s.CurrencyRepository.List(ctx, limit, offset)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to retrieve currency list")
 	}
@@ -49,7 +50,8 @@ func (s *economyServiceServer) ListCurrency(ctx context.Context, req *v1.ListCur
 	}, nil
 }
 
-func (s *economyServiceServer) CreateCurrency(ctx context.Context, req *v1.CreateCurrencyRequest) (*v1.CreateCurrencyResponse, error) {
+// CreateCurrency creates a new currency
+func (s *EconomyServiceServer) CreateCurrency(ctx context.Context, req *v1.CreateCurrencyRequest) (*v1.CreateCurrencyResponse, error) {
 	fmt.Println("CreateCurrency")
 
 	// Check the name
@@ -67,7 +69,7 @@ func (s *economyServiceServer) CreateCurrency(ctx context.Context, req *v1.Creat
 		return nil, status.Error(codes.InvalidArgument, "no symbol given")
 	}
 
-	currency, err := s.currencyRepository.Create(
+	currency, err := s.CurrencyRepository.Create(
 		ctx,
 		req.GetName(),
 		req.GetShortName(),
@@ -82,7 +84,8 @@ func (s *economyServiceServer) CreateCurrency(ctx context.Context, req *v1.Creat
 	}, nil
 }
 
-func (s *economyServiceServer) UpdateCurrency(ctx context.Context, req *v1.UpdateCurrencyRequest) (*v1.UpdateCurrencyResponse, error) {
+// UpdateCurrency updates an existing currency
+func (s *EconomyServiceServer) UpdateCurrency(ctx context.Context, req *v1.UpdateCurrencyRequest) (*v1.UpdateCurrencyResponse, error) {
 	fmt.Println("UpdateCurrency")
 
 	// Check the id
@@ -90,7 +93,7 @@ func (s *economyServiceServer) UpdateCurrency(ctx context.Context, req *v1.Updat
 		return nil, status.Error(codes.InvalidArgument, "no currency_id given")
 	}
 
-	currency, err := s.currencyRepository.Update(
+	currency, err := s.CurrencyRepository.Update(
 		ctx,
 		req.GetCurrencyId(),
 		req.GetName(),
@@ -106,10 +109,11 @@ func (s *economyServiceServer) UpdateCurrency(ctx context.Context, req *v1.Updat
 	}, nil
 }
 
-func (s *economyServiceServer) GetCurrency(ctx context.Context, req *v1.GetCurrencyRequest) (*v1.GetCurrencyResponse, error) {
+// GetCurrency gets a currency
+func (s *EconomyServiceServer) GetCurrency(ctx context.Context, req *v1.GetCurrencyRequest) (*v1.GetCurrencyResponse, error) {
 	fmt.Println("GetCurrency")
 
-	currency, err := s.currencyRepository.Get(ctx, req.GetCurrencyId())
+	currency, err := s.CurrencyRepository.Get(ctx, req.GetCurrencyId())
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "currency not found")
 	}

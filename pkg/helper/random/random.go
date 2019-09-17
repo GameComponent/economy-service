@@ -2,6 +2,7 @@ package random
 
 import (
 	crand "crypto/rand"
+	"encoding/base64"
 	"encoding/binary"
 	"log"
 	rand "math/rand"
@@ -17,6 +18,24 @@ func GenerateRandomInt(min int64, max int64) int64 {
 	rnd := rand.New(src)
 
 	return rnd.Int63n((max+1)-min) + min
+}
+
+// GenerateRandomBytes returns securely generated random bytes
+func GenerateRandomBytes(n int) ([]byte, error) {
+	b := make([]byte, n)
+	_, err := rand.Read(b)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return b, nil
+}
+
+// GenerateRandomString returns a URL-safe, base64 encoded securely generated random string
+func GenerateRandomString(s int) (string, error) {
+	b, err := GenerateRandomBytes(s)
+	return base64.URLEncoding.EncodeToString(b), err
 }
 
 // Helper to turn crypto/rand into a seeder for math/rand

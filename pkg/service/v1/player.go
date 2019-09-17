@@ -5,16 +5,17 @@ import (
 	"strconv"
 
 	v1 "github.com/GameComponent/economy-service/pkg/api/v1"
+	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"go.uber.org/zap"
 )
 
-func (s *economyServiceServer) GetPlayer(ctx context.Context, req *v1.GetPlayerRequest) (*v1.GetPlayerResponse, error) {
-	player, err := s.playerRepository.Get(ctx, req.GetPlayerId())
+// GetPlayer gets a player
+func (s *EconomyServiceServer) GetPlayer(ctx context.Context, req *v1.GetPlayerRequest) (*v1.GetPlayerResponse, error) {
+	player, err := s.PlayerRepository.Get(ctx, req.GetPlayerId())
 
 	if err != nil {
-		s.logger.Error("player not found", zap.Error(err))
+		s.Logger.Error("player not found", zap.Error(err))
 		return nil, status.Error(codes.NotFound, "player not found")
 	}
 
@@ -23,7 +24,8 @@ func (s *economyServiceServer) GetPlayer(ctx context.Context, req *v1.GetPlayerR
 	}, nil
 }
 
-func (s *economyServiceServer) CreatePlayer(ctx context.Context, req *v1.CreatePlayerRequest) (*v1.CreatePlayerResponse, error) {
+// CreatePlayer creates a player
+func (s *EconomyServiceServer) CreatePlayer(ctx context.Context, req *v1.CreatePlayerRequest) (*v1.CreatePlayerResponse, error) {
 	if req.GetPlayerId() == "" {
 		return nil, status.Error(codes.InvalidArgument, "no player_id given")
 	}
@@ -32,7 +34,7 @@ func (s *economyServiceServer) CreatePlayer(ctx context.Context, req *v1.CreateP
 		return nil, status.Error(codes.InvalidArgument, "no name given")
 	}
 
-	player, err := s.playerRepository.Create(
+	player, err := s.PlayerRepository.Create(
 		ctx,
 		req.GetPlayerId(),
 		req.GetName(),
@@ -47,19 +49,20 @@ func (s *economyServiceServer) CreatePlayer(ctx context.Context, req *v1.CreateP
 	}, nil
 }
 
-func (s *economyServiceServer) UpdatePlayer(ctx context.Context, req *v1.UpdatePlayerRequest) (*v1.UpdatePlayerResponse, error) {
+// UpdatePlayer updates a player
+func (s *EconomyServiceServer) UpdatePlayer(ctx context.Context, req *v1.UpdatePlayerRequest) (*v1.UpdatePlayerResponse, error) {
 	if req.GetPlayerId() == "" {
 		return nil, status.Error(codes.InvalidArgument, "no player_id given")
 	}
 
-	player, err := s.playerRepository.Update(
+	player, err := s.PlayerRepository.Update(
 		ctx,
 		req.GetPlayerId(),
 		req.GetName(),
 		req.GetMetadata(),
 	)
 	if err != nil {
-		s.logger.Error("unable to update player", zap.Error(err))
+		s.Logger.Error("unable to update player", zap.Error(err))
 		return nil, status.Error(codes.NotFound, "unable to update player")
 	}
 
@@ -68,7 +71,8 @@ func (s *economyServiceServer) UpdatePlayer(ctx context.Context, req *v1.UpdateP
 	}, nil
 }
 
-func (s *economyServiceServer) ListPlayer(ctx context.Context, req *v1.ListPlayerRequest) (*v1.ListPlayerResponse, error) {
+// ListPlayer lists players
+func (s *EconomyServiceServer) ListPlayer(ctx context.Context, req *v1.ListPlayerRequest) (*v1.ListPlayerResponse, error) {
 	// Parse the page token
 	var parsedToken int64
 	parsedToken, _ = strconv.ParseInt(req.GetPageToken(), 10, 32)
@@ -86,9 +90,9 @@ func (s *economyServiceServer) ListPlayer(ctx context.Context, req *v1.ListPlaye
 	}
 
 	// Get the players
-	players, totalSize, err := s.playerRepository.List(ctx, limit, offset)
+	players, totalSize, err := s.PlayerRepository.List(ctx, limit, offset)
 	if err != nil {
-		s.logger.Error("unable to list players", zap.Error(err))
+		s.Logger.Error("unable to list players", zap.Error(err))
 		return nil, status.Error(codes.Aborted, "unable to list players")
 	}
 
@@ -106,7 +110,8 @@ func (s *economyServiceServer) ListPlayer(ctx context.Context, req *v1.ListPlaye
 	}, nil
 }
 
-func (s *economyServiceServer) SearchPlayer(ctx context.Context, req *v1.SearchPlayerRequest) (*v1.SearchPlayerResponse, error) {
+// SearchPlayer search for a player
+func (s *EconomyServiceServer) SearchPlayer(ctx context.Context, req *v1.SearchPlayerRequest) (*v1.SearchPlayerResponse, error) {
 	// Check if query is empty
 	if req.GetQuery() == "" {
 		return nil, status.Error(codes.InvalidArgument, "no query given")
@@ -129,7 +134,7 @@ func (s *economyServiceServer) SearchPlayer(ctx context.Context, req *v1.SearchP
 	}
 
 	// Search the players
-	players, totalSize, err := s.playerRepository.Search(ctx, req.GetQuery(), limit, offset)
+	players, totalSize, err := s.PlayerRepository.Search(ctx, req.GetQuery(), limit, offset)
 	if err != nil {
 		return nil, err
 	}

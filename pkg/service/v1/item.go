@@ -10,11 +10,12 @@ import (
 	status "google.golang.org/grpc/status"
 )
 
-func (s *economyServiceServer) CreateItem(ctx context.Context, req *v1.CreateItemRequest) (*v1.CreateItemResponse, error) {
+// CreateItem creates a new item
+func (s *EconomyServiceServer) CreateItem(ctx context.Context, req *v1.CreateItemRequest) (*v1.CreateItemResponse, error) {
 	fmt.Println("CreateItem")
 
 	// Add item to the databased return the generated UUID
-	item, err := s.itemRepository.Create(
+	item, err := s.ItemRepository.Create(
 		ctx,
 		req.GetName(),
 		req.GetStackable(),
@@ -31,10 +32,11 @@ func (s *economyServiceServer) CreateItem(ctx context.Context, req *v1.CreateIte
 	}, nil
 }
 
-func (s *economyServiceServer) UpdateItem(ctx context.Context, req *v1.UpdateItemRequest) (*v1.UpdateItemResponse, error) {
+// UpdateItem updates an item
+func (s *EconomyServiceServer) UpdateItem(ctx context.Context, req *v1.UpdateItemRequest) (*v1.UpdateItemResponse, error) {
 	fmt.Println("UpdateItem")
 
-	item, err := s.itemRepository.Update(
+	item, err := s.ItemRepository.Update(
 		ctx,
 		req.GetItemId(),
 		req.GetName(),
@@ -50,8 +52,9 @@ func (s *economyServiceServer) UpdateItem(ctx context.Context, req *v1.UpdateIte
 	}, nil
 }
 
-func (s *economyServiceServer) GetItem(ctx context.Context, req *v1.GetItemRequest) (*v1.GetItemResponse, error) {
-	item, err := s.itemRepository.Get(ctx, req.GetItemId())
+// GetItem gets an item
+func (s *EconomyServiceServer) GetItem(ctx context.Context, req *v1.GetItemRequest) (*v1.GetItemResponse, error) {
+	item, err := s.ItemRepository.Get(ctx, req.GetItemId())
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +64,8 @@ func (s *economyServiceServer) GetItem(ctx context.Context, req *v1.GetItemReque
 	}, nil
 }
 
-func (s *economyServiceServer) ListItem(ctx context.Context, req *v1.ListItemRequest) (*v1.ListItemResponse, error) {
+// ListItem lists items
+func (s *EconomyServiceServer) ListItem(ctx context.Context, req *v1.ListItemRequest) (*v1.ListItemResponse, error) {
 	fmt.Println("ListItem")
 
 	// Parse the page token
@@ -81,7 +85,7 @@ func (s *economyServiceServer) ListItem(ctx context.Context, req *v1.ListItemReq
 	}
 
 	// Get the items from the repository
-	items, totalSize, err := s.itemRepository.List(ctx, limit, offset)
+	items, totalSize, err := s.ItemRepository.List(ctx, limit, offset)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to retrieve item list")
 	}
@@ -100,7 +104,8 @@ func (s *economyServiceServer) ListItem(ctx context.Context, req *v1.ListItemReq
 	}, nil
 }
 
-func (s *economyServiceServer) SearchItem(ctx context.Context, req *v1.SearchItemRequest) (*v1.SearchItemResponse, error) {
+// SearchItem search for an item
+func (s *EconomyServiceServer) SearchItem(ctx context.Context, req *v1.SearchItemRequest) (*v1.SearchItemResponse, error) {
 	fmt.Println("SearchItem")
 
 	// Check if query is empty
@@ -125,7 +130,7 @@ func (s *economyServiceServer) SearchItem(ctx context.Context, req *v1.SearchIte
 	}
 
 	// Search the items
-	items, totalSize, err := s.itemRepository.Search(ctx, req.GetQuery(), limit, offset)
+	items, totalSize, err := s.ItemRepository.Search(ctx, req.GetQuery(), limit, offset)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "unable to retrieve item search results")
 	}
