@@ -22,7 +22,7 @@ require (
 	github.com/json-iterator/go v1.1.7 // indirect
 	github.com/kisielk/errcheck v1.2.0 // indirect
 	github.com/kr/pty v1.1.8 // indirect
-	github.com/lib/pq v1.1.1
+	github.com/lib/pq v1.3.0
 	github.com/magiconair/properties v1.8.1 // indirect
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f // indirect
 	github.com/pelletier/go-toml v1.4.0 // indirect
