@@ -2,7 +2,7 @@ module github.com/GameComponent/economy-service
 
 require (
 	cloud.google.com/go v0.43.0 // indirect
-	github.com/DATA-DOG/go-sqlmock v1.3.3
+	github.com/DATA-DOG/go-sqlmock v1.4.1
 	github.com/coreos/bbolt v1.3.3 // indirect
 	github.com/coreos/etcd v3.3.13+incompatible // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
