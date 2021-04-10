@@ -2,7 +2,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/GameComponent/economy-service)](https://goreportcard.com/report/github.com/GameComponent/economy-service)
 [![Discord Chat](https://img.shields.io/discord/555785438162583553.svg)](https://discord.gg/CPmb5N5)  
 
-**State of the project:** Unstable and in active development
+**State of the project:** Unstable and abandoned
 
 # :dollar: Economy Service
 
