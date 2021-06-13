@@ -10,7 +10,7 @@ build_linux:
 build: build_darwin build_windows build_linux
 
 api_go:
-	protoc -I api/proto/v1/ \
+	protoc -I ./api/proto/v1/ \
 	-I ${GOPATH}/src \
 	-I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
 	-I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway \
@@ -18,17 +18,17 @@ api_go:
 	economy_service.proto
 
 api_gateway:
-	protoc -I api/proto/v1/ \
-	-I${GOPATH}/src \
-	-I${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
+	protoc -I ./api/proto/v1/ \
+	-I ${GOPATH}/src \
+	-I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
 	-I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway \
 	--grpc-gateway_out=logtostderr=true:pkg/api/v1 \
 	economy_service.proto
 
 api_swagger:
-	protoc -I api/proto/v1/ \
-	-I${GOPATH}/src \
-	-I${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
+	protoc -I ./api/proto/v1/ \
+	-I ${GOPATH}/src \
+	-I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
 	-I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway \
 	--swagger_out=logtostderr=true:api/swagger/v1 \
 	economy_service.proto
